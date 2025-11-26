@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WIP Copilot · Meeting Pad v2</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #1f2937;
+      background: #020617;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .brand {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .brand span {
+      color: #60a5fa;
+    }
+    .topbar-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    button {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: none;
+      background: #2563eb;
+      color: #f9fafb;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    button:hover {
+      filter: brightness(1.05);
+    }
+    .btn-secondary {
+      background: #0f172a;
+      border: 1px solid #4b5563;
+    }
+
+    .main {
+      padding: 14px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 800px) {
+      .columns { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: #020617;
+      border: 1px solid #1f2937;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .panel-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .panel-sub {
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 6px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 13px;
+      padding: 8px;
+      resize: vertical;
+    }
+    textarea::placeholder {
+      color: #6b7280;
+    }
+
+    .thinking-box {
+      font-size: 12px;
+      color: #d1d5db;
+      white-space: pre-wrap;
+      min-height: 80px;
+    }
+
+    .code-box {
+      background: #020617;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+      padding: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      color: #a5b4fc;
+      white-space: pre-wrap;
+      min-height: 140px;
+      overflow-y: auto;
+    }
+
+    .actions-row {
+      display: flex;
+      justify-content: flex-start;
+      gap: 8px;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">WIP <span>Copilot</span> · Meeting Pad v2</div>
+  <div class="topbar-buttons">
+    <!-- SAME KEY: opens index2.html (HLB Toolkit / SQL Key page) -->
+    <button class="btn-secondary" onclick="openSqlKey()">SQL Key / Toolkit</button>
+  </div>
+</div>
+
+<div class="main">
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-title">Live Meeting Notes (what you tell me)</div>
+    <div class="panel-sub">
+      I type your ideas here as you talk. Then we let “Copilot” break it into a plan and a first code sketch.
+    </div>
+    <textarea id="inputNotes" placeholder="Example:
+- We need a simple WIP week view, not another ugly form
+- Staff should drag work into days, not type codes
+- Output needs to be Excel + SQL-ready
+- Later: plug into APS / Xero, but don’t overbuild yet"></textarea>
+    <div class="actions-row">
+      <button onclick="runCopilot()">Run Copilot on these notes</button>
+    </div>
+  </div>
+
+  <!-- THINKING + CODE COLUMNS -->
+  <div class="columns">
+    <div class="panel">
+      <div class="panel-title">Copilot’s breakdown of your ideas</div>
+      <div id="thinkingOutput" class="thinking-box">
+        When we run Copilot, a structured breakdown of your notes will show up here.
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">First code sketch we can refine together</div>
+      <div id="codeOutput" class="code-box">// Code sketch will type out here…</div>
+      <div class="actions-row">
+        <button class="btn-secondary" onclick="copyCode()">Copy code</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // SAME KEY: go to your HLB Automation & Change Toolkit / SQL key page
+  function openSqlKey() {
+    // if copilo2.html and index2.html live in the same folder, this relative link works:
+    window.open("index2.html", "_blank");
+    // Or if you prefer the absolute URL, use:
+    // window.open("https://justfeldman.github.io/Changes/index2.html", "_blank");
+  }
+
+  let typingTimer = null;
+
+  function runCopilot() {
+    const notes = document.getElementById("inputNotes").value.trim();
+    const thinkingEl = document.getElementById("thinkingOutput");
+    const codeEl = document.getElementById("codeOutput");
+
+    if (!notes) {
+      alert("Type some notes first – what is she asking for?");
+      return;
+    }
+
+    // 1) Copilot-style thinking: turn each line into a bullet and add simple next steps
+    const lines = notes.split("\n")
+      .map(l => l.trim())
+      .filter(l => l.length > 0);
+
+    let thinking = "Understanding your request:\n\n";
+    lines.forEach((line, idx) => {
+      thinking += `• Point ${idx + 1}: ${line}\n`;
+    });
+
+    thinking += `\nProposed plan:\n`;
+    thinking += `1) Turn these points into a small UI or script prototype.\n`;
+    thinking += `2) Test it with real data before touching APS / production.\n`;
+    thinking += `3) When the flow feels right, connect it to the SQL / WIP engine.\n`;
+
+    thinkingEl.textContent = thinking;
+
+    // 2) Build a code draft from the notes (front-end oriented sketch)
+    const commentLines = lines.map(l => `// - ${l}`).join("\n");
+    const codeDraft =
+`// Sketch based on meeting notes:
+// (Starting point for us to refine live in the session.)
+
+${commentLines}
+
+function buildPrototype() {
+  // TODO: wire this to your real backend or SQL later.
+  const requirements = [
+${lines.map(l => `    "${l.replace(/"/g, '\\"')}"`).join(",\n")}
+  ];
+
+  console.log("Starting from these requirements:", requirements);
+  // 1) Design a simple UI (HTML / SwiftUI / Power App).
+  // 2) Add 1–2 key interactions that prove the concept.
+  // 3) Only after that, connect to the WIP engine / SQL schema.
+}
+
+// Call this in your actual environment to kick off iteration:
+buildPrototype();`;
+
+    // 3) Type it out like Copilot writing
+    if (typingTimer) clearInterval(typingTimer);
+    codeEl.textContent = "";
+
+    let idx = 0;
+    typingTimer = setInterval(() => {
+      if (idx >= codeDraft.length) {
+        clearInterval(typingTimer);
+        typingTimer = null;
+        return;
+      }
+      codeEl.textContent += codeDraft[idx];
+      idx++;
+      codeEl.scrollTop = codeEl.scrollHeight;
+    }, 8);
+  }
+
+  function copyCode() {
+    const code = document.getElementById("codeOutput").textContent;
+    if (!code.trim()) {
+      alert("There is no code to copy yet.");
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code)
+        .then(() => alert("Code copied to clipboard."))
+        .catch(() => alert("Could not access clipboard – copy manually."));
+    } else {
+      alert("Clipboard API not available – copy manually.");
+    }
+  }
+</script>
+
+</body>
+</html>
