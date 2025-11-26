@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WIP Engine Demo</title>
+  <!-- Excel export library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f3f5f8;
+      margin: 0;
+      padding: 20px;
+      color: #222;
+    }
+    h1 {
+      margin: 0 0 4px;
+      font-size: 26px;
+    }
+    .subtitle {
+      margin: 0 0 16px;
+      font-size: 13px;
+      color: #666;
+    }
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
+    }
+    .field label {
+      margin-bottom: 4px;
+      color: #555;
+    }
+    .field input {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #cfd3da;
+      font-size: 13px;
+    }
+    button {
+      padding: 9px 14px;
+      border: none;
+      background: #007aff;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: 0.15s;
+    }
+    button:hover {
+      background: #005fcb;
+    }
+    .summary {
+      margin: 8px 0 16px;
+      font-size: 13px;
+      color: #555;
+    }
+    .layout {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .bucket, .unassigned {
+      background: #fff;
+      padding: 14px;
+      width: 220px;
+      min-height: 210px;
+      border-radius: 14px;
+      border: 1px solid #d8dce3;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    }
+    .bucket h3, .unassigned h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+    .job {
+      padding: 8px 10px;
+      background: #fff;
+      border: 1px solid #cfd3da;
+      border-radius: 10px;
+      margin: 6px 0;
+      cursor: grab;
+      transition: 0.1s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      font-size: 13px;
+    }
+    .job:hover {
+      transform: scale(1.02);
+    }
+    .job-main {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .job-sub {
+      font-size: 11px;
+      color: #666;
+      display: flex;
+      justify-content: space-between;
+    }
+    details {
+      margin-top: 18px;
+      font-size: 12px;
+    }
+    details pre {
+      background: #111;
+      color: #0f0;
+      padding: 10px;
+      border-radius: 8px;
+      max-height: 260px;
+      overflow-y: auto;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>WIP Engine Demo</h1>
+<p class="subtitle">Drag jobs into days → engine updates data → export a timesheet-ready Excel.</p>
+
+<div class="top-bar">
+  <div class="field">
+    <label for="staffCode">Staff Code</label>
+    <input id="staffCode" placeholder="e.g. JFELD">
+  </div>
+  <div class="field">
+    <label for="weekStart">Week Starting (Monday)</label>
+    <input id="weekStart" type="date">
+  </div>
+  <button onclick="downloadExcel()">Download Excel</button>
+</div>
+
+<p class="summary" id="summary"></p>
+
+<div class="layout">
+  <div class="unassigned" ondragover="allowDrop(event)" ondrop="dropJob(event,'unassigned')">
+    <h3>Unassigned</h3>
+  </div>
+
+  <div class="bucket" ondragover="allowDrop(event)" ondrop="dropJob(event,'monday')">
+    <h3>Monday</h3>
+  </div>
+
+  <div class="bucket" ondragover="allowDrop(event)" ondrop="dropJob(event,'tuesday')">
+    <h3>Tuesday</h3>
+  </div>
+
+  <div class="bucket" ondragover="allowDrop(event)" ondrop="dropJob(event,'wednesday')">
+    <h3>Wednesday</h3>
+  </div>
+
+  <div class="bucket" ondragover="allowDrop(event)" ondrop="dropJob(event,'thursday')">
+    <h3>Thursday</h3>
+  </div>
+
+  <div class="bucket" ondragover="allowDrop(event)" ondrop="dropJob(event,'friday')">
+    <h3>Friday</h3>
+  </div>
+</div>
+
+<details>
+  <summary>Show underlying data (JSON engine output)</summary>
+  <pre id="jsonOutput"></pre>
+</details>
+
+<script>
+  // Sample WIP jobs – can be swapped for real APS data later
+  let jobs = [
+    {
+      id: 1,
+      clientCode: "SURF001",
+      clientName: "SurfCo",
+      jobCode: "AUTOPIPE",
+      jobName: "Pipeline Automation",
+      hours: 1.5,
+      day: "unassigned"
+    },
+    {
+      id: 2,
+      clientCode: "MED100",
+      clientName: "MedGroup",
+      jobCode: "PILLAR2",
+      jobName: "Pillar Two Model",
+      hours: 2.0,
+      day: "unassigned"
+    },
+    {
+      id: 3,
+      clientCode: "ZOO777",
+      clientName: "Sydney Zoo",
+      jobCode: "ESGMAP",
+      jobName: "ESG Map Build",
+      hours: 3.0,
+      day: "unassigned"
+    }
+  ];
+
+  const dayOffsets = {
+    monday: 0,
+    tuesday: 1,
+    wednesday: 2,
+    thursday: 3,
+    friday: 4
+  };
+
+  function getWorkDate(weekStartStr, dayKey) {
+    if (!weekStartStr || !dayOffsets.hasOwnProperty(dayKey)) return "";
+    const base = new Date(weekStartStr);
+    base.setDate(base.getDate() + dayOffsets[dayKey]);
+    return base.toISOString().substring(0, 10); // YYYY-MM-DD
+  }
+
+  // Render UI from jobs array
+  function render() {
+    // Reset buckets but keep headings
+    document.querySelectorAll(".bucket,.unassigned").forEach(b => {
+      const heading = b.querySelector("h3").innerText;
+      b.innerHTML = "<h3>" + heading + "</h3>";
+    });
+
+    // Add job cards
+    jobs.forEach(j => {
+      const card = document.createElement("div");
+      card.className = "job";
+      card.draggable = true;
+      card.id = "job-" + j.id;
+
+      card.innerHTML = `
+        <div class="job-main">${j.clientName} (${j.clientCode})</div>
+        <div class="job-sub">
+          <span>${j.jobCode} – ${j.jobName}</span>
+          <span>${j.hours}h</span>
+        </div>
+      `;
+
+      card.ondragstart = e => e.dataTransfer.setData("jobId", j.id);
+      document.querySelector(`[ondrop*="${j.day}"]`).appendChild(card);
+    });
+
+    updateSummary();
+    updateJsonView();
+  }
+
+  function updateSummary() {
+    const counts = { unassigned: 0, monday: 0, tuesday: 0, wednesday: 0, thursday: 0, friday: 0 };
+    jobs.forEach(j => { counts[j.day] = (counts[j.day] || 0) + 1; });
+
+    document.getElementById("summary").innerText =
+      `Unassigned: ${counts.unassigned || 0} · ` +
+      `Mon: ${counts.monday || 0} · ` +
+      `Tue: ${counts.tuesday || 0} · ` +
+      `Wed: ${counts.wednesday || 0} · ` +
+      `Thu: ${counts.thursday || 0} · ` +
+      `Fri: ${counts.friday || 0}`;
+  }
+
+  function updateJsonView() {
+    document.getElementById("jsonOutput").textContent =
+      JSON.stringify(jobs, null, 2);
+  }
+
+  function allowDrop(e) {
+    e.preventDefault();
+  }
+
+  function dropJob(e, day) {
+    e.preventDefault();
+    const id = e.dataTransfer.getData("jobId");
+    const job = jobs.find(j => j.id == id);
+    job.day = day;
+    render();
+  }
+
+  function buildTimesheetRows() {
+    const staffCode = document.getElementById("staffCode").value || "";
+    const weekStart = document.getElementById("weekStart").value || "";
+
+    return jobs
+      .filter(j => j.day !== "unassigned")
+      .map(j => {
+        const workDate = getWorkDate(weekStart, j.day);
+        const narrative = `${j.jobName} (${j.clientName})`;
+        return {
+          StaffCode: staffCode,
+          WorkDate: workDate,
+          ClientCode: j.clientCode,
+          JobCode: j.jobCode,
+          Hours: j.hours,
+          Narrative: narrative
+        };
+      });
+  }
+
+  function downloadExcel() {
+    const rows = buildTimesheetRows();
+    if (!rows.length) {
+      alert("Drag at least one job into a day before exporting.");
+      return;
+    }
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Timesheet");
+    XLSX.writeFile(wb, "wip_timesheet_demo.xlsx");
+  }
+
+  // Initial load
+  render();
+</script>
+
+</body>
+</html>
