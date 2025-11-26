@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Excel Generator Demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; }
+    button {
+      padding: 12px 20px;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .box {
+      padding: 20px;
+      background: #f2f2f2;
+      border-radius: 6px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Excel Generator MVP</h1>
+
+  <p>This shows how your automation engine can take inputs → convert to structured data → generate Excel instantly.</p>
+
+  <button onclick="generateExcel()">Download Excel</button>
+
+  <div class="box">
+    <h3>Behind the scenes</h3>
+    <p>Your 4-step engine:</p>
+    <ul>
+      <li><b>Input:</b> Data in JavaScript</li>
+      <li><b>Process:</b> Convert to rows + columns (WIP / Pillar Two logic)</li>
+      <li><b>Output:</b> Excel file</li>
+      <li><b>Feedback:</b> User review & adjustments</li>
+    </ul>
+  </div>
+
+<script>
+function generateExcel() {
+
+    // --- SAMPLE DATA (replace this later with real logic) ---
+    const data = [
+        ["Client", "Hours", "Rate", "Value"],
+        ["HLB Sydney", 5, 250, 1250],
+        ["Zoo Project", 2, 180, 360],
+        ["Pillar Two Engine", 4, 300, 1200],
+        ["WIP Automation", 6, 220, 1320]
+    ];
+
+    // Convert array → sheet
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Demo");
+
+    // Download file
+    XLSX.writeFile(wb, "demo_output.xlsx");
+}
+</script>
+
+</body>
+</html>
