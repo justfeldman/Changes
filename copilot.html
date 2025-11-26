@@ -2,533 +2,260 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>WIP Copilot – Hero Funnel</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <title>WIP Copilot Notepad</title>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #050816;
-      color: #f9fafb;
-    }
-
-    /* HERO / FUNNEL */
-
-    .hero {
-      min-height: 75vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 40px 20px 60px;
-      background: radial-gradient(circle at top, #1d4ed8 0, #0b1120 42%, #020617 100%);
-    }
-    .hero-title {
-      font-size: clamp(32px, 5vw, 42px);
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      margin-bottom: 12px;
-    }
-    .hero-highlight {
-      background: linear-gradient(90deg,#60a5fa,#c4b5fd);
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-    .hero-sub {
-      max-width: 520px;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #d1d5db;
-      margin-bottom: 24px;
-    }
-    .hero-badge {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .14em;
-      color: #9ca3af;
-      margin-bottom: 8px;
-    }
-    .hero-button {
-      margin-top: 18px;
-      padding: 11px 22px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg,#3b82f6,#6366f1);
-      color: white;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 12px 30px rgba(37,99,235,.4);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .hero-button:hover {
-      filter: brightness(1.05);
-      transform: translateY(-1px);
-    }
-    .hero-footnote {
-      margin-top: 14px;
-      font-size: 11px;
-      color: #9ca3af;
-    }
-
-    /* APP SHELL */
-
-    .app-section {
-      background: #020617;
-      border-radius: 24px 24px 0 0;
-      padding: 24px 16px 40px;
-      margin-top: -40px;
-      position: relative;
-      z-index: 2;
-      box-shadow: 0 -10px 40px rgba(0,0,0,0.7);
-    }
-    .app-inner {
-      max-width: 1080px;
-      margin: 0 auto;
-      background: #0b1120;
-      border-radius: 18px;
-      padding: 18px 18px 24px;
-      border: 1px solid rgba(148,163,184,.4);
-      box-shadow: 0 18px 40px rgba(15,23,42,.8);
-    }
-
-    h1.app-title {
-      margin: 0 0 4px;
-      font-size: 18px;
-      color: #e5e7eb;
-    }
-    .app-subtitle {
-      margin: 0 0 14px;
-      font-size: 12px;
-      color: #9ca3af;
-    }
-
-    .top-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: flex-end;
-      margin-bottom: 10px;
-    }
-    .field {
-      display: flex;
-      flex-direction: column;
-      font-size: 11px;
-      color: #e5e7eb;
-    }
-    .field label {
-      margin-bottom: 3px;
-      color: #9ca3af;
-    }
-    .field input {
-      padding: 6px 8px;
-      border-radius: 8px;
-      border: 1px solid #374151;
       background: #020617;
       color: #e5e7eb;
-      font-size: 12px;
-      min-width: 140px;
-    }
-    .field input::placeholder {
-      color: #6b7280;
-    }
-    button {
-      padding: 8px 13px;
-      border: none;
-      border-radius: 999px;
-      background: #2563eb;
-      color: white;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      box-shadow: 0 4px 16px rgba(37,99,235,.5);
-    }
-    button:hover {
-      filter: brightness(1.07);
     }
 
-    .summary {
-      margin: 6px 0 12px;
-      font-size: 11px;
-      color: #9ca3af;
-    }
-
-    .layout {
-      display: flex;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      gap: 12px;
-      padding-bottom: 4px;
-    }
-    .bucket, .unassigned {
-      background: #020617;
-      border-radius: 14px;
-      border: 1px solid #1f2937;
-      padding: 12px;
-      min-width: 180px;
-      min-height: 190px;
-    }
-    .bucket h3, .unassigned h3 {
-      margin: 0 0 6px;
-      font-size: 12px;
-      color: #e5e7eb;
-    }
-
-    .job {
-      padding: 8px 9px;
-      border-radius: 10px;
-      border: 1px solid #374151;
-      background: #020617;
-      margin: 5px 0;
-      cursor: grab;
-      box-shadow: 0 2px 8px rgba(0,0,0,.5);
-      font-size: 12px;
-    }
-    .job-main {
-      font-weight: 600;
-      margin-bottom: 2px;
-      color: #e5e7eb;
-    }
-    .job-sub {
-      font-size: 10px;
-      color: #9ca3af;
+    .topbar {
       display: flex;
       justify-content: space-between;
-      gap: 4px;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #1f2937;
+      background: #020617;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .brand {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .brand span {
+      color: #60a5fa;
+    }
+    .topbar-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    button {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: none;
+      background: #2563eb;
+      color: #f9fafb;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    button:hover {
+      filter: brightness(1.05);
+    }
+    .btn-secondary {
+      background: #0f172a;
+      border: 1px solid #4b5563;
     }
 
-    details {
-      margin-top: 14px;
-      font-size: 11px;
-      color: #9ca3af;
+    .main {
+      padding: 14px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    details pre, textarea {
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 800px) {
+      .columns { grid-template-columns: 1fr; }
+    }
+
+    .panel {
       background: #020617;
+      border: 1px solid #1f2937;
       border-radius: 10px;
       padding: 10px;
-      border: 1px solid #1f2937;
-      color: #22c55e;
-      max-height: 220px;
-      overflow-y: auto;
-      font-size: 11px;
-      width: 100%;
-      box-sizing: border-box;
+    }
+    .panel-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
     textarea {
+      width: 100%;
+      min-height: 180px;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+      background: #020617;
       color: #e5e7eb;
+      font-size: 13px;
+      padding: 8px;
       resize: vertical;
-      min-height: 120px;
+    }
+    textarea::placeholder {
+      color: #6b7280;
     }
 
-    @media (max-width: 640px) {
-      .field input { min-width: 120px; }
-      .app-inner { padding: 14px 12px 20px; }
+    .thinking-box {
+      font-size: 12px;
+      color: #d1d5db;
+      white-space: pre-wrap;
+      min-height: 80px;
+    }
+
+    .code-box {
+      background: #020617;
+      border-radius: 8px;
+      border: 1px solid #1f2937;
+      padding: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      color: #a5b4fc;
+      white-space: pre-wrap;
+      min-height: 140px;
+      overflow-y: auto;
+    }
+
+    .actions-row {
+      display: flex;
+      justify-content: flex-start;
+      gap: 8px;
+      margin-top: 6px;
     }
   </style>
 </head>
 <body>
 
-<!-- HERO FUNNEL -->
-<section class="hero">
-  <div class="hero-badge">WIP COPILOT · INTERNAL DEMO (NOT MICROSOFT)</div>
-  <h1 class="hero-title">
-    Your <span class="hero-highlight">WIP Copilot</span> for the week.
-  </h1>
-  <p class="hero-sub">
-    Drag real work into your week once. The engine turns it into a structured
-    timesheet and a ready-made Copilot prompt you can use for summaries and reports.
-  </p>
-
-  <button class="hero-button" onclick="scrollToApp()">
-    Open the WIP Copilot canvas
-    <span>↓</span>
-  </button>
-
-  <div class="hero-footnote">
-    Built to feel like a Copilot for WIP. Backend can be scrappy – the experience can’t.
+<div class="topbar">
+  <div class="brand">WIP <span>Copilot</span> · Meeting Pad</div>
+  <div class="topbar-buttons">
+    <button class="btn-secondary" onclick="openSqlKey()">SQL Key Page</button>
   </div>
-</section>
+</div>
 
-<!-- APP SECTION -->
-<section class="app-section" id="app">
-  <div class="app-inner">
-    <h1 class="app-title">WIP Copilot Canvas</h1>
-    <p class="app-subtitle">
-      Add WIP at the top, drag it into days, then export Excel or generate a Copilot prompt from the same engine.
-    </p>
-
-    <!-- Row 1: staff + week + export + Copilot button -->
-    <div class="top-bar">
-      <div class="field">
-        <label for="staffCode">Staff Code</label>
-        <input id="staffCode" placeholder="e.g. JFELD" />
-      </div>
-      <div class="field">
-        <label for="weekStart">Week Starting (Monday)</label>
-        <input id="weekStart" type="date" />
-      </div>
-      <button onclick="downloadExcel()">Download Excel</button>
-      <button onclick="generateCopilotPrompt()" style="background:#10b981; box-shadow:0 4px 16px rgba(16,185,129,.5);">
-        Copilot Prompt
-      </button>
+<div class="main">
+  <div class="panel">
+    <div class="panel-title">Input · Notes for Copilot</div>
+    <textarea id="inputNotes" placeholder="Write down her ideas here during the meeting. 
+Example:
+- Build a simple WIP dashboard
+- Needs a front-end for staff
+- Export should be Excel + SQL-ready
+- Connect to APS later, not now"></textarea>
+    <div class="actions-row">
+      <button onclick="runCopilot()">Run Copilot on these notes</button>
     </div>
-
-    <!-- Row 2: new WIP input -->
-    <div class="top-bar">
-      <div class="field">
-        <label for="clientName">Client</label>
-        <input id="clientName" placeholder="SurfCo" />
-      </div>
-      <div class="field">
-        <label for="jobName">Work / WIP</label>
-        <input id="jobName" placeholder="Pipeline Automation" />
-      </div>
-      <div class="field">
-        <label for="jobHours">Hours</label>
-        <input id="jobHours" type="number" step="0.25" placeholder="1.5" />
-      </div>
-      <button onclick="addJob()">Add WIP</button>
-    </div>
-
-    <p class="summary" id="summary"></p>
-
-    <div class="layout">
-      <div class="unassigned" ondragover="allowDrop(event)" ondrop="dropJob(event,'unassigned')">
-        <h3>Unassigned</h3>
-      </div>
-
-      <div class="bucket" ondragover="allowDrop(event)" ondrop="dropJob(event,'monday')">
-        <h3>Monday</h3>
-      </div>
-
-      <div class="bucket" ondragover="allowDrop(event)" ondrop="dropJob(event,'tuesday')">
-        <h3>Tuesday</h3>
-      </div>
-
-      <div class="bucket" ondragover="allowDrop(event)" ondrop="dropJob(event,'wednesday')">
-        <h3>Wednesday</h3>
-      </div>
-
-      <div class="bucket" ondragover="allowDrop(event)" ondrop="dropJob(event,'thursday')">
-        <h3>Thursday</h3>
-      </div>
-
-      <div class="bucket" ondragover="allowDrop(event)" ondrop="dropJob(event,'friday')">
-        <h3>Friday</h3>
-      </div>
-    </div>
-
-    <details>
-      <summary>Show underlying data (JSON engine output)</summary>
-      <pre id="jsonOutput"></pre>
-    </details>
-
-    <details>
-      <summary>Copilot prompt (copy/paste into Microsoft Copilot)</summary>
-      <textarea id="copilotPrompt" placeholder="Click the Copilot Prompt button after you lay out your week."></textarea>
-    </details>
   </div>
-</section>
+
+  <div class="columns">
+    <div class="panel">
+      <div class="panel-title">Copilot Thinking · Plan</div>
+      <div id="thinkingOutput" class="thinking-box">
+        Copilot-style breakdown of the problem will show up here.
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Copilot Draft · Code</div>
+      <div id="codeOutput" class="code-box">// Code sketch will type out here…</div>
+      <div class="actions-row">
+        <button class="btn-secondary" onclick="copyCode()">Copy code</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-  function scrollToApp() {
-    const el = document.getElementById("app");
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+  // Opens your existing SQL key page in a new tab
+  function openSqlKey() {
+    window.open("https://justfeldman.github.io/Changes/index2.html", "_blank");
   }
 
-  let jobs = [
-    {
-      id: 1,
-      clientCode: "SURF001",
-      clientName: "SurfCo",
-      jobCode: "AUTOPIPE",
-      jobName: "Pipeline Automation",
-      hours: 1.5,
-      day: "unassigned"
-    },
-    {
-      id: 2,
-      clientCode: "MED100",
-      clientName: "MedGroup",
-      jobCode: "PILLAR2",
-      jobName: "Pillar Two Model",
-      hours: 2.0,
-      day: "tuesday"
-    },
-    {
-      id: 3,
-      clientCode: "ZOO777",
-      clientName: "Sydney Zoo",
-      jobCode: "ESGMAP",
-      jobName: "ESG Map Build",
-      hours: 3.0,
-      day: "unassigned"
+  let typingTimer = null;
+
+  function runCopilot() {
+    const notes = document.getElementById("inputNotes").value.trim();
+    const thinkingEl = document.getElementById("thinkingOutput");
+    const codeEl = document.getElementById("codeOutput");
+
+    if (!notes) {
+      alert("Type some notes first – what is she asking for?");
+      return;
     }
+
+    // Build a simple "thinking" view: bullet points from each line
+    const lines = notes.split("\n")
+      .map(l => l.trim())
+      .filter(l => l.length > 0);
+
+    let thinking = "Understanding the request:\n\n";
+    lines.forEach((line, idx) => {
+      thinking += `• Point ${idx + 1}: ${line}\n`;
+    });
+    thinking += `\nNext steps:\n`;
+    thinking += `1) Translate these into a small UI or script.\n`;
+    thinking += `2) Iterate live in the meeting as she talks.\n`;
+
+    thinkingEl.textContent = thinking;
+
+    // Build a simple code draft (front-end oriented)
+    const commentLines = lines.map(l => `// - ${l}`).join("\n");
+    const codeDraft =
+`// Sketch based on meeting notes:
+// (Use this as a starting point to refine live.)
+
+${commentLines}
+
+function buildPrototype() {
+  // TODO: wire this to your real backend or SQL later
+  const requirements = [
+${lines.map(l => `    "${l.replace(/"/g, '\\"')}"`).join(",\n")}
   ];
 
-  const dayOffsets = {
-    monday: 0,
-    tuesday: 1,
-    wednesday: 2,
-    thursday: 3,
-    friday: 4
-  };
+  console.log("Starting from these requirements:", requirements);
+  // 1) Draw a simple UI (HTML or SwiftUI)
+  // 2) Add 1–2 key interactions
+  // 3) Only then think about APS / SQL integration
+}
 
-  function getWorkDate(weekStartStr, dayKey) {
-    if (!weekStartStr || !dayOffsets.hasOwnProperty(dayKey)) return "";
-    const base = new Date(weekStartStr);
-    base.setDate(base.getDate() + dayOffsets[dayKey]);
-    return base.toISOString().substring(0, 10);
+// Call this in your real environment to start iterating:
+buildPrototype();`;
+
+    // Clear any existing typing animation
+    if (typingTimer) clearInterval(typingTimer);
+
+    codeEl.textContent = ""; // reset
+
+    // Type out the code like Copilot writing
+    let idx = 0;
+    typingTimer = setInterval(() => {
+      if (idx >= codeDraft.length) {
+        clearInterval(typingTimer);
+        typingTimer = null;
+        return;
+      }
+      codeEl.textContent += codeDraft[idx];
+      idx++;
+      codeEl.scrollTop = codeEl.scrollHeight;
+    }, 8); // lower = faster typing
   }
 
-  function addJob() {
-    const clientName = document.getElementById("clientName").value.trim();
-    const jobName = document.getElementById("jobName").value.trim();
-    const hoursStr = document.getElementById("jobHours").value;
-    const hours = parseFloat(hoursStr);
-
-    if (!clientName || !jobName || isNaN(hours)) {
-      alert("Please fill in Client, Work/WIP, and Hours.");
+  function copyCode() {
+    const code = document.getElementById("codeOutput").textContent;
+    if (!code.trim()) {
+      alert("There is no code to copy yet.");
       return;
     }
-
-    const clientCode = clientName.toUpperCase().replace(/\s+/g, "").slice(0, 6) || "CLIENT";
-    const jobCode = jobName.toUpperCase().replace(/\s+/g, "").slice(0, 8) || "JOB";
-    const newId = jobs.length ? Math.max(...jobs.map(j => j.id)) + 1 : 1;
-
-    jobs.push({
-      id: newId,
-      clientCode,
-      clientName,
-      jobCode,
-      jobName,
-      hours,
-      day: "unassigned"
-    });
-
-    document.getElementById("clientName").value = "";
-    document.getElementById("jobName").value = "";
-    document.getElementById("jobHours").value = "";
-
-    render();
-  }
-
-  function render() {
-    document.querySelectorAll(".bucket,.unassigned").forEach(b => {
-      const heading = b.querySelector("h3").innerText;
-      b.innerHTML = "<h3>" + heading + "</h3>";
-    });
-
-    jobs.forEach(j => {
-      const card = document.createElement("div");
-      card.className = "job";
-      card.draggable = true;
-      card.id = "job-" + j.id;
-      card.innerHTML = `
-        <div class="job-main">${j.clientName} (${j.clientCode})</div>
-        <div class="job-sub">
-          <span>${j.jobCode} – ${j.jobName}</span>
-          <span>${j.hours}h</span>
-        </div>
-      `;
-      card.ondragstart = e => e.dataTransfer.setData("jobId", j.id);
-      document.querySelector(`[ondrop*="${j.day}"]`).appendChild(card);
-    });
-
-    updateSummary();
-    updateJsonView();
-  }
-
-  function updateSummary() {
-    const counts = { unassigned: 0, monday: 0, tuesday: 0, wednesday: 0, thursday: 0, friday: 0 };
-    jobs.forEach(j => { counts[j.day] = (counts[j.day] || 0) + 1; });
-
-    document.getElementById("summary").innerText =
-      `Unassigned: ${counts.unassigned || 0} · ` +
-      `Mon: ${counts.monday || 0} · ` +
-      `Tue: ${counts.tuesday || 0} · ` +
-      `Wed: ${counts.wednesday || 0} · ` +
-      `Thu: ${counts.thursday || 0} · ` +
-      `Fri: ${counts.friday || 0}`;
-  }
-
-  function updateJsonView() {
-    document.getElementById("jsonOutput").textContent =
-      JSON.stringify(jobs, null, 2);
-  }
-
-  function allowDrop(e) { e.preventDefault(); }
-
-  function dropJob(e, day) {
-    e.preventDefault();
-    const id = e.dataTransfer.getData("jobId");
-    const job = jobs.find(j => j.id == id);
-    job.day = day;
-    render();
-  }
-
-  function buildTimesheetRows() {
-    const staffCode = document.getElementById("staffCode").value || "";
-    const weekStart = document.getElementById("weekStart").value || "";
-
-    return jobs
-      .filter(j => j.day !== "unassigned")
-      .map(j => {
-        const workDate = getWorkDate(weekStart, j.day);
-        const narrative = `${j.jobName} (${j.clientName})`;
-        return {
-          StaffCode: staffCode,
-          WorkDate: workDate,
-          ClientCode: j.clientCode,
-          JobCode: j.jobCode,
-          Hours: j.hours,
-          Narrative: narrative
-        };
-      });
-  }
-
-  function downloadExcel() {
-    const rows = buildTimesheetRows();
-    if (!rows.length) {
-      alert("Drag at least one job into a day before exporting.");
-      return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code)
+        .then(() => alert("Code copied to clipboard."))
+        .catch(() => alert("Could not access clipboard – copy manually."));
+    } else {
+      alert("Clipboard API not available – copy manually.");
     }
-    const ws = XLSX.utils.json_to_sheet(rows);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Timesheet");
-    XLSX.writeFile(wb, "wip_timesheet_demo.xlsx");
   }
-
-  function generateCopilotPrompt() {
-    const staffCode = document.getElementById("staffCode").value || "UNKNOWN_STAFF";
-    const weekStart = document.getElementById("weekStart").value || "";
-    const rows = buildTimesheetRows();
-
-    let prompt = `Act as a WIP timesheet copilot for an accounting firm.\n`;
-    prompt += `Staff code: ${staffCode}.\n`;
-    if (weekStart) {
-      prompt += `Week starting: ${weekStart}.\n`;
-    }
-    prompt += `\nHere is the structured work for this week (each line is a row):\n`;
-
-    rows.forEach((r, idx) => {
-      prompt += `${idx + 1}. Date: ${r.WorkDate || "N/A"}, Client: ${r.ClientCode}, Job: ${r.JobCode}, Hours: ${r.Hours}, Narrative: ${r.Narrative}\n`;
-    });
-
-    prompt += `\nUsing this data, you can:\n`;
-    prompt += `- Summarize the main themes of the week.\n`;
-    prompt += `- Draft a short weekly status update for managers.\n`;
-    prompt += `- Check for obvious gaps or inconsistencies in work allocation.\n`;
-
-    document.getElementById("copilotPrompt").value = prompt;
-  }
-
-  render();
 </script>
 
 </body>
