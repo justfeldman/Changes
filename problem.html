@@ -1,0 +1,67 @@
+//WIP code 
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WIP Timesheet – Minimal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  .bucket, .unassigned { padding:10px; width:200px; min-height:150px; background:#eee; margin:10px; border-radius:8px; }
+  .job { padding:6px; background:#fff; border:1px solid #ccc; border-radius:6px; margin:4px 0; cursor:grab; }
+  .row { display:flex; }
+</style>
+</head>
+<body>
+
+<button onclick="downloadExcel()">Download Excel</button>
+<pre id="json"></pre>
+
+<div class="row">
+  <div class="unassigned" ondragover="allow(event)" ondrop="drop(event,'unassigned')">
+    <h3>Unassigned</h3>
+  </div>
+  <div class="bucket" ondragover="allow(event)" ondrop="drop(event,'monday')"><h3>Mon</h3></div>
+  <div class="bucket" ondragover="allow(event)" ondrop="drop(event,'tuesday')"><h3>Tue</h3></div>
+</div>
+
+<script>
+let jobs=[
+  {id:1,client:"SurfCo",name:"Pipeline Automation",hours:1.5,day:"unassigned"},
+  {id:2,client:"MedGroup",name:"Pillar Two Model",hours:2.0,day:"unassigned"},
+  {id:3,client:"Zoo",name:"ESG Map Build",hours:3.0,day:"unassigned"},
+];
+
+function render(){
+  document.querySelectorAll(".bucket,.unassigned").forEach(b=>{
+    b.innerHTML="<h3>"+b.querySelector("h3").innerText+"</h3>";
+  });
+  jobs.forEach(j=>{
+    let d=document.createElement("div");
+    d.className="job"; d.draggable=true; d.id="job-"+j.id;
+    d.innerText=j.client+": "+j.name;
+    d.ondragstart=e=>e.dataTransfer.setData("id",j.id);
+    document.querySelector(`[ondrop*="${j.day}"]`).appendChild(d);
+  });
+  document.getElementById("json").innerText=JSON.stringify(jobs,null,2);
+}
+
+function allow(e){ e.preventDefault(); }
+function drop(e,day){
+  e.preventDefault();
+  jobs.find(j=>j.id==e.dataTransfer.getData("id")).day=day;
+  render();
+}
+
+function downloadExcel(){
+  const ws=XLSX.utils.json_to_sheet(jobs);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Timesheet");
+  XLSX.writeFile(wb,"wip_timesheet.xlsx");
+}
+
+render();
+</script>
+
+</body>
+</html>
