@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SQL Snippet Safe Capture</title>
+  <!-- Basic security header (browsers respect this when served over HTTP) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';">
+  <style>
+    body { font-family: system-ui, sans-serif; background:#f5f7fa; padding:20px; }
+    h1 { margin-top:0; font-size:22px; }
+    textarea { width:100%; min-height:160px; padding:8px; font-family: monospace; }
+    button { margin-top:10px; padding:8px 12px; border:none; border-radius:6px;
+             background:#007aff; color:#fff; cursor:pointer; font-size:13px; }
+    button:hover { background:#005fcb; }
+    pre { background:#111; color:#0f0; padding:10px; border-radius:6px; margin-top:15px; }
+  </style>
+</head>
+<body>
+
+<h1>Secure SQL Capture (Front-End Only)</h1>
+
+<textarea id="sqlInput" placeholder="Paste your SQL here..."></textarea>
+<br>
+<button onclick="previewSql()">Preview Safely</button>
+<button onclick="downloadSql()">Download .sql</button>
+
+<pre id="preview"></pre>
+
+<script>
+  // Escape HTML so SQL shows safely in the preview (prevents XSS if you paste weird stuff)
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function previewSql() {
+    const sql = document.getElementById("sqlInput").value || "";
+    document.getElementById("preview").innerHTML = escapeHtml(sql);
+  }
+
+  function downloadSql() {
+    const sql = document.getElementById("sqlInput").value || "";
+    if (!sql.trim()) {
+      alert("Nothing to download – paste some SQL first.");
+      return;
+    }
+    const blob = new Blob([sql], { type: "text/sql" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "snippet.sql";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
+
+</body>
+</html>
