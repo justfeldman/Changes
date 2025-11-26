@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WIP Engine Demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; }
+    button {
+      padding: 12px 20px;
+      background: black;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .box {
+      padding: 20px;
+      background: #f2f2f2;
+      border-radius: 6px;
+      margin-top: 30px;
+    }
+    input {
+      margin: 5px;
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<h1>WIP Engine — Week-by-Week Excel Generator</h1>
+
+<p>This version calculates WIP by person → week → day → hour → rate.</p>
+
+<button onclick="generateWIP()">Download WIP Excel</button>
+
+<div class="box">
+  <h3>WIP Input Data (Static Demo)</h3>
+  <p>You will replace this with dynamic UI later.</p>
+</div>
+
+<script>
+// ---------------------------------------------------------
+// SAMPLE DATA: Replace with your dynamic inputs later.
+// ---------------------------------------------------------
+const staff = [
+  { name: "Justin", rate: 250 },
+  { name: "Vu",     rate: 200 },
+  { name: "Sarah",  rate: 180 }
+];
+
+// Weekly timesheet — (person → week → day → hours)
+const timeData = {
+  "Justin": {
+    "Week 47": { Mon: 2, Tue: 3, Wed: 1, Thu: 4, Fri: 0 },
+    "Week 48": { Mon: 1, Tue: 1, Wed: 1, Thu: 2, Fri: 3 }
+  },
+  "Vu": {
+    "Week 47": { Mon: 0, Tue: 2, Wed: 2, Thu: 1, Fri: 2 },
+    "Week 48": { Mon: 3, Tue: 3, Wed: 0, Thu: 0, Fri: 1 }
+  },
+  "Sarah": {
+    "Week 47": { Mon: 1, Tue: 1, Wed: 1, Thu: 1, Fri: 1 },
+    "Week 48": { Mon: 2, Tue: 2, Wed: 2, Thu: 2, Fri: 2 }
+  }
+};
+
+// ---------------------------------------------------------
+// MAIN FUNCTION — GENERATE WORKBOOK
+// ---------------------------------------------------------
+function generateWIP() {
+
+  const wb = XLSX.utils.book_new();
+
+  // 1) A master sheet with person → week → hours → value
+  const masterRows = [
+    ["Person", "Week", "Day", "Hours", "Rate", "Value"]
+  ];
+
+  staff.forEach(person => {
+    const name = person.name;
+    const rate = person.rate;
+
+    const personWeeks = timeData[name];
+    Object.keys(personWeeks).forEach(week => {
+      const days = personWeeks[week];
+
+      Object.keys(days).forEach(day => {
+        const h = days[day];
+        const value = h * rate;
+        masterRows.push([name, week, day, h, rate, value]);
+      });
+    });
+  });
+
+  const masterSheet = XLSX.utils.aoa_to_sheet(masterRows);
+  XLSX.utils.book_append_sheet(wb, masterSheet, "Master");
+
+  // ---------------------------------------------------------
+  // 2) Weekly Summary Sheet
+  // ---------------------------------------------------------
+  const weekly = [["Week", "Person", "Total Hours", "Rate", "Value"]];
+
+  staff.forEach(person => {
+    const name = person.name;
+    const rate = person.rate;
+    const personWeeks = timeData[name];
+
+    Object.keys(personWeeks).forEach(week => {
+      const totalHours = Object.values(personWeeks[week]).reduce((a,b)=>a+b,0);
+      const value = totalHours * rate;
+      weekly.push([week, name, totalHours, rate, value]);
+    });
+  });
+
+  const weeklySheet = XLSX.utils.aoa_to_sheet(weekly);
+  XLSX.utils.book_append_sheet(wb, weeklySheet, "Weekly Summary");
+
+  // ---------------------------------------------------------
+  // 3) Person Summary Sheet
+  // ---------------------------------------------------------
+  const personSheetData = [["Person", "Total Hours", "Rate", "Total Value"]];
+
+  staff.forEach(person => {
+    const name = person.name;
+    const rate = person.rate;
+
+    const personWeeks = timeData[name];
+    let sumHours = 0;
+
+    Object.values(personWeeks).forEach(weekObj => {
+      sumHours += Object.values(weekObj).reduce((a,b)=>a+b, 0);
+    });
+
+    const totalValue = sumHours * rate;
+    personSheetData.push([name, sumHours, rate, totalValue]);
+  });
+
+  const personSheet = XLSX.utils.aoa_to_sheet(personSheetData);
+  XLSX.utils.book_append_sheet(wb, personSheet, "People Summary");
+
+  // ---------------------------------------------------------
+  // DOWNLOAD FILE
+  // ---------------------------------------------------------
+  XLSX.writeFile(wb, "WIP_Engine_Output.xlsx");
+}
+
+</script>
+
+</body>
+</html>
