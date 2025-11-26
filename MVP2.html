@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WIP Timesheet – MVP2 Plugged In</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f3f5f8;
+    margin: 0; padding: 20px;
+    color: #222;
+  }
+
+  h1 {
+    margin-top: 0;
+    font-size: 26px;
+    font-weight: 700;
+  }
+
+  .top-bar {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+  }
+
+  .field label {
+    margin-bottom: 4px;
+    color: #555;
+  }
+
+  .field input {
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #cfd3da;
+    font-size: 13px;
+  }
+
+  button {
+    padding: 10px 16px;
+    border: none;
+    background: #007aff;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: 0.15s;
+  }
+
+  button:hover {
+    background: #0060d6;
+  }
+
+  .layout {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .bucket, .unassigned {
+    background: white;
+    padding: 16px;
+    width: 240px;
+    min-height: 230px;
+    border-radius: 14px;
+    border: 1px solid #d8dce3;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  }
+
+  .bucket h3, .unassigned h3 {
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+
+  .job {
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #cfd3da;
+    border-radius: 10px;
+    margin: 8px 0;
+    cursor: grab;
+    transition: 0.1s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    font-size: 13px;
+  }
+
+  .job:hover {
+    transform: scale(1.02);
+  }
+
+  .job-main {
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .job-sub {
+    font-size: 11px;
+    color: #666;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .summary {
+    margin: 12px 0;
+    font-size: 13px;
+    color: #555;
+  }
+
+  pre {
+    background: #1e1e1e;
+    color: #00ff99;
+    padding: 12px;
+    border-radius: 8px;
+    max-height: 260px;
+    overflow-y: auto;
+    margin-top: 16px;
+    font-size: 12px;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>WIP Timesheet – MVP2 (APS-Ready)</h1>
+
+<div class="top-bar">
+  <div class="field">
+    <label for="staffCode">Staff Code</label>
+    <input id="staffCode" placeholder="e.g. JFELD" />
+  </div>
+  <div class="field">
+    <label for="weekStart">Week Starting (Mon)</label>
+    <input id="weekStart" type="date" />
+  </div>
+  <button onclick="downloadExcel()">Download APS-style Excel</button>
+</div>
+
+<div class="summary" id="summary"></div>
+
+<div class="layout">
+  <div class="unassigned" ondragover="allow(event)" ondrop="drop(event,'unassigned')">
+    <h3>Unassigned Work</h3>
+  </div>
+
+  <div class="bucket" ondragover="allow(event)" ondrop="drop(event,'monday')">
+    <h3>Monday</h3>
+  </div>
+
+  <div class="bucket" ondragover="allow(event)" ondrop="drop(event,'tuesday')">
+    <h3>Tuesday</h3>
+  </div>
+
+  <div class="bucket" ondragover="allow(event)" ondrop="drop(event,'wednesday')">
+    <h3>Wednesday</h3>
+  </div>
+</div>
+
+<h2>Live JSON (Engine Output)</h2>
+<pre id="json"></pre>
+
+<script>
+// --- SAMPLE JOB DATA (more APS-like fields) ---
+let jobs = [
+  {
+    id: 1,
+    clientCode: "SURF001",
+    clientName: "SurfCo",
+    jobCode: "AUTOPIPE",
+    jobName: "Pipeline Automation",
+    hours: 1.5,
+    day: "unassigned"
+  },
+  {
+    id: 2,
+    clientCode: "MED100",
+    clientName: "MedGroup",
+    jobCode: "PILLAR2",
+    jobName: "Pillar Two Model",
+    hours: 2.0,
+    day: "unassigned"
+  },
+  {
+    id: 3,
+    clientCode: "ZOO777",
+    clientName: "Sydney Zoo",
+    jobCode: "ESGMAP",
+    jobName: "ESG Map Build",
+    hours: 3.0,
+    day: "unassigned"
+  }
+];
+
+// --- RENDERING ---
+function render() {
+  // Reset buckets but keep headings
+  document.querySelectorAll(".bucket,.unassigned").forEach(b => {
+    const heading = b.querySelector("h3").innerText;
+    b.innerHTML = "<h3>" + heading + "</h3>";
+  });
+
+  // Place each job into its bucket
+  jobs.forEach(j => {
+    let d = document.createElement("div");
+    d.className = "job";
+    d.draggable = true;
+    d.id = "job-" + j.id;
+
+    d.innerHTML = `
+      <div class="job-main">${j.clientName} (${j.clientCode})</div>
+      <div class="job-sub">
+        <span>${j.jobCode} – ${j.jobName}</span>
+        <span>${j.hours}h</span>
+      </div>
+    `;
+
+    d.ondragstart = e => e.dataTransfer.setData("id", j.id);
+    document.querySelector(`[ondrop*="${j.day}"]`).appendChild(d);
+  });
+
+  // Update JSON view
+  document.getElementById("json").innerText = JSON.stringify(jobs, null, 2);
+
+  // Update summary
+  updateSummary();
+}
+
+function updateSummary() {
+  const counts = { unassigned: 0, monday: 0, tuesday: 0, wednesday: 0 };
+  jobs.forEach(j => { counts[j.day] = (counts[j.day] || 0) + 1; });
+
+  document.getElementById("summary").innerText =
+    `Unassigned: ${counts.unassigned || 0} · ` +
+    `Mon: ${counts.monday || 0} · ` +
+    `Tue: ${counts.tuesday || 0} · ` +
+    `Wed: ${counts.wednesday || 0}`;
+}
+
+// --- DRAG/DROP ---
+function allow(e) { e.preventDefault(); }
+
+function drop(e, day) {
+  e.preventDefault();
+  const id = e.dataTransfer.getData("id");
+  const job = jobs.find(j => j.id == id);
+  job.day = day;
+  render();
+}
+
+// --- DATE HELPER ---
+const dayOffsets = { monday: 0, tuesday: 1, wednesday: 2 };
+
+function getWorkDate(weekStartStr, dayKey) {
+  if (!weekStartStr || !dayOffsets.hasOwnProperty(dayKey)) return "";
+  const base = new Date(weekStartStr);
+  base.setDate(base.getDate() + dayOffsets[dayKey]);
+  return base.toISOString().substring(0, 10); // YYYY-MM-DD
+}
+
+// --- EXCEL EXPORT (APS-style row shape) ---
+function downloadExcel() {
+  const staffCode = document.getElementById("staffCode").value || "";
+  const weekStart = document.getElementById("weekStart").value || "";
+
+  // Build rows only for jobs assigned to a day
+  const rows = jobs
+    .filter(j => j.day !== "unassigned")
+    .map(j => {
+      const workDate = getWorkDate(weekStart, j.day);
+      const narrative = `${j.jobName} (${j.clientName})`;
+
+      return {
+        StaffCode: staffCode,
+        WorkDate: workDate,
+        ClientCode: j.clientCode,
+        JobCode: j.jobCode,
+        Hours: j.hours,
+        Narrative: narrative
+      };
+    });
+
+  if (rows.length === 0) {
+    alert("No jobs assigned to days yet.");
+    return;
+  }
+
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Timesheet");
+  XLSX.writeFile(wb, "wip_timesheet_aps.xlsx");
+}
+
+// --- INITIAL RENDER ---
+render();
+</script>
+
+</body>
+</html>
