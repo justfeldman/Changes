@@ -1,0 +1,289 @@
+<!--
+  Bridges WIP Pilot – Input Layer (Single HTML File)
+
+  Philosophy / Best Practices
+  ---------------------------
+  1. Keep it simple, obvious, and easy to inherit.
+     - One responsibility: UI for partners to set Fee & Write-Off on WIP.
+     - No backend calls, no hidden magic, no frameworks.
+
+  2. Treat this as the "input layer" of a future WIP engine.
+     - Today: dummy Bridges data, HTML/CSS/vanilla JS only.
+     - Tomorrow: same UI pattern, but wired to APS/SQL via a backend.
+
+  3. Optimise for humans reading the code, not just the browser.
+     - Clear naming: fee-input, writeoff-input, remaining-cell, recalculateTotals().
+     - Short comments explaining intent, not every single line.
+     - Structure: HTML for layout, CSS for look, JS for behaviour.
+
+  4. Design for desktop and phone from day one.
+     - Uses meta viewport + responsive CSS.
+     - Table is scrollable on small screens; inputs large enough to tap.
+
+  Notes
+  -----
+  - Front-end only: NOT connected to APS, no data is saved.
+  - Safe to demo publicly as a pilot UI.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bridges WIP Pilot – Fee &amp; Write-Off</title>
+
+  <style>
+    /* ===== Base Layout ===== */
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f7fa;
+      padding: 20px;
+    }
+
+    .wrapper {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      margin-top: 0;
+      margin-bottom: 18px;
+      color: #555;
+      font-size: 14px;
+    }
+
+    /* ===== Table + Cells ===== */
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto; /* allows horizontal scroll on small screens */
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    thead {
+      background: #e3f2fd;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    th {
+      font-weight: 600;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .num-cell {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* ===== Inputs ===== */
+
+    input[type="number"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    input[type="number"]::placeholder {
+      color: #bbb;
+    }
+
+    /* ===== Totals Row ===== */
+
+    .totals-row {
+      background: #f0f4ff;
+      font-weight: 600;
+    }
+
+    .totals-label {
+      text-align: right;
+    }
+
+    /* ===== Footer Note ===== */
+
+    .footer-note {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #777;
+    }
+
+    /* ===== Responsive Tweaks (Mobile) ===== */
+
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .wrapper {
+        max-width: 100%;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .subtitle {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 8px 6px;
+        font-size: 13px;
+      }
+
+      input[type="number"] {
+        padding: 6px 6px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Bridges WIP Pilot – Fee &amp; Write-Off</h1>
+
+    <p class="subtitle">
+      First-pass prototype using dummy Bridges WIP data.<br>
+      Workflow: scan the list, pick a job, type Fee and Write-Off, and watch totals update.<br>
+      Goal: make WIP review faster and clearer on a single screen (desktop or phone).
+    </p>
+
+    <div class="table-wrapper">
+      <table id="wip-table">
+        <thead>
+          <tr>
+            <th>Job / Client</th>
+            <th class="num-cell">WIP Balance</th>
+            <th>Fee to Raise</th>
+            <th>Write-Off</th>
+            <th class="num-cell">Remaining WIP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Dummy Bridges jobs (can be swapped for real APS data later) -->
+          <tr>
+            <td>Bridges – FY24 Audit</td>
+            <td class="num-cell wip-cell" data-wip="15000">$15,000</td>
+            <td><input type="number" class="fee-input" placeholder="e.g. 7,500"></td>
+            <td><input type="number" class="writeoff-input" placeholder="e.g. 500"></td>
+            <td class="num-cell remaining-cell">$15,000</td>
+          </tr>
+          <tr>
+            <td>Bridges – FY24 Tax Compliance</td>
+            <td class="num-cell wip-cell" data-wip="9000">$9,000</td>
+            <td><input type="number" class="fee-input" placeholder="e.g. 4,500"></td>
+            <td><input type="number" class="writeoff-input" placeholder="e.g. 300"></td>
+            <td class="num-cell remaining-cell">$9,000</td>
+          </tr>
+          <tr>
+            <td>Bridges – Advisory Engagement</td>
+            <td class="num-cell wip-cell" data-wip="6000">$6,000</td>
+            <td><input type="number" class="fee-input" placeholder="e.g. 3,000"></td>
+            <td><input type="number" class="writeoff-input" placeholder="e.g. 250"></td>
+            <td class="num-cell remaining-cell">$6,000</td>
+          </tr>
+
+          <!-- Totals row -->
+          <tr class="totals-row">
+            <td class="totals-label">Totals:</td>
+            <td class="num-cell" id="total-wip">$0</td>
+            <td class="num-cell" id="total-fee">$0</td>
+            <td class="num-cell" id="total-writeoff">$0</td>
+            <td class="num-cell" id="total-remaining">$0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="footer-note">
+      Pilot only – not connected to APS and no data is saved.<br>
+      Feedback focus: does this single-screen UI help Bridges partners review WIP faster?
+    </p>
+  </div>
+
+  <noscript>
+    <p style="color:#b00; font-size:12px; text-align:center; margin-top:10px;">
+      JavaScript is required for totals and Remaining WIP to update.
+    </p>
+  </noscript>
+
+  <script>
+    // Format a number as $X,XXX (basic, locale-aware enough for this pilot)
+    function formatCurrency(value) {
+      if (isNaN(value)) value = 0;
+      return "$" + value.toLocaleString();
+    }
+
+    // Recalculate row-level and total numbers when inputs change.
+    // This is the core "engine" of the front-end.
+    function recalculateTotals() {
+      const rows = document.querySelectorAll("#wip-table tbody tr:not(.totals-row)");
+
+      let totalWip = 0;
+      let totalFee = 0;
+      let totalWriteoff = 0;
+      let totalRemaining = 0;
+
+      rows.forEach(row => {
+        const wipCell       = row.querySelector(".wip-cell");
+        const feeInput      = row.querySelector(".fee-input");
+        const writeoffInput = row.querySelector(".writeoff-input");
+        const remainingCell = row.querySelector(".remaining-cell");
+
+        const wip       = Number(wipCell.getAttribute("data-wip")) || 0;
+        const fee       = Number(feeInput.value) || 0;
+        const writeoff  = Number(writeoffInput.value) || 0;
+        const remaining = Math.max(wip - fee - writeoff, 0); // never negative
+
+        totalWip       += wip;
+        totalFee       += fee;
+        totalWriteoff  += writeoff;
+        totalRemaining += remaining;
+
+        // Update the UI for this row
+        remainingCell.textContent = formatCurrency(remaining);
+      });
+
+      // Update totals row
+      document.getElementById("total-wip").textContent       = formatCurrency(totalWip);
+      document.getElementById("total-fee").textContent       = formatCurrency(totalFee);
+      document.getElementById("total-writeoff").textContent  = formatCurrency(totalWriteoff);
+      document.getElementById("total-remaining").textContent = formatCurrency(totalRemaining);
+    }
+
+    // Attach listeners so totals update as the user types
+    document.querySelectorAll(".fee-input, .writeoff-input").forEach(input => {
+      input.addEventListener("input", recalculateTotals);
+    });
+
+    // Initial totals when page loads (based on WIP + blank inputs)
+    recalculateTotals();
+  </script>
+</body>
+</html>
