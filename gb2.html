@@ -4,176 +4,9 @@
   <meta charset="UTF-8" />
   <title>GrowBucks – Kid View (gb2)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0f172a;
-      color: #f9fafb;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 16px;
-      background: #020617;
-      color: #e5e7eb;
-    }
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .logo {
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
-      background: #f97316;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .topbar-title {
-      margin: 0;
-      font-size: 16px;
-    }
-    .topbar-sub {
-      margin: 0;
-      font-size: 11px;
-      opacity: 0.8;
-    }
-
-    .topbar-right {
-      display: flex;
-      gap: 8px;
-    }
-    .nav-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(148,163,184,0.7);
-      padding: 5px 10px;
-      font-size: 12px;
-      background: rgba(15,23,42,0.6);
-      color: #e5e7eb;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    .nav-btn.active {
-      background: #f9fafb;
-      color: #020617;
-      border-color: transparent;
-      font-weight: 600;
-    }
-
-    main {
-      padding: 16px;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
-    .card {
-      background: #020617;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 6px 18px rgba(15,23,42,0.7);
-      margin-bottom: 14px;
-      border: 1px solid #1e293b;
-    }
-
-    .card-title {
-      margin: 0 0 6px;
-      font-size: 18px;
-    }
-    .muted {
-      margin: 0 0 10px;
-      font-size: 12px;
-      color: #9ca3af;
-    }
-
-    .balance {
-      font-size: 24px;
-      font-weight: 700;
-    }
-
-    .chore-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .chore-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #0b1120;
-      border-radius: 12px;
-      padding: 10px 12px;
-      border: 1px solid #1e293b;
-      font-size: 13px;
-    }
-
-    .chore-main {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .chore-name {
-      font-weight: 600;
-    }
-    .chore-meta {
-      font-size: 11px;
-      color: #9ca3af;
-    }
-
-    .chore-right {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 4px;
-    }
-
-    .tag {
-      font-size: 11px;
-      padding: 2px 6px;
-      border-radius: 999px;
-      background: #0f766e;
-      color: #ecfeff;
-    }
-
-    button {
-      font-family: inherit;
-    }
-    .btn {
-      border-radius: 999px;
-      border: none;
-      padding: 5px 10px;
-      font-size: 12px;
-      cursor: pointer;
-    }
-    .btn-done {
-      background: #22c55e;
-      color: #052e16;
-    }
-    .btn-done[disabled] {
-      background: #4b5563;
-      color: #d1d5db;
-      cursor: default;
-    }
-
-    .status {
-      font-size: 12px;
-      color: #9ca3af;
-    }
-
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body class="gb-kid">
   <header class="topbar">
     <div class="topbar-left">
       <div class="logo">A</div>
@@ -193,14 +26,14 @@
       <h2 class="card-title">Your wallet (demo)</h2>
       <p class="muted">This is just a fake balance to make it feel real.</p>
       <div class="balance" id="kid-balance">$8.00</div>
-      <p class="status" id="balance-note">Complete chores to earn more GrowBucks.</p>
+      <p class="status-note" id="balance-note">Complete chores to earn more GrowBucks.</p>
     </section>
 
     <section class="card">
       <h2 class="card-title">Today’s chores</h2>
-      <p class="muted">Tap “I did this” when you finish a chore.</p>
+      <p class="muted">Tap “🎉 I finished!” when you complete a chore.</p>
       <ul id="chore-list" class="chore-list">
-        <!-- list items via JS -->
+        <!-- items injected by JS -->
       </ul>
     </section>
   </main>
@@ -226,10 +59,10 @@
       list.innerHTML = "";
 
       chores.forEach(chore => {
+        const isDone = chore.status !== "assigned";
+
         const li = document.createElement("li");
         li.className = "chore-item";
-
-        const isDone = chore.status !== "assigned";
 
         li.innerHTML = `
           <div class="chore-main">
@@ -239,7 +72,7 @@
           <div class="chore-right">
             <span class="tag">${isDone ? "Sent to parent" : "To do"}</span>
             <button class="btn btn-done" data-id="${chore.id}" ${isDone ? "disabled" : ""}>
-              ${isDone ? "Done ✔" : "I did this"}
+              ${isDone ? "Done ✔" : "🎉 I finished!"}
             </button>
           </div>
         `;
@@ -258,15 +91,22 @@
     function markDone(id) {
       const chore = chores.find(c => c.id === id);
       if (!chore || chore.status !== "assigned") return;
-      chore.status = "pending"; // in real app: goes to parent for approval
 
-      // tiny fake reward feeling (instant +$0.50 just to show change)
+      // In a real app: this would send to parent for approval
+      chore.status = "pending";
+
+      // Tiny instant “feel good” bump
       kid.balance += 0.5;
       renderBalance();
       renderChores();
+
+      const note = document.getElementById("balance-note");
+      if (note) {
+        note.textContent = "Nice! Your parent will see this and can approve it for full payout.";
+      }
     }
 
-    // init
+    // Init
     renderBalance();
     renderChores();
   </script>
