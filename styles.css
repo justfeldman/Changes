@@ -1,0 +1,391 @@
+/* ========== GROWBUCKS DESIGN TOKENS ========== */
+
+:root {
+  /* Neutrals */
+  --gb-bg-body-light: #f3f4f6;
+  --gb-bg-body-dark: #020617;
+  --gb-surface: #ffffff;
+  --gb-border-soft: #e5e7eb;
+  --gb-text-main: #111827;
+  --gb-text-muted: #6b7280;
+  --gb-text-on-dark: #e5e7eb;
+
+  /* Brand */
+  --gb-primary: #0f766e;
+  --gb-primary-dark: #115e59;
+  --gb-primary-soft: #ecfdf5;
+
+  /* Accent */
+  --gb-accent: #f97316;
+
+  /* Status */
+  --gb-success-bg: #dcfce7;
+  --gb-success-border: #22c55e;
+  --gb-success-text: #14532d;
+
+  --gb-warning-bg: #fef9c3;
+  --gb-warning-border: #facc15;
+  --gb-warning-text: #854d0e;
+
+  --gb-neutral-bg: #e5e7eb;
+  --gb-neutral-border: #9ca3af;
+  --gb-neutral-text: #374151;
+}
+
+/* ========== GLOBAL RESET ========== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Light (parent) + dark (kid) bodies */
+
+body.gb-parent,
+body.gb-kid {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Parent (light) */
+
+body.gb-parent {
+  background: var(--gb-bg-body-light);
+  color: var(--gb-text-main);
+}
+
+/* Kid (dark) */
+
+body.gb-kid {
+  background: var(--gb-bg-body-dark);
+  color: var(--gb-text-on-dark);
+}
+
+/* ========== TOP BAR / NAV ========== */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+}
+
+.gb-parent .topbar {
+  background: var(--gb-primary);
+  color: var(--gb-text-on-dark);
+}
+
+.gb-kid .topbar {
+  background: #020617;
+  color: var(--gb-text-on-dark);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--gb-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.topbar-title {
+  margin: 0;
+  font-size: 16px;
+}
+
+.topbar-sub {
+  margin: 0;
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.topbar-right {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-btn {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  padding: 5px 10px;
+  font-size: 12px;
+  background: rgba(15, 23, 42, 0.15);
+  color: #e5e7eb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-btn.active,
+.gb-parent .nav-btn.active,
+.gb-kid .nav-btn.active {
+  background: var(--gb-primary);
+  color: #ecfeff;
+  border-color: transparent;
+  font-weight: 600;
+}
+
+.nav-btn:hover {
+  opacity: 0.9;
+}
+
+/* ========== LAYOUT & CARDS ========== */
+
+main {
+  padding: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.card {
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+}
+
+/* Parent cards */
+
+.gb-parent .card {
+  background: var(--gb-surface);
+  border: 1px solid var(--gb-border-soft);
+}
+
+/* Kid cards */
+
+.gb-kid .card {
+  background: #020617;
+  border: 1px solid #1e293b;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.7);
+}
+
+.card-title {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.gb-kid .card-title {
+  font-size: 18px;
+}
+
+.muted {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--gb-text-muted);
+}
+
+.gb-kid .muted {
+  color: #9ca3af;
+}
+
+/* ========== SUMMARY CHIPS (PARENT) ========== */
+
+.summary-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.summary-chip {
+  flex: 1;
+  border-radius: 8px;
+  padding: 8px;
+  border: 1px solid var(--gb-border-soft);
+  background: #f9fafb;
+  font-size: 12px;
+}
+
+.summary-label {
+  color: var(--gb-text-muted);
+  margin-bottom: 2px;
+}
+
+.summary-value {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ========== TABLE (PARENT CHORES) ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th,
+td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--gb-border-soft);
+  text-align: left;
+}
+
+thead {
+  background: #f3f4f6;
+}
+
+.gb-kid table {
+  border-color: #1e293b;
+}
+
+/* ========== STATUS PILLS ========== */
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  border: 1px solid transparent;
+}
+
+.status-assigned {
+  background: var(--gb-neutral-bg);
+  border-color: var(--gb-neutral-border);
+  color: var(--gb-neutral-text);
+}
+
+.status-pending {
+  background: var(--gb-warning-bg);
+  border-color: var(--gb-warning-border);
+  color: var(--gb-warning-text);
+}
+
+.status-completed {
+  background: var(--gb-success-bg);
+  border-color: var(--gb-success-border);
+  color: var(--gb-success-text);
+}
+
+/* ========== BUTTONS ========== */
+
+button {
+  font-family: inherit;
+}
+
+.btn {
+  border-radius: 999px;
+  border: none;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--gb-primary);
+  color: #ecfeff;
+}
+
+.btn-primary:hover {
+  background: var(--gb-primary-dark);
+}
+
+.btn-approve {
+  background: var(--gb-success-border);
+  color: var(--gb-success-text);
+}
+
+.btn-approve:hover {
+  background: #16a34a;
+}
+
+/* Kid-specific buttons */
+
+.gb-kid .btn-done {
+  background: var(--gb-success-border);
+  color: var(--gb-success-text);
+}
+
+.gb-kid .btn-done[disabled] {
+  background: #4b5563;
+  color: #d1d5db;
+  cursor: default;
+}
+
+/* ========== KID VIEW: WALLET + CHORE LIST ========== */
+
+.balance {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.status-note {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.chore-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chore-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid #1e293b;
+  font-size: 13px;
+  background: #0b1120;
+}
+
+.chore-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.chore-name {
+  font-weight: 600;
+}
+
+.chore-meta {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.chore-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.tag {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--gb-primary);
+  color: #ecfeff;
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 640px) {
+  main {
+    padding: 12px;
+  }
+
+  .summary-row {
+    flex-direction: column;
+  }
+
+  .topbar-title {
+    font-size: 15px;
+  }
+}
