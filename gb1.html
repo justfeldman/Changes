@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GrowBucks – Parent View (gb1)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    /* Top dashboard */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #0f766e;
+      color: #f9fafb;
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(15,23,42,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .topbar-title {
+      font-size: 16px;
+      margin: 0;
+    }
+    .topbar-sub {
+      font-size: 11px;
+      margin: 0;
+      opacity: 0.85;
+    }
+
+    .topbar-right {
+      display: flex;
+      gap: 8px;
+    }
+    .nav-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      padding: 5px 10px;
+      font-size: 12px;
+      background: rgba(15,23,42,0.15);
+      color: #e5e7eb;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .nav-btn.active {
+      background: #f9fafb;
+      color: #0f172a;
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    /* Layout */
+    main {
+      padding: 16px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 14px;
+      box-shadow: 0 4px 10px rgba(15,23,42,0.08);
+      margin-bottom: 12px;
+    }
+    .card-title {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+    .muted {
+      font-size: 12px;
+      color: #6b7280;
+      margin: 0 0 10px;
+    }
+
+    .summary-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .summary-chip {
+      flex: 1;
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 8px;
+      border: 1px solid #e5e7eb;
+      font-size: 12px;
+    }
+    .summary-label {
+      color: #6b7280;
+      margin-bottom: 2px;
+    }
+    .summary-value {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 6px 8px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+    thead {
+      background: #f3f4f6;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+    }
+    .status-assigned {
+      background: #e5e7eb;
+      color: #374151;
+    }
+    .status-pending {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+    .status-completed {
+      background: #dcfce7;
+      color: #14532d;
+    }
+
+    button {
+      font-family: inherit;
+    }
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .btn-approve {
+      background: #22c55e;
+      color: #052e16;
+    }
+    .btn-approve:hover {
+      background: #16a34a;
+    }
+
+    .log {
+      background: #020617;
+      color: #e5e7eb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+      font-size: 11px;
+      border-radius: 8px;
+      padding: 8px;
+      max-height: 150px;
+      overflow-y: auto;
+      border: 1px solid #111827;
+    }
+    .log-line {
+      margin-bottom: 4px;
+    }
+    .log-time {
+      color: #6ee7b7;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo">GB</div>
+      <div>
+        <p class="topbar-title">GrowBucks</p>
+        <p class="topbar-sub">Parent View (gb1.html)</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <!-- nav buttons just link between the two html files -->
+      <a href="gb1.html" class="nav-btn active">Parent</a>
+      <a href="gb2.html" class="nav-btn">Kid</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2 class="card-title">Household summary</h2>
+      <p class="muted">Dummy data – this is just a front-end prototype.</p>
+      <div class="summary-row">
+        <div class="summary-chip">
+          <div class="summary-label">Kid</div>
+          <div class="summary-value" id="kid-name">Ava</div>
+        </div>
+        <div class="summary-chip">
+          <div class="summary-label">Balance (demo)</div>
+          <div class="summary-value" id="kid-balance">$0.00</div>
+        </div>
+        <div class="summary-chip">
+          <div class="summary-label">Active chores</div>
+          <div class="summary-value" id="chor-count">0</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">Chores for today</h2>
+      <p class="muted">Approve chores that have been marked “done” by Ava (in the kid view).</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Chore</th>
+            <th>Frequency</th>
+            <th>Payout</th>
+            <th>Status</th>
+            <th>Approve</th>
+          </tr>
+        </thead>
+        <tbody id="chores-body">
+          <!-- rows injected by JS -->
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">Console</h2>
+      <p class="muted">Shows how a single approval ripples through the “engine”.</p>
+      <div id="log" class="log"></div>
+    </section>
+  </main>
+
+  <script>
+    // Simple shared struct for this page
+    const kid = { name: "Ava", balance: 8.0 };
+
+    let chores = [
+      { id: "c1", name: "Dishes after dinner", frequency: "Daily", payout: 2.0, status: "assigned" },
+      { id: "c2", name: "Clean bedroom", frequency: "Weekly", payout: 4.0, status: "pending" }
+    ];
+
+    function formatMoney(x) {
+      return "$" + x.toFixed(2);
+    }
+
+    function renderSummary() {
+      document.getElementById("kid-name").textContent = kid.name;
+      document.getElementById("kid-balance").textContent = formatMoney(kid.balance);
+      document.getElementById("chor-count").textContent = chores.length;
+    }
+
+    function statusClass(status) {
+      if (status === "assigned") return "status-pill status-assigned";
+      if (status === "pending") return "status-pill status-pending";
+      if (status === "completed") return "status-pill status-completed";
+      return "status-pill";
+    }
+
+    function statusLabel(status) {
+      if (status === "assigned") return "Assigned";
+      if (status === "pending") return "Waiting approval";
+      if (status === "completed") return "Completed";
+      return status;
+    }
+
+    function renderChores() {
+      const tbody = document.getElementById("chores-body");
+      tbody.innerHTML = "";
+
+      chores.forEach(chore => {
+        const tr = document.createElement("tr");
+
+        const approveButton =
+          chore.status === "pending"
+            ? `<button class="btn btn-approve" data-id="${chore.id}">Approve</button>`
+            : "";
+
+        tr.innerHTML = `
+          <td>${chore.name}</td>
+          <td>${chore.frequency}</td>
+          <td>${formatMoney(chore.payout)}</td>
+          <td><span class="${statusClass(chore.status)}">${statusLabel(chore.status)}</span></td>
+          <td>${approveButton}</td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      // wire buttons
+      tbody.querySelectorAll("button[data-id]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-id");
+          approveChore(id);
+        });
+      });
+    }
+
+    function log(message) {
+      const logDiv = document.getElementById("log");
+      const time = new Date().toLocaleTimeString();
+      const line = document.createElement("div");
+      line.className = "log-line";
+      line.innerHTML = `<span class="log-time">[${time}]</span> ${message}`;
+      logDiv.prepend(line);
+    }
+
+    function approveChore(id) {
+      const chore = chores.find(c => c.id === id);
+      if (!chore || chore.status !== "pending") return;
+
+      // 1) update chore
+      chore.status = "completed";
+
+      // 2) update kid balance
+      kid.balance += chore.payout;
+
+      // 3) log what happened
+      log(`Approved "${chore.name}" for ${kid.name} (+${formatMoney(chore.payout)}). New balance: ${formatMoney(kid.balance)}.`);
+
+      renderSummary();
+      renderChores();
+    }
+
+    // init
+    renderSummary();
+    renderChores();
+    log("Parent view loaded with dummy data.");
+  </script>
+</body>
+</html>
