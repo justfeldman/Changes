@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Vault | Art Timeline</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .timeline-line { position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: #334155; }
+        .active-tab { border-bottom: 3px solid #6366f1; color: #6366f1; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="pb-24">
+
+    <header class="p-6 flex justify-between items-center sticky top-0 z-50 glass">
+        <h1 class="text-xl font-bold tracking-tight text-indigo-400">MUSIC VAULT</h1>
+        <button onclick="toggleModal()" class="bg-indigo-600 hover:bg-indigo-500 p-2 rounded-full">
+            <i data-lucide="plus"></i>
+        </button>
+    </header>
+
+    <nav class="flex border-b border-slate-800 mb-6">
+        <button id="tab-songs" onclick="showScreen('songs')" class="flex-1 py-4 font-medium active-tab">Library</button>
+        <button id="tab-timeline" onclick="showScreen('timeline')" class="flex-1 py-4 font-medium text-slate-400">Timeline</button>
+    </nav>
+
+    <main id="screen-songs" class="px-4 space-y-4">
+        <div class="glass p-4 rounded-xl flex gap-4">
+            <div class="w-20 h-20 bg-slate-800 rounded-lg flex items-center justify-center">
+                <i data-lucide="music" class="text-slate-500"></i>
+            </div>
+            <div class="flex-1">
+                <h3 class="font-bold text-lg">Midnight Sketches</h3>
+                <p class="text-sm text-slate-400">Summer 2023 • Era: The Blue Period</p>
+                <p class="text-xs mt-2 italic text-slate-300">"Wrote this when I couldn't sleep..."</p>
+            </div>
+        </div>
+    </main>
+
+    <main id="screen-timeline" class="px-4 hidden relative">
+        <div class="timeline-line"></div>
+        <div class="space-y-12 pl-10 pt-4">
+            <div class="relative">
+                <div class="absolute -left-[38px] w-4 h-4 rounded-full bg-indigo-500"></div>
+                <h2 class="text-indigo-400 font-bold uppercase tracking-widest text-sm">The Early Days (2022)</h2>
+                <div class="mt-4 glass p-4 rounded-xl">
+                    <img src="https://images.unsplash.com/photo-1514525253361-bee8a4874a73?w=400" class="rounded-lg mb-2 opacity-80">
+                    <h3 class="font-bold">First Demo</h3>
+                    <p class="text-xs text-slate-400">A time of learning and exploration.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="add-modal" class="fixed inset-0 z-[100] bg-black/90 hidden p-6 overflow-y-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-2xl font-bold">Add to Vault</h2>
+            <button onclick="toggleModal()"><i data-lucide="x"></i></button>
+        </div>
+        
+        <form class="space-y-6">
+            <div>
+                <label class="block text-sm text-slate-400 mb-2">Music File / Audio</label>
+                <div class="border-2 border-dashed border-slate-700 p-8 text-center rounded-xl">
+                    <i data-lucide="upload" class="mx-auto mb-2 opacity-50"></i>
+                    <p class="text-sm">Tap to upload audio</p>
+                </div>
+            </div>
+
+            <input type="text" placeholder="Song Title" class="w-full bg-slate-800 p-4 rounded-xl outline-none focus:ring-2 ring-indigo-500">
+            
+            <textarea placeholder="The Backstory: What did this time in your life feel like?" class="w-full bg-slate-800 p-4 rounded-xl h-32 outline-none"></textarea>
+
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" placeholder="Era (e.g. 2024)" class="bg-slate-800 p-4 rounded-xl outline-none">
+                <input type="date" class="bg-slate-800 p-4 rounded-xl outline-none">
+            </div>
+
+            <button type="button" onclick="toggleModal()" class="w-full bg-indigo-600 p-4 rounded-xl font-bold">Save to Capsule</button>
+        </form>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function showScreen(screen) {
+            document.getElementById('screen-songs').classList.add('hidden');
+            document.getElementById('screen-timeline').classList.add('hidden');
+            document.getElementById('tab-songs').classList.remove('active-tab', 'text-slate-400');
+            document.getElementById('tab-timeline').classList.remove('active-tab', 'text-slate-400');
+
+            if(screen === 'songs') {
+                document.getElementById('screen-songs').classList.remove('hidden');
+                document.getElementById('tab-songs').classList.add('active-tab');
+                document.getElementById('tab-timeline').classList.add('text-slate-400');
+            } else {
+                document.getElementById('screen-timeline').classList.remove('hidden');
+                document.getElementById('tab-timeline').classList.add('active-tab');
+                document.getElementById('tab-songs').classList.add('text-slate-400');
+            }
+        }
+
+        function toggleModal() {
+            const modal = document.getElementById('add-modal');
+            modal.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
