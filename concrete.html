@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Andrew Boyle Concreting | Northern Rivers NSW</title>
+  <meta name="description" content="Professional slabs, driveways, and retaining walls built to last. Family owned & operated since 1990." />
+  <style>
+    :root{
+      --bg:#0b0d10;
+      --panel:#0f1318;
+      --card:#141a21;
+      --text:#e9eef5;
+      --muted:#aab6c4;
+      --line:#223041;
+      --accent:#f3c14b;
+      --accent2:#66d9ff;
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --radius: 18px;
+      --max: 1120px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(102,217,255,.12), transparent 60%),
+                  radial-gradient(900px 500px at 90% 10%, rgba(243,193,75,.10), transparent 55%),
+                  linear-gradient(180deg, #07090c, var(--bg));
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    a{color:inherit; text-decoration:none}
+    img{max-width:100%; display:block}
+    .wrap{max-width:var(--max); margin:0 auto; padding:0 20px}
+    .grid{display:grid; gap:18px}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 16px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing:.2px;
+      transition: transform .12s ease, background .12s ease, border .12s ease;
+      cursor:pointer;
+      user-select:none;
+      gap:10px;
+      min-height:44px;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(243,193,75,.95), rgba(243,193,75,.72));
+      color:#101215;
+      border-color: rgba(243,193,75,.55);
+      box-shadow: 0 10px 24px rgba(243,193,75,.18);
+    }
+    .btn.primary:hover{background: linear-gradient(135deg, rgba(243,193,75,1), rgba(243,193,75,.78))}
+    .btn.ghost{background: transparent}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      color: var(--muted);
+      font-weight:600;
+      font-size: 13px;
+    }
+
+    /* Nav */
+    header{
+      position: sticky; top:0; z-index:50;
+      backdrop-filter: blur(12px);
+      background: rgba(7,9,12,.62);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
+    }
+    .brand{
+      display:flex; align-items:baseline; gap:10px;
+      font-weight:900; letter-spacing:.8px;
+      text-transform:uppercase;
+    }
+    .brand .big{font-size:18px}
+    .brand .small{font-size:12px; color: var(--muted); font-weight:700; letter-spacing:.6px}
+    nav ul{
+      list-style:none; padding:0; margin:0;
+      display:flex; align-items:center; gap:14px;
+    }
+    nav a{
+      color: var(--muted);
+      font-weight:700;
+      font-size: 14px;
+      padding:10px 10px;
+      border-radius: 10px;
+      transition: background .12s ease, color .12s ease;
+    }
+    nav a:hover{background: rgba(255,255,255,.06); color: var(--text)}
+    .nav-right{display:flex; align-items:center; gap:10px}
+    .menu-btn{display:none}
+
+    /* Hero */
+    .hero{
+      padding:44px 0 22px;
+    }
+    .hero-card{
+      border-radius: calc(var(--radius) + 10px);
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(900px 400px at 20% 0%, rgba(102,217,255,.12), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hero-inner{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:0;
+    }
+    .hero-left{
+      padding:34px 26px 28px;
+    }
+    .hero h1{
+      margin:14px 0 10px;
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: -.6px;
+    }
+    .hero p{
+      margin:0 0 18px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.5vw, 17px);
+      max-width: 56ch;
+    }
+    .hero-cta{display:flex; flex-wrap:wrap; gap:10px; margin-top: 18px}
+    .hero-meta{display:flex; flex-wrap:wrap; gap:10px; margin-top: 18px}
+    .hero-right{
+      position:relative;
+      min-height: 320px;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.00), rgba(0,0,0,.35)),
+        url("https://images.unsplash.com/photo-1602872029701-84f1f2e0d2c6?auto=format&fit=crop&w=1600&q=80");
+      background-size:cover;
+      background-position:center;
+      border-left: 1px solid rgba(255,255,255,.08);
+    }
+    .hero-right::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(600px 300px at 30% 20%, rgba(243,193,75,.12), transparent 55%);
+      pointer-events:none;
+    }
+    .badge{
+      position:absolute;
+      bottom:16px; left:16px;
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      padding: 10px 12px;
+      display:flex; align-items:center; gap:10px;
+      color: var(--text);
+      font-weight:800;
+      box-shadow: 0 10px 26px rgba(0,0,0,.35);
+    }
+    .badge .dot{
+      width:10px; height:10px; border-radius:99px;
+      background: var(--accent);
+      box-shadow: 0 0 0 6px rgba(243,193,75,.18);
+    }
+    .section{padding: 26px 0}
+    .section h2{
+      margin: 0 0 10px;
+      font-size: clamp(22px, 2.4vw, 30px);
+      letter-spacing: -.4px;
+    }
+    .sub{
+      margin:0 0 16px;
+      color: var(--muted);
+      max-width: 70ch;
+    }
+
+    /* Legacy strip */
+    .legacy{
+      margin-top: 18px;
+      background: rgba(255,255,255,.06);
+      border-top: 1px solid rgba(255,255,255,.08);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .legacy-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      padding: 12px 0;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .legacy .item{
+      display:flex; align-items:center; gap:10px;
+      color: var(--text);
+      font-weight:800;
+      font-size: 14px;
+    }
+    .legacy .item span{color: var(--muted); font-weight:700}
+    .icon{
+      width:34px; height:34px;
+      border-radius: 12px;
+      background: rgba(0,0,0,.26);
+      border: 1px solid rgba(255,255,255,.10);
+      display:grid; place-items:center;
+    }
+
+    /* Cards */
+    .cards{grid-template-columns: repeat(3, 1fr)}
+    .card{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      padding: 18px;
+      box-shadow: 0 10px 26px rgba(0,0,0,.25);
+    }
+    .card h3{margin:10px 0 8px; font-size:18px}
+    .card p{margin:0; color: var(--muted)}
+    .card .mini{
+      display:flex; align-items:center; justify-content:space-between;
+      margin-top:14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Projects grid */
+    .projects{grid-template-columns: repeat(12, 1fr)}
+    .shot{
+      grid-column: span 4;
+      position:relative;
+      border-radius: var(--radius);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background: #0d1116;
+      min-height: 180px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.32);
+      cursor: pointer;
+      transform: translateZ(0);
+    }
+    .shot img{
+      width:100%; height:100%;
+      object-fit:cover;
+      filter: saturate(1.05) contrast(1.02);
+      transition: transform .18s ease;
+    }
+    .shot:hover img{transform: scale(1.03)}
+    .shot .label{
+      position:absolute; left:12px; bottom:12px;
+      padding:10px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      font-weight: 900;
+      letter-spacing:.2px;
+      font-size: 13px;
+      display:flex; gap:10px; align-items:center;
+    }
+    .shot .label span{color: var(--muted); font-weight:800}
+
+    /* Guarantee split */
+    .split{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    .photo{
+      border-radius: var(--radius);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.55)),
+        url("https://images.unsplash.com/photo-1581579185169-1a11a74d0893?auto=format&fit=crop&w=1600&q=80");
+      background-size:cover;
+      background-position:center;
+      min-height: 320px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.32);
+      position:relative;
+    }
+    .photo .caption{
+      position:absolute; left:16px; bottom:16px;
+      background: rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 12px 14px;
+      max-width: 46ch;
+    }
+    .photo .caption b{display:block; margin-bottom:4px}
+    .list{
+      display:grid; gap:10px;
+    }
+    .bullet{
+      display:flex; gap:12px; align-items:flex-start;
+      padding: 14px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+    .bullet b{display:block; margin-bottom:4px}
+    .bullet p{margin:0; color: var(--muted)}
+    .check{
+      width:28px; height:28px;
+      border-radius: 10px;
+      background: rgba(243,193,75,.15);
+      border:1px solid rgba(243,193,75,.35);
+      display:grid; place-items:center;
+      color: var(--accent);
+      font-weight: 1000;
+      flex: 0 0 auto;
+      margin-top: 2px;
+    }
+
+    /* Form */
+    .form{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:18px;
+    }
+    form{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding: 18px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.28);
+    }
+    .fields{display:grid; gap:12px}
+    label{font-weight:800; font-size: 13px; color: var(--muted)}
+    input, select, textarea{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.28);
+      color: var(--text);
+      outline:none;
+      transition: border .12s ease, background .12s ease;
+      font-size: 15px;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(102,217,255,.45);
+      background: rgba(0,0,0,.34);
+    }
+    textarea{min-height: 110px; resize: vertical}
+    .two{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    .note-card{
+      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      padding: 18px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.28);
+    }
+    .note-card h3{margin:0 0 10px}
+    .note-card p{margin:0 0 10px; color: var(--muted)}
+    .callbox{
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(243,193,75,.12);
+      border:1px solid rgba(243,193,75,.28);
+      color: var(--text);
+      font-weight: 900;
+      display:flex; justify-content:space-between; align-items:center; gap:12px;
+    }
+    .callbox small{display:block; color:#1b1e22; opacity:.0} /* keep layout stable if you remove later */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.72);
+      border: 1px solid rgba(255,255,255,.14);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 14px;
+      box-shadow: 0 14px 30px rgba(0,0,0,.35);
+      display:none;
+      max-width: min(520px, calc(100% - 28px));
+      z-index: 80;
+      font-weight: 750;
+    }
+
+    /* Footer */
+    footer{
+      padding: 26px 0 38px;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,.06);
+      margin-top: 10px;
+    }
+    .foot{
+      display:flex; flex-wrap:wrap;
+      gap:12px;
+      justify-content:space-between;
+      align-items:flex-start;
+    }
+    .foot b{color: var(--text)}
+    .foot .areas{max-width: 68ch}
+
+    /* Responsive */
+    @media (max-width: 920px){
+      .hero-inner{grid-template-columns: 1fr}
+      .hero-right{min-height: 260px; border-left:none; border-top:1px solid rgba(255,255,255,.08)}
+      .cards{grid-template-columns: 1fr}
+      .shot{grid-column: span 12}
+      .split{grid-template-columns: 1fr}
+      .form{grid-template-columns: 1fr}
+      nav ul{display:none}
+      .menu-btn{display:inline-flex}
+    }
+
+    /* Utility */
+    .sr-only{
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <header>
+    <div class="wrap">
+      <div class="nav">
+        <a class="brand" href="#top" aria-label="Andrew Boyle Concreting Home">
+          <span class="big">BOYLE</span>
+          <span class="small">CONCRETING</span>
+        </a>
+
+        <nav aria-label="Primary">
+          <ul>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#work">Our Work</a></li>
+            <li><a href="#why">Why Us</a></li>
+          </ul>
+        </nav>
+
+        <div class="nav-right">
+          <a class="btn ghost" href="tel:+61410316500" aria-label="Call Andrew Boyle Concreting">
+            📞 Call
+          </a>
+          <button class="btn primary" id="navQuoteBtn">Get a Quote</button>
+          <button class="btn menu-btn" id="menuBtn" aria-expanded="false" aria-controls="mobileMenu">☰</button>
+        </div>
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobileMenu" style="display:none; padding:0 0 14px;">
+        <div class="card" style="padding:12px;">
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="btn" href="#services">Services</a>
+            <a class="btn" href="#work">Our Work</a>
+            <a class="btn" href="#why">Why Us</a>
+            <button class="btn primary" id="mobileQuoteBtn">Get a Quote</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <main id="top" class="hero">
+    <div class="wrap">
+      <div class="hero-card">
+        <div class="hero-inner">
+          <section class="hero-left">
+            <span class="pill">✅ Licensed & insured • Northern Rivers NSW</span>
+            <h1>Northern Rivers’ Most Trusted Concreting Since 1990.</h1>
+            <p>Professional slabs, driveways, and retaining walls built to last — with clear quoting, clean finishes, and reliable scheduling.</p>
+
+            <div class="hero-cta">
+              <button class="btn primary" id="heroQuoteBtn">Request a Quote</button>
+              <a class="btn" href="tel:+61410316500">Call 0410 316 500</a>
+            </div>
+
+            <div class="hero-meta">
+              <span class="pill">🛠️ Slabs</span>
+              <span class="pill">🚗 Driveways</span>
+              <span class="pill">🧱 Retaining walls</span>
+              <span class="pill">🌧️ Drainage-aware</span>
+            </div>
+          </section>
+
+          <aside class="hero-right" aria-label="Project photo">
+            <div class="badge">
+              <span class="dot"></span>
+              <span>Family owned & operated</span>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEGACY STRIP -->
+    <div class="legacy">
+      <div class="wrap">
+        <div class="legacy-row">
+          <div class="item">
+            <div class="icon">🏁</div>
+            35+ Years <span>Experience</span>
+          </div>
+          <div class="item">
+            <div class="icon">👷</div>
+            Family <span>Owned & Operated</span>
+          </div>
+          <div class="item">
+            <div class="icon">📄</div>
+            NSW Licensed <span>0410316500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- SERVICES -->
+  <section id="services" class="section">
+    <div class="wrap">
+      <h2>Services</h2>
+      <p class="sub">Straightforward options, clearly explained. We’ll guide you to the right finish for your site, use-case, and budget.</p>
+
+      <div class="grid cards">
+        <div class="card">
+          <div class="icon">🚗</div>
+          <h3>Driveways & Paths</h3>
+          <p>Plain, broom, or exposed aggregate — built for the Northern Rivers climate and everyday wear.</p>
+          <div class="mini">
+            <span>Popular for: homes & farms</span>
+            <span>From: quote</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon">🏠</div>
+          <h3>House & Shed Slabs</h3>
+          <p>Precision-level foundations for homes, sheds, and extensions — set out clean, poured right.</p>
+          <div class="mini">
+            <span>Popular for: builds & add-ons</span>
+            <span>From: quote</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon">🧱</div>
+          <h3>Retaining Walls</h3>
+          <p>Structural and aesthetic wall solutions with proper prep and drainage — no shortcuts.</p>
+          <div class="mini">
+            <span>Popular for: slopes & yards</span>
+            <span>From: quote</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECENT PROJECTS -->
+  <section id="work" class="section">
+    <div class="wrap">
+      <h2>Quality Work Across the Northern Rivers</h2>
+      <p class="sub">A snapshot of recent jobs. Hover/tap to see the job label. Replace these with Andrew’s real photos later.</p>
+
+      <div class="grid projects">
+        <div class="shot" data-label="Lismore Slab">
+          <img alt="Concrete slab project" src="https://images.unsplash.com/photo-1581092921461-eab62e97a780?auto=format&fit=crop&w=1600&q=80">
+          <div class="label">📍 <span>Lismore</span> Slab</div>
+        </div>
+        <div class="shot" data-label="Byron Bay Driveway">
+          <img alt="Concrete driveway project" src="https://images.unsplash.com/photo-1590725121839-892b458a74fe?auto=format&fit=crop&w=1600&q=80">
+          <div class="label">📍 <span>Byron Bay</span> Driveway</div>
+        </div>
+        <div class="shot" data-label="Ballina Shed Base">
+          <img alt="Concrete shed base project" src="https://images.unsplash.com/photo-1601301412950-6f0a8f7f8e22?auto=format&fit=crop&w=1600&q=80">
+          <div class="label">📍 <span>Ballina</span> Shed Base</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section id="why" class="section">
+    <div class="wrap">
+      <h2>The Old School Guarantee</h2>
+      <p class="sub">Modern finish, old-school reliability. We keep it simple: show up, do it properly, stand behind it.</p>
+
+      <div class="split">
+        <div class="photo" aria-label="Team photo area">
+          <div class="caption">
+            <b>“We’re not a franchise — we’re a family.”</b>
+            <div style="color:var(--muted); font-weight:700;">
+              Replace this image with a real on-site photo of Andrew and the crew for instant trust.
+            </div>
+          </div>
+        </div>
+
+        <div class="list">
+          <div class="bullet">
+            <div class="check">✓</div>
+            <div>
+              <b>Reliability</b>
+              <p>We show up when we say we will, communicate clearly, and keep the job moving.</p>
+            </div>
+          </div>
+          <div class="bullet">
+            <div class="check">✓</div>
+            <div>
+              <b>Local Knowledge</b>
+              <p>We understand Northern Rivers soil, slope, and drainage — prep matters.</p>
+            </div>
+          </div>
+          <div class="bullet">
+            <div class="check">✓</div>
+            <div>
+              <b>Quality Control</b>
+              <p>Every pour is overseen properly so the finished result holds up long-term.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL HOOK / FORM -->
+  <section class="section" id="quote">
+    <div class="wrap">
+      <h2>Ready to start your project?</h2>
+      <p class="sub">Send your details and we’ll get back to you. If it’s urgent, call — old school still works.</p>
+
+      <div class="form">
+        <form id="quoteForm">
+          <div class="fields">
+            <div class="two">
+              <div>
+                <label for="name">Name</label>
+                <input id="name" name="name" placeholder="Your full name" required />
+              </div>
+              <div>
+                <label for="phone">Phone</label>
+                <input id="phone" name="phone" placeholder="04xx xxx xxx" required />
+              </div>
+            </div>
+
+            <div class="two">
+              <div>
+                <label for="email">Email</label>
+                <input id="email" type="email" name="email" placeholder="you@email.com" />
+              </div>
+              <div>
+                <label for="service">Service Type</label>
+                <select id="service" name="service" required>
+                  <option value="" selected disabled>Select one…</option>
+                  <option>Driveway & Paths</option>
+                  <option>House / Shed Slab</option>
+                  <option>Retaining Wall</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="message">Message</label>
+              <textarea id="message" name="message" placeholder="Tell us the location, approximate size, finish, and any timing info." required></textarea>
+            </div>
+
+            <button class="btn primary" type="submit">Send My Quote Request</button>
+            <div style="color:var(--muted); font-size:13px; margin-top:8px;">
+              Demo only: this mock form shows a confirmation message. Hook to Formspree / Airtable / email later.
+            </div>
+          </div>
+        </form>
+
+        <div class="note-card">
+          <h3>Prefer to call?</h3>
+          <p>For a quick quote chat, a phone call is often the fastest way to nail down scope and timing.</p>
+
+          <div class="callbox">
+            <div>
+              <div style="font-size:14px; color: var(--muted); font-weight:800;">Call now</div>
+              <div style="font-size:20px;">0410 316 500</div>
+            </div>
+            <a class="btn" href="tel:+61410316500">📞 Call</a>
+          </div>
+
+          <div style="margin-top:14px; color: var(--muted); font-weight:700; font-size:13px;">
+            Serving Lismore, Ballina, Byron Bay & surrounds.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="wrap">
+      <div class="foot">
+        <div>
+          <b>Andrew Boyle Concreting</b><br/>
+          Licensed & insured • Northern Rivers NSW
+        </div>
+        <div class="areas">
+          © 2026 Andrew Boyle Concreting. Serving Lismore, Ballina, Byron Bay & beyond.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // Smooth scroll to quote section
+    function goToQuote(){
+      document.querySelector("#quote").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    document.getElementById("navQuoteBtn").addEventListener("click", goToQuote);
+    document.getElementById("heroQuoteBtn").addEventListener("click", goToQuote);
+    document.getElementById("mobileQuoteBtn").addEventListener("click", () => {
+      toggleMenu(false);
+      goToQuote();
+    });
+
+    // Mobile menu
+    const menuBtn = document.getElementById("menuBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+    function toggleMenu(force){
+      const isOpen = force ?? (mobileMenu.style.display !== "none");
+      const next = !isOpen;
+      mobileMenu.style.display = next ? "block" : "none";
+      menuBtn.setAttribute("aria-expanded", String(next));
+    }
+    menuBtn.addEventListener("click", () => toggleMenu());
+
+    // Fake form submit + toast
+    const form = document.getElementById("quoteForm");
+    const toast = document.getElementById("toast");
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.style.display = "block";
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=> toast.style.display = "none", 2600);
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim().split(" ")[0] || "there";
+      showToast(`Thanks, ${name}! Your quote request is ready to send (demo). Connect this form to email/Formspree next.`);
+      form.reset();
+    });
+
+    // Make project labels clickable for demo
+    document.querySelectorAll(".shot").forEach(el => {
+      el.addEventListener("click", () => {
+        const label = el.getAttribute("data-label") || "Project";
+        showToast(`${label} — swap these images with Andrew’s real Instagram photos.`);
+      });
+    });
+  </script>
+</body>
+</html>
