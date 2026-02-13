@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rehab Stitch - v1</title>
+    <style>
+        :root {
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --accent: #007aff; /* Apple Blue */
+            --text: #1c1c1e;
+            --secondary: #8e8e93;
+            --danger: #ff3b30;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 { font-size: 22px; margin: 0; }
+
+        .finish-btn {
+            background: #34c759;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        /* The Exercise Card */
+        .exercise-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .exercise-title {
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        /* AI Whisper Area */
+        .ai-hint {
+            background: #f0f7ff;
+            border-left: 3px solid var(--accent);
+            padding: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            color: #004a99;
+        }
+
+        /* Table Headers */
+        .row-grid {
+            display: grid;
+            grid-template-columns: 40px 1fr 60px 60px 40px;
+            gap: 10px;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .label {
+            font-size: 11px;
+            color: var(--secondary);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px 0;
+            border: 1px solid #e5e5ea;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .set-num { font-weight: bold; color: var(--secondary); }
+
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f2f2f7;
+            border: 1px dashed #c7c7cc;
+            border-radius: 8px;
+            color: var(--accent);
+            font-weight: 600;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .context-tag {
+            font-size: 12px;
+            background: #e5e5ea;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #3a3a3c;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>Afternoon Rehab</h1>
+            <span class="context-tag">Context: Left Knee Space</span>
+        </div>
+        <button class="finish-btn">Finish</button>
+    </header>
+
+    <div class="exercise-card">
+        <div class="exercise-header">
+            <span class="exercise-title">Spanish Squats</span>
+        </div>
+
+        <div class="ai-hint">
+            <strong>AI Coach:</strong> "Last set you logged Pain 4. Keep heels elevated to reduce patellar load."
+        </div>
+
+        <div class="row-grid">
+            <div class="label">Set</div>
+            <div class="label">Previous</div>
+            <div class="label">Reps</div>
+            <div class="label">Pain</div>
+            <div class="label"></div>
+        </div>
+
+        <div class="row-grid">
+            <div class="set-num">1</div>
+            <div style="font-size: 13px; color: var(--secondary);">10 x 0kg</div>
+            <input type="number" placeholder="10">
+            <input type="number" placeholder="2">
+            <input type="checkbox" checked>
+        </div>
+
+        <div class="row-grid" style="margin-top: 5px;">
+            <div class="set-num">2</div>
+            <div style="font-size: 13px; color: var(--secondary);">10 x 0kg</div>
+            <input type="number" placeholder="--">
+            <input type="number" placeholder="--">
+            <input type="checkbox">
+        </div>
+
+        <button class="add-btn">+ Add Set</button>
+    </div>
+
+    <button class="add-btn" style="background: white; border: 1px solid var(--accent);">+ Add Exercise</button>
+
+    <footer>
+        <p style="color: var(--secondary); font-size: 12px;">v1.0 - On-Device Intelligence Active</p>
+    </footer>
+</div>
+
+</body>
+</html>
