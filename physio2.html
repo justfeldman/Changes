@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physio Cursor v1</title>
+    <style>
+        :root {
+            --bg: #000000;
+            --card: #1c1c1e;
+            --accent: #0A84FF;
+            --text: #ffffff;
+            --secondary: #8e8e93;
+            --diff-bg: rgba(10, 132, 255, 0.15);
+            --apply: #30d158;
+        }
+
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0; padding: 20px;
+        }
+
+        .container { max-width: 400px; margin: 0 auto; }
+
+        /* Command Bar (The Cmd+K equivalent) */
+        .command-bar {
+            background: var(--card);
+            border: 1px solid #38383a;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .command-bar input {
+            background: transparent;
+            border: none;
+            color: white;
+            flex: 1;
+            font-size: 16px;
+            outline: none;
+        }
+
+        /* The Exercise Row */
+        .exercise-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .label-row {
+            display: grid;
+            grid-template-columns: 1fr 60px 60px 40px;
+            gap: 10px;
+            color: var(--secondary);
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .data-row {
+            display: grid;
+            grid-template-columns: 1fr 60px 60px 40px;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        input {
+            background: #2c2c2e;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* THE DIFF / SUGGESTION POP */
+        .ai-proposal {
+            background: var(--diff-bg);
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .proposal-header {
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .proposal-text { font-size: 14px; margin-bottom: 12px; line-height: 1.4; }
+
+        .btn-group { display: flex; gap: 10px; }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-apply { background: var(--apply); color: white; }
+        .btn-ignore { background: #3a3a3c; color: white; }
+
+        .strike { text-decoration: line-through; color: var(--secondary); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="command-bar">
+        <span style="margin-right: 10px; opacity: 0.5;">⌘</span>
+        <input type="text" placeholder="Ask AI to refactor workout...">
+    </div>
+
+    <div class="exercise-card">
+        <div style="font-weight: bold; margin-bottom: 15px;">Spanish Squats</div>
+        
+        <div class="label-row">
+            <div>Previous</div>
+            <div>Reps</div>
+            <div>Pain</div>
+            <div></div>
+        </div>
+
+        <div class="data-row">
+            <div style="color: var(--secondary);">10 x 0kg</div>
+            <input type="number" value="10">
+            <input type="number" value="7" style="color: #ff453a; font-weight: bold;">
+            <input type="checkbox" checked>
+        </div>
+
+        <div class="ai-proposal">
+            <div class="proposal-header">
+                <span>AI SUGGESTION (PAIN DETECTED)</span>
+                <span>JUST NOW</span>
+            </div>
+            <div class="proposal-text">
+                Your <span class="strike">Spanish Squats</span> are causing high patellar load. Refactor Set 2 to <b>Wall Sits (45s)</b> to create knee space.
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-ignore">Ignore</button>
+                <button class="btn btn-apply">Apply Change</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
