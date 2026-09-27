@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piano Studio</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --panel-2: #273449;
+    --border: rgba(255,255,255,0.08);
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --accent: #6366f1;
+    --accent-2: #818cf8;
+    --good: #22c55e;
+    --bad: #ef4444;
+    --hint: #f59e0b;
+    --white-key: #fafafa;
+    --white-key-down: #c7d2fe;
+    --black-key: #111827;
+    --black-key-down: #4f46e5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    background: rgba(30,41,59,0.7); position: sticky; top: 0; z-index: 10;
+    backdrop-filter: blur(8px);
+  }
+  header h1 { margin: 0; font-size: 1.15rem; letter-spacing: 0.02em; color: var(--accent-2); }
+  header .midi { font-size: 0.75rem; color: var(--muted); }
+
+  nav.tabs { display: flex; gap: 4px; padding: 10px 16px 0; max-width: 1100px; margin: 0 auto; }
+  nav.tabs button {
+    flex: 1; padding: 10px 8px; border: 0; border-radius: 10px 10px 0 0;
+    background: transparent; color: var(--muted); font-size: 0.95rem; font-weight: 600; cursor: pointer;
+  }
+  nav.tabs button.active { background: var(--panel); color: var(--text); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 0 16px 24px; }
+  .panel {
+    background: var(--panel); border-radius: 0 0 14px 14px; padding: 16px;
+    min-height: 190px;
+  }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .spacer { flex: 1; }
+  label.toggle { display: inline-flex; gap: 6px; align-items: center; font-size: 0.9rem; color: var(--muted); cursor: pointer; }
+  select, button.btn {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px; font-size: 0.9rem; cursor: pointer;
+  }
+  button.btn.primary { background: var(--accent); border-color: var(--accent); }
+  button.btn:hover { filter: brightness(1.15); }
+  button.btn:disabled { opacity: 0.5; cursor: default; filter: none; }
+  input[type=range] { accent-color: var(--accent); }
+  h2 { margin: 0 0 6px; font-size: 1.05rem; }
+  p.help { margin: 0 0 12px; color: var(--muted); font-size: 0.9rem; line-height: 1.45; }
+
+  /* Now-playing display */
+  .display {
+    display: flex; align-items: baseline; gap: 14px; margin-top: 14px;
+    min-height: 56px;
+  }
+  .display .big { font-size: 2.6rem; font-weight: 700; color: var(--accent-2); min-width: 3ch; }
+  .display .sub { color: var(--muted); font-size: 0.9rem; }
+
+  /* Song lane */
+  .lane {
+    display: flex; gap: 6px; overflow-x: auto; padding: 10px 2px; margin: 12px 0 4px;
+    scroll-behavior: smooth;
+  }
+  .chip {
+    flex: 0 0 auto; min-width: 44px; text-align: center; padding: 8px 6px; border-radius: 8px;
+    background: var(--panel-2); color: var(--muted); font-weight: 600; font-size: 0.9rem;
+    border: 2px solid transparent; transition: all .12s;
+  }
+  .chip.done { background: rgba(34,197,94,0.15); color: var(--good); }
+  .chip.current { border-color: var(--hint); color: var(--text); background: rgba(245,158,11,0.15); transform: scale(1.1); }
+  .stats { display: flex; gap: 18px; font-size: 0.9rem; color: var(--muted); margin-top: 6px; }
+  .stats b { color: var(--text); }
+  .progress { height: 6px; background: var(--panel-2); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+  .progress > div { height: 100%; width: 0; background: var(--good); transition: width .2s; }
+  .feedback { min-height: 1.5em; margin-top: 10px; font-weight: 600; }
+  .feedback.good { color: var(--good); }
+  .feedback.bad { color: var(--bad); }
+  .stars { color: var(--hint); letter-spacing: 2px; }
+
+  /* Lessons grid */
+  .lessons { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; }
+  .lesson {
+    background: var(--panel-2); border-radius: 10px; padding: 12px; cursor: pointer;
+    border: 1px solid var(--border); text-align: left; color: var(--text);
+  }
+  .lesson:hover { border-color: var(--accent); }
+  .lesson .t { font-weight: 600; }
+  .lesson .d { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+  /* Quiz */
+  .choices { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .choices button { min-width: 52px; }
+
+  /* Keyboard */
+  .kb-wrap {
+    max-width: 1100px; margin: 16px auto 0; padding: 0 16px 24px;
+  }
+  .kb-controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 10px; }
+  .kb-scroll { overflow-x: auto; padding-bottom: 6px; }
+  .keyboard {
+    position: relative; height: 220px; user-select: none; touch-action: none;
+    background: #0b1220; border-radius: 10px; padding: 10px 10px 0; min-width: 760px;
+    box-shadow: inset 0 6px 12px rgba(0,0,0,0.5);
+  }
+  .keys { position: relative; height: 100%; display: flex; }
+  .key { position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; cursor: pointer; }
+  .key.white {
+    flex: 1; background: var(--white-key); border: 1px solid #cbd5e1; border-top: 0;
+    border-radius: 0 0 6px 6px; color: #475569; z-index: 1; transition: background .05s;
+  }
+  .key.black {
+    position: absolute; top: 0; height: 62%; background: var(--black-key);
+    border-radius: 0 0 5px 5px; color: #cbd5e1; z-index: 2;
+    box-shadow: 0 3px 4px rgba(0,0,0,0.6); transition: background .05s;
+  }
+  .key.white.down { background: var(--white-key-down); }
+  .key.black.down { background: var(--black-key-down); }
+  .key.hint.white { background: #fde68a; }
+  .key.hint.black { background: var(--hint); }
+  .key.hint { animation: pulse 1s ease-in-out infinite; }
+  .key.wrong.white { background: #fecaca; }
+  .key.wrong.black { background: var(--bad); }
+  @keyframes pulse { 50% { filter: brightness(0.85); } }
+  .key .lbl { font-size: 0.72rem; font-weight: 600; margin-bottom: 8px; pointer-events: none; text-align: center; line-height: 1.3; }
+  .key.black .lbl { font-size: 0.62rem; margin-bottom: 6px; }
+  .key .kbd { display: block; opacity: 0.55; font-weight: 500; }
+  body:not(.show-notes) .key .note-name { display: none; }
+  body:not(.show-kbd) .key .kbd { display: none; }
+
+  @media (max-width: 640px) {
+    .display .big { font-size: 2rem; }
+    .keyboard { height: 180px; }
+    .key.black .lbl { font-size: 0.5rem; }
+  }
+</style>
+</head>
+<body class="show-notes show-kbd">
+
+<header>
+  <h1>🎹 Piano Studio</h1>
+  <span class="midi" id="midiStatus"></span>
+</header>
+
+<nav class="tabs">
+  <button data-tab="play" class="active">Free Play</button>
+  <button data-tab="songs">Learn Songs</button>
+  <button data-tab="lessons">Lessons</button>
+  <button data-tab="quiz">Ear Training</button>
+</nav>
+
+<main>
+  <!-- FREE PLAY -->
+  <section class="panel" id="tab-play">
+    <h2>Free Play</h2>
+    <p class="help">Click or tap the keys, or use your computer keyboard: the row <b>A S D F G H J K L ;</b> plays white keys and <b>W E T Y U O P</b> plays black keys. Use <b>Z</b> / <b>X</b> to shift octave down / up. A MIDI keyboard works too if your browser supports it.</p>
+    <div class="display">
+      <span class="big" id="playNote">–</span>
+      <span class="sub" id="playInfo">Play a key to see its name</span>
+    </div>
+  </section>
+
+  <!-- SONGS -->
+  <section class="panel" id="tab-songs" hidden>
+    <div class="row">
+      <select id="songSelect" aria-label="Choose a song"></select>
+      <button class="btn primary" id="songStart">Start practice</button>
+      <button class="btn" id="songListen">▶ Listen</button>
+      <button class="btn" id="songStop" disabled>■ Stop</button>
+      <span class="spacer"></span>
+      <span class="stars" id="songBest"></span>
+    </div>
+    <p class="help" style="margin-top:10px">The next note glows <span style="color:var(--hint)">amber</span> on the keyboard. Play it to move on — the song waits for you, so take your time.</p>
+    <div class="lane" id="songLane"></div>
+    <div class="progress"><div id="songProgress"></div></div>
+    <div class="stats">
+      <span>Correct: <b id="songCorrect">0</b></span>
+      <span>Mistakes: <b id="songMistakes">0</b></span>
+      <span>Accuracy: <b id="songAccuracy">–</b></span>
+    </div>
+    <div class="feedback" id="songFeedback"></div>
+  </section>
+
+  <!-- LESSONS -->
+  <section class="panel" id="tab-lessons" hidden>
+    <h2>Lessons</h2>
+    <p class="help" id="lessonText">Pick a lesson. Each one explains an idea, then gives you a short exercise to play.</p>
+    <div class="lessons" id="lessonList"></div>
+    <div id="lessonActive" hidden>
+      <div class="lane" id="lessonLane"></div>
+      <div class="row">
+        <button class="btn" id="lessonBack">← All lessons</button>
+        <button class="btn" id="lessonDemo">▶ Hear it</button>
+        <button class="btn" id="lessonRestart">↺ Restart</button>
+      </div>
+      <div class="feedback" id="lessonFeedback"></div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="panel" id="tab-quiz" hidden>
+    <h2>Ear Training</h2>
+    <p class="help">Listen to a note and name it. Start with white keys only, then add sharps when you're ready.</p>
+    <div class="row">
+      <button class="btn primary" id="quizNew">🎧 New note</button>
+      <button class="btn" id="quizReplay" disabled>↺ Replay</button>
+      <button class="btn" id="quizRef">Play C (reference)</button>
+      <label class="toggle"><input type="checkbox" id="quizSharps"> Include sharps</label>
+      <span class="spacer"></span>
+      <span class="stats" style="margin:0">Score: <b id="quizScore">0 / 0</b> &nbsp; Streak: <b id="quizStreak">0</b></span>
+    </div>
+    <div class="choices" id="quizChoices"></div>
+    <div class="feedback" id="quizFeedback"></div>
+  </section>
+</main>
+
+<div class="kb-wrap">
+  <div class="kb-controls">
+    <label class="toggle"><input type="checkbox" id="optNotes" checked> Note names</label>
+    <label class="toggle"><input type="checkbox" id="optKbd" checked> Keyboard letters</label>
+    <label class="toggle">Sound
+      <select id="optSound">
+        <option value="piano">Piano</option>
+        <option value="soft">Soft</option>
+        <option value="organ">Organ</option>
+        <option value="bright">Bright</option>
+      </select>
+    </label>
+    <label class="toggle">Volume <input type="range" id="optVolume" min="0" max="1" step="0.05" value="0.7"></label>
+    <label class="toggle"><input type="checkbox" id="optSustain"> Sustain (Space)</label>
+    <span class="spacer"></span>
+    <span class="sub" style="color:var(--muted);font-size:0.85rem">Octave shift: <b id="octaveLabel">0</b></span>
+  </div>
+  <div class="kb-scroll">
+    <div class="keyboard"><div class="keys" id="keys"></div></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // ---------- Music helpers ----------
+  const NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  const SOLFEGE = { C:'Do', D:'Re', E:'Mi', F:'Fa', G:'Sol', A:'La', B:'Ti' };
+  const isBlack = m => NAMES[m % 12].includes('#');
+  const midiToName = m => NAMES[m % 12] + (Math.floor(m / 12) - 1);
+  const nameToMidi = n => {
+    const match = /^([A-G]#?)(-?\d)$/.exec(n);
+    if (!match) throw new Error('Bad note ' + n);
+    return NAMES.indexOf(match[1]) + (parseInt(match[2], 10) + 1) * 12;
+  };
+  const freq = m => 440 * Math.pow(2, (m - 69) / 12);
+
+  const LOW = nameToMidi('C3');
+  const HIGH = nameToMidi('C6');
+
+  // ---------- Audio ----------
+  let ctx = null, master = null;
+  const voices = new Map();
+  const SOUNDS = {
+    piano:  { harmonics: [1, 0.5, 0.25, 0.12, 0.06], type: 'sine', attack: 0.005, decay: 1.2, sustain: 0.15, release: 0.35 },
+    soft:   { harmonics: [1, 0.15, 0.05], type: 'sine', attack: 0.03, decay: 0.8, sustain: 0.4, release: 0.6 },
+    organ:  { harmonics: [1, 0.8, 0.6, 0, 0.4, 0, 0, 0.3], type: 'sine', attack: 0.02, decay: 0.1, sustain: 0.9, release: 0.15 },
+    bright: { harmonics: [1], type: 'triangle', attack: 0.005, decay: 0.6, sustain: 0.25, release: 0.3 },
+  };
+  let sound = 'piano', volume = 0.7, sustainOn = false;
+  const waveCache = {};
+
+  function ensureAudio() {
+    if (!ctx) {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const comp = ctx.createDynamicsCompressor();
+      master = ctx.createGain();
+      master.gain.value = volume;
+      master.connect(comp).connect(ctx.destination);
+    }
+    if (ctx.state === 'suspended') ctx.resume();
+  }
+
+  function wave(s) {
+    if (!waveCache[s]) {
+      const h = SOUNDS[s].harmonics;
+      const real = new Float32Array(h.length + 1), imag = new Float32Array(h.length + 1);
+      h.forEach((v, i) => imag[i + 1] = v);
+      waveCache[s] = ctx.createPeriodicWave(real, imag);
+    }
+    return waveCache[s];
+  }
+
+  function noteOn(m, vel = 0.8) {
+    ensureAudio();
+    noteOff(m, true);
+    const s = SOUNDS[sound], t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    if (s.type === 'sine') osc.setPeriodicWave(wave(sound)); else osc.type = s.type;
+    osc.frequency.value = freq(m);
+    const g = ctx.createGain();
+    // Higher notes are naturally quieter and decay faster on a real piano
+    const peak = vel * 0.35 * Math.min(1, 1.3 - (m - 48) / 80);
+    const decay = s.decay * Math.max(0.4, 1.4 - (m - 48) / 40);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(peak, t + s.attack);
+    g.gain.setTargetAtTime(peak * s.sustain, t + s.attack, decay / 3);
+    osc.connect(g).connect(master);
+    osc.start(t);
+    voices.set(m, { osc, g, held: true, s });
+  }
+
+  function noteOff(m, immediate = false) {
+    const v = voices.get(m);
+    if (!v) return;
+    v.held = false;
+    if (sustainOn && !immediate) return;
+    const t = ctx.currentTime, rel = immediate ? 0.02 : v.s.release;
+    v.g.gain.cancelScheduledValues(t);
+    v.g.gain.setValueAtTime(v.g.gain.value, t);
+    v.g.gain.setTargetAtTime(0, t, rel / 4);
+    v.osc.stop(t + rel * 2);
+    voices.delete(m);
+  }
+
+  function releaseSustained() {
+    for (const [m, v] of [...voices]) if (!v.held) { sustainOn = false; noteOff(m); }
+    sustainOn = optSustain.checked;
+  }
+
+  // ---------- Keyboard UI ----------
+  const keysEl = document.getElementById('keys');
+  const keyEls = {};
+  // Computer keys map to semitone offsets from the base C
+  const KBD = { a:0, w:1, s:2, e:3, d:4, f:5, t:6, g:7, y:8, h:9, u:10, j:11, k:12, o:13, l:14, p:15, ';':16, "'":17 };
+  let baseOctave = 4, octaveShift = 0;
+  const kbdBase = () => nameToMidi('C' + (baseOctave + octaveShift));
+
+  function buildKeyboard() {
+    keysEl.innerHTML = '';
+    const whites = [];
+    for (let m = LOW; m <= HIGH; m++) if (!isBlack(m)) whites.push(m);
+    const w = 100 / whites.length;
+    let wi = 0;
+    for (let m = LOW; m <= HIGH; m++) {
+      const el = document.createElement('div');
+      el.className = 'key ' + (isBlack(m) ? 'black' : 'white');
+      el.dataset.midi = m;
+      if (isBlack(m)) {
+        el.style.left = `calc(${wi * w}% - ${w * 0.3}%)`;
+        el.style.width = (w * 0.6) + '%';
+      } else wi++;
+      el.innerHTML = `<span class="lbl"><span class="note-name">${midiToName(m)}</span><span class="kbd"></span></span>`;
+      keysEl.appendChild(el);
+      keyEls[m] = el;
+    }
+    labelKbd();
+  }
+
+  function labelKbd() {
+    for (const m in keyEls) keyEls[m].querySelector('.kbd').textContent = '';
+    const base = kbdBase();
+    for (const [k, off] of Object.entries(KBD)) {
+      const el = keyEls[base + off];
+      if (el) el.querySelector('.kbd').textContent = k.toUpperCase();
+    }
+    document.getElementById('octaveLabel').textContent = (octaveShift > 0 ? '+' : '') + octaveShift;
+  }
+
+  // Pointer handling supports multi-touch and sliding across keys
+  const pointers = new Map();
+  function midiAt(x, y) {
+    const el = document.elementFromPoint(x, y);
+    const k = el && el.closest('.key');
+    return k ? +k.dataset.midi : null;
+  }
+  keysEl.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    const m = midiAt(e.clientX, e.clientY);
+    if (m == null) return;
+    keysEl.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, m);
+    press(m, 'pointer');
+  });
+  keysEl.addEventListener('pointermove', e => {
+    if (!pointers.has(e.pointerId)) return;
+    const m = midiAt(e.clientX, e.clientY), prev = pointers.get(e.pointerId);
+    if (m !== prev) {
+      if (prev != null) release(prev);
+      if (m != null) press(m, 'pointer');
+      pointers.set(e.pointerId, m);
+    }
+  });
+  const endPointer = e => {
+    if (!pointers.has(e.pointerId)) return;
+    const m = pointers.get(e.pointerId);
+    if (m != null) release(m);
+    pointers.delete(e.pointerId);
+  };
+  keysEl.addEventListener('pointerup', endPointer);
+  keysEl.addEventListener('pointercancel', endPointer);
+
+  const heldKbd = {};
+  window.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT' && e.target.type !== 'checkbox' && e.target.type !== 'range') return;
+    const k = e.key.toLowerCase();
+    if (k === ' ') { e.preventDefault(); if (!e.repeat) { sustainOn = true; } return; }
+    if (k === 'z' || k === 'x') {
+      const next = octaveShift + (k === 'z' ? -1 : 1);
+      if (kbdBase() + (k === 'z' ? -12 : 12) >= LOW && nameToMidi('C' + (baseOctave + next)) + 17 <= HIGH + 12) {
+        octaveShift = next; labelKbd();
+      }
+      return;
+    }
+    if (k in KBD && !e.repeat && !heldKbd[k]) {
+      const m = kbdBase() + KBD[k];
+      if (m < LOW || m > HIGH) return;
+      heldKbd[k] = m;
+      press(m, 'kbd');
+    }
+  });
+  window.addEventListener('keyup', e => {
+    const k = e.key.toLowerCase();
+    if (k === ' ') { releaseSustained(); return; }
+    if (heldKbd[k] != null) { release(heldKbd[k]); delete heldKbd[k]; }
+  });
+  window.addEventListener('blur', () => {
+    for (const k in heldKbd) { release(heldKbd[k]); delete heldKbd[k]; }
+  });
+
+  // ---------- Central press/release ----------
+  const listeners = [];
+  function press(m, source, vel) {
+    noteOn(m, vel);
+    keyEls[m] && keyEls[m].classList.add('down');
+    showPlayed(m);
+    listeners.forEach(fn => fn(m, source));
+  }
+  function release(m) {
+    noteOff(m);
+    keyEls[m] && keyEls[m].classList.remove('down');
+  }
+
+  function showPlayed(m) {
+    const n = midiToName(m), letter = NAMES[m % 12];
+    document.getElementById('playNote').textContent = n;
+    const sol = SOLFEGE[letter] ? ` · solfège "${SOLFEGE[letter]}"` : ` · black key (also ${enharmonic(letter)})`;
+    document.getElementById('playInfo').textContent = `${freq(m).toFixed(1)} Hz${sol}`;
+  }
+  const enharmonic = l => ({ 'C#':'D♭', 'D#':'E♭', 'F#':'G♭', 'G#':'A♭', 'A#':'B♭' })[l];
+
+  function flash(m, cls, ms = 350) {
+    const el = keyEls[m]; if (!el) return;
+    el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), ms);
+  }
+  function setHint(m) {
+    document.querySelectorAll('.key.hint').forEach(el => el.classList.remove('hint'));
+    if (m != null && keyEls[m]) {
+      keyEls[m].classList.add('hint');
+      keyEls[m].scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+    }
+  }
+
+  // ---------- Playback (demo) ----------
+  let playTimers = [];
+  function stopPlayback() {
+    playTimers.forEach(clearTimeout); playTimers = [];
+    for (const m in keyEls) keyEls[m].classList.remove('down');
+    for (const m of [...voices.keys()]) noteOff(m);
+  }
+  function playSequence(notes, bpm, onStep, onDone) {
+    stopPlayback();
+    ensureAudio();
+    const beat = 60000 / bpm;
+    let t = 0;
+    notes.forEach((n, i) => {
+      playTimers.push(setTimeout(() => {
+        noteOn(n.midi, 0.7);
+        keyEls[n.midi] && keyEls[n.midi].classList.add('down');
+        onStep && onStep(i);
+      }, t));
+      playTimers.push(setTimeout(() => {
+        noteOff(n.midi);
+        keyEls[n.midi] && keyEls[n.midi].classList.remove('down');
+      }, t + n.beats * beat * 0.9));
+      t += n.beats * beat;
+    });
+    playTimers.push(setTimeout(() => onDone && onDone(), t));
+  }
+
+  // Song format: "E4 D4 C4:2" — optional ":beats" after each note (default 1)
+  const parse = str => str.trim().split(/\s+/).map(tok => {
+    const [n, b] = tok.split(':');
+    return { name: n, midi: nameToMidi(n), beats: b ? parseFloat(b) : 1 };
+  });
+
+  // ---------- Songs ----------
+  const SONGS = [
+    { id: 'twinkle', title: 'Twinkle Twinkle Little Star', level: 1, bpm: 100,
+      notes: 'C4 C4 G4 G4 A4 A4 G4:2 F4 F4 E4 E4 D4 D4 C4:2 G4 G4 F4 F4 E4 E4 D4:2 G4 G4 F4 F4 E4 E4 D4:2 C4 C4 G4 G4 A4 A4 G4:2 F4 F4 E4 E4 D4 D4 C4:2' },
+    { id: 'mary', title: 'Mary Had a Little Lamb', level: 1, bpm: 110,
+      notes: 'E4 D4 C4 D4 E4 E4 E4:2 D4 D4 D4:2 E4 G4 G4:2 E4 D4 C4 D4 E4 E4 E4 E4 D4 D4 E4 D4 C4:4' },
+    { id: 'hotcross', title: 'Hot Cross Buns', level: 1, bpm: 100,
+      notes: 'E4 D4 C4:2 E4 D4 C4:2 C4:0.5 C4:0.5 C4:0.5 C4:0.5 D4:0.5 D4:0.5 D4:0.5 D4:0.5 E4 D4 C4:2' },
+    { id: 'ode', title: 'Ode to Joy (Beethoven)', level: 2, bpm: 110,
+      notes: 'E4 E4 F4 G4 G4 F4 E4 D4 C4 C4 D4 E4 E4:1.5 D4:0.5 D4:2 E4 E4 F4 G4 G4 F4 E4 D4 C4 C4 D4 E4 D4:1.5 C4:0.5 C4:2' },
+    { id: 'frere', title: 'Frère Jacques', level: 2, bpm: 110,
+      notes: 'C4 D4 E4 C4 C4 D4 E4 C4 E4 F4 G4:2 E4 F4 G4:2 G4:0.5 A4:0.5 G4:0.5 F4:0.5 E4 C4 G4:0.5 A4:0.5 G4:0.5 F4:0.5 E4 C4 C4 G3 C4:2 C4 G3 C4:2' },
+    { id: 'jingle', title: 'Jingle Bells', level: 2, bpm: 130,
+      notes: 'E4 E4 E4:2 E4 E4 E4:2 E4 G4 C4:1.5 D4:0.5 E4:4 F4 F4 F4:1.5 F4:0.5 F4 E4 E4 E4:0.5 E4:0.5 E4 D4 D4 E4 D4:2 G4:2' },
+    { id: 'birthday', title: 'Happy Birthday', level: 3, bpm: 100,
+      notes: 'C4:0.75 C4:0.25 D4 C4 F4 E4:2 C4:0.75 C4:0.25 D4 C4 G4 F4:2 C4:0.75 C4:0.25 C5 A4 F4 E4 D4:2 A#4:0.75 A#4:0.25 A4 F4 G4 F4:2' },
+    { id: 'furelise', title: 'Für Elise (opening)', level: 3, bpm: 120,
+      notes: 'E5:0.5 D#5:0.5 E5:0.5 D#5:0.5 E5:0.5 B4:0.5 D5:0.5 C5:0.5 A4 C4:0.5 E4:0.5 A4:0.5 B4 E4:0.5 G#4:0.5 B4:0.5 C5 E4:0.5 E5:0.5 D#5:0.5 E5:0.5 D#5:0.5 E5:0.5 B4:0.5 D5:0.5 C5:0.5 A4 C4:0.5 E4:0.5 A4:0.5 B4 E4:0.5 C5:0.5 B4:0.5 A4:2' },
+  ].map(s => ({ ...s, seq: parse(s.notes) }));
+
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem('piano:' + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem('piano:' + k, JSON.stringify(v)); } catch {} },
+  };
+
+  const songSelect = document.getElementById('songSelect');
+  const songLane = document.getElementById('songLane');
+  const songFeedback = document.getElementById('songFeedback');
+  const btnStart = document.getElementById('songStart');
+  const btnListen = document.getElementById('songListen');
+  const btnStop = document.getElementById('songStop');
+  const starStr = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+
+  function fillSongs() {
+    const best = store.get('best', {});
+    const sel = songSelect.value;
+    songSelect.innerHTML = SONGS.map(s =>
+      `<option value="${s.id}">${'●'.repeat(s.level)}${'○'.repeat(3 - s.level)}  ${s.title}${best[s.id] ? '  ' + '★'.repeat(best[s.id]) : ''}</option>`
+    ).join('');
+    if (sel) songSelect.value = sel;
+  }
+
+  let practice = null; // { song, idx, correct, mistakes }
+  const curSong = () => SONGS.find(s => s.id === songSelect.value);
+
+  function renderLane(el, seq, idx) {
+    el.innerHTML = seq.map((n, i) =>
+      `<div class="chip ${i < idx ? 'done' : i === idx ? 'current' : ''}">${n.name.replace(/\d/, '')}<br><small style="opacity:.6">${n.name.match(/\d/)[0]}</small></div>`
+    ).join('');
+    const cur = el.children[idx];
+    if (cur) el.scrollLeft = cur.offsetLeft - el.clientWidth / 2 + cur.clientWidth / 2;
+  }
+
+  function updateSongStats() {
+    const p = practice, s = curSong();
+    const idx = p ? p.idx : 0;
+    document.getElementById('songCorrect').textContent = p ? p.correct : 0;
+    document.getElementById('songMistakes').textContent = p ? p.mistakes : 0;
+    const tot = p ? p.correct + p.mistakes : 0;
+    document.getElementById('songAccuracy').textContent = tot ? Math.round(100 * p.correct / tot) + '%' : '–';
+    document.getElementById('songProgress').style.width = (100 * idx / s.seq.length) + '%';
+    const best = store.get('best', {})[s.id] || 0;
+    document.getElementById('songBest').textContent = best ? 'Best: ' + starStr(best) : '';
+  }
+
+  function resetSongView() {
+    practice = null;
+    setHint(null);
+    renderLane(songLane, curSong().seq, -1);
+    songFeedback.textContent = ''; songFeedback.className = 'feedback';
+    updateSongStats();
+  }
+
+  songSelect.addEventListener('change', () => { stopPlayback(); setButtons(false); resetSongView(); });
+
+  function setButtons(busy) {
+    btnStop.disabled = !busy;
+    btnListen.disabled = busy;
+  }
+
+  btnStart.addEventListener('click', () => {
+    stopPlayback(); ensureAudio();
+    const s = curSong();
+    practice = { song: s, idx: 0, correct: 0, mistakes: 0 };
+    songFeedback.textContent = 'Play the glowing key!'; songFeedback.className = 'feedback';
+    renderLane(songLane, s.seq, 0);
+    setHint(s.seq[0].midi);
+    btnStart.textContent = 'Restart';
+    setButtons(true);
+    updateSongStats();
+  });
+
+  btnListen.addEventListener('click', () => {
+    const s = curSong();
+    practice = null; setHint(null);
+    setButtons(true);
+    songFeedback.textContent = 'Listen to how it goes…'; songFeedback.className = 'feedback';
+    playSequence(s.seq, s.bpm, i => renderLane(songLane, s.seq, i), () => {
+      setButtons(false); renderLane(songLane, s.seq, -1);
+      songFeedback.textContent = 'Now try it yourself — press Start practice.';
+    });
+  });
+
+  btnStop.addEventListener('click', () => {
+    stopPlayback(); setButtons(false); resetSongView();
+    btnStart.textContent = 'Start practice';
+  });
+
+  listeners.push((m) => {
+    if (!practice || activeTab !== 'songs') return;
+    const p = practice, target = p.song.seq[p.idx];
+    if (m === target.midi) {
+      p.correct++; p.idx++;
+      if (p.idx >= p.song.seq.length) return finishSong();
+      renderLane(songLane, p.song.seq, p.idx);
+      setHint(p.song.seq[p.idx].midi);
+      songFeedback.textContent = ['Nice!', 'Good!', 'Keep going!', 'Great!'][p.correct % 4];
+      songFeedback.className = 'feedback good';
+    } else {
+      p.mistakes++;
+      flash(m, 'wrong');
+      songFeedback.textContent = `That was ${midiToName(m)} — look for ${target.name}.`;
+      songFeedback.className = 'feedback bad';
+    }
+    updateSongStats();
+  });
+
+  function finishSong() {
+    const p = practice, acc = p.correct / (p.correct + p.mistakes);
+    const stars = acc >= 0.95 ? 3 : acc >= 0.8 ? 2 : 1;
+    const best = store.get('best', {});
+    const improved = stars > (best[p.song.id] || 0);
+    if (improved) { best[p.song.id] = stars; store.set('best', best); }
+    setHint(null);
+    renderLane(songLane, p.song.seq, p.song.seq.length);
+    updateSongStats();
+    songFeedback.innerHTML = `🎉 You finished <b>${p.song.title}</b>! <span class="stars">${starStr(stars)}</span> ${Math.round(acc * 100)}% accuracy${improved ? ' — new best!' : ''}`;
+    songFeedback.className = 'feedback good';
+    practice = null;
+    setButtons(false);
+    btnStart.textContent = 'Play again';
+    fillSongs();
+  }
+
+  // ---------- Lessons ----------
+  const LESSONS = [
+    { title: '1. Find Middle C', desc: 'Your home base on the piano.',
+      text: 'Black keys come in groups of 2 and 3. <b>C</b> is always the white key just to the left of a group of 2 black keys. The C in the middle of the keyboard is called <b>Middle C (C4)</b>. Play it a few times.',
+      notes: 'C4 C4 C4 C4' },
+    { title: '2. The Musical Alphabet', desc: 'White keys use A–G, then repeat.',
+      text: 'White keys are named with just 7 letters: <b>C D E F G A B</b>, then the pattern starts again at the next C. Play from Middle C up to the next C.',
+      notes: 'C4 D4 E4 F4 G4 A4 B4 C5' },
+    { title: '3. Five-Finger Position', desc: 'Right hand on C-D-E-F-G.',
+      text: 'Put your right thumb (finger 1) on Middle C and one finger on each white key up to G (finger 5). Play up and back down, one finger per note.',
+      notes: 'C4 D4 E4 F4 G4 F4 E4 D4 C4' },
+    { title: '4. Black Keys: Sharps & Flats', desc: 'What # and ♭ mean.',
+      text: 'A <b>sharp (#)</b> is the key just to the right; a <b>flat (♭)</b> is the key just to the left. So C# and D♭ are the same black key. Play each white key followed by its sharp.',
+      notes: 'C4 C#4 D4 D#4 F4 F#4 G4 G#4 A4 A#4' },
+    { title: '5. C Major Scale', desc: 'The most important scale.',
+      text: 'A scale is a stepwise run of notes. <b>C major</b> uses only white keys. Fingering tip: play C-D-E with fingers 1-2-3, then tuck your thumb under to play F, and continue 1-2-3-4-5.',
+      notes: 'C4 D4 E4 F4 G4 A4 B4 C5 B4 A4 G4 F4 E4 D4 C4' },
+    { title: '6. Whole & Half Steps', desc: 'The building blocks of scales.',
+      text: 'A <b>half step</b> is the very next key (e.g. E→F, or C→C#). A <b>whole step</b> skips one key (C→D). Major scales follow: whole, whole, half, whole, whole, whole, half. Try the G major scale — notice it needs F#!',
+      notes: 'G4 A4 B4 C5 D5 E5 F#5 G5' },
+    { title: '7. Your First Chords', desc: 'C, F and G major triads.',
+      text: 'A <b>major triad</b> is 3 notes: a root, the note 4 half steps up, and 3 more half steps above that. Play C-E-G, then F-A-C, then G-B-D. (Try pressing each group together in Free Play!)',
+      notes: 'C4 E4 G4 F4 A4 C5 G4 B4 D5 C4 E4 G4' },
+    { title: '8. A Minor Scale', desc: 'The sad-sounding cousin.',
+      text: '<b>A minor</b> uses the same white keys as C major but starts on A, which gives it a darker mood. Listen to the difference.',
+      notes: 'A3 B3 C4 D4 E4 F4 G4 A4 G4 F4 E4 D4 C4 B3 A3' },
+  ].map(l => ({ ...l, seq: parse(l.notes) }));
+
+  const lessonList = document.getElementById('lessonList');
+  const lessonActive = document.getElementById('lessonActive');
+  const lessonText = document.getElementById('lessonText');
+  const lessonLane = document.getElementById('lessonLane');
+  const lessonFeedback = document.getElementById('lessonFeedback');
+  const defaultLessonText = lessonText.innerHTML;
+  let lesson = null; // { l, idx, i }
+
+  function renderLessonList() {
+    const done = store.get('lessons', {});
+    lessonList.innerHTML = LESSONS.map((l, i) =>
+      `<button class="lesson" data-i="${i}"><div class="t">${done[i] ? '✅ ' : ''}${l.title}</div><div class="d">${l.desc}</div></button>`
+    ).join('');
+  }
+  lessonList.addEventListener('click', e => {
+    const b = e.target.closest('.lesson'); if (!b) return;
+    startLesson(+b.dataset.i);
+  });
+  function startLesson(i) {
+    stopPlayback(); ensureAudio();
+    const l = LESSONS[i];
+    lesson = { l, i, idx: 0 };
+    lessonText.innerHTML = `<b>${l.title}</b><br>${l.text}`;
+    lessonList.hidden = true; lessonActive.hidden = false;
+    lessonFeedback.textContent = 'Play the glowing key to begin.'; lessonFeedback.className = 'feedback';
+    renderLane(lessonLane, l.seq, 0);
+    setHint(l.seq[0].midi);
+  }
+  document.getElementById('lessonBack').addEventListener('click', exitLesson);
+  function exitLesson() {
+    stopPlayback(); lesson = null; setHint(null);
+    lessonText.innerHTML = defaultLessonText;
+    lessonList.hidden = false; lessonActive.hidden = true;
+    renderLessonList();
+  }
+  document.getElementById('lessonRestart').addEventListener('click', () => lesson && startLesson(lesson.i));
+  document.getElementById('lessonDemo').addEventListener('click', () => {
+    if (!lesson) return;
+    const l = lesson.l;
+    setHint(null);
+    playSequence(l.seq, 110, i => renderLane(lessonLane, l.seq, i), () => startLesson(lesson.i));
+  });
+  listeners.push((m) => {
+    if (!lesson || activeTab !== 'lessons' || lesson.idx >= lesson.l.seq.length) return;
+    const target = lesson.l.seq[lesson.idx];
+    if (m === target.midi) {
+      lesson.idx++;
+      renderLane(lessonLane, lesson.l.seq, lesson.idx);
+      if (lesson.idx >= lesson.l.seq.length) {
+        setHint(null);
+        const done = store.get('lessons', {}); done[lesson.i] = true; store.set('lessons', done);
+        const next = lesson.i + 1 < LESSONS.length ? ` Up next: <b>${LESSONS[lesson.i + 1].title}</b>.` : ' You finished every lesson — try the songs!';
+        lessonFeedback.innerHTML = '✅ Lesson complete!' + next;
+        lessonFeedback.className = 'feedback good';
+      } else {
+        setHint(lesson.l.seq[lesson.idx].midi);
+        lessonFeedback.textContent = 'Good — keep going.'; lessonFeedback.className = 'feedback good';
+      }
+    } else {
+      flash(m, 'wrong');
+      lessonFeedback.textContent = `That was ${midiToName(m)} — the next note is ${target.name}.`;
+      lessonFeedback.className = 'feedback bad';
+    }
+  });
+
+  // ---------- Ear training ----------
+  const quizChoices = document.getElementById('quizChoices');
+  const quizFeedback = document.getElementById('quizFeedback');
+  const quizSharps = document.getElementById('quizSharps');
+  let quiz = { target: null, answered: true, right: 0, total: 0, streak: 0 };
+
+  function renderChoices() {
+    const names = quizSharps.checked ? NAMES : NAMES.filter(n => !n.includes('#'));
+    quizChoices.innerHTML = names.map(n => `<button class="btn" data-n="${n}">${n}</button>`).join('');
+  }
+  quizSharps.addEventListener('change', renderChoices);
+  document.getElementById('quizRef').addEventListener('click', () => playSequence(parse('C4'), 60));
+  document.getElementById('quizNew').addEventListener('click', () => {
+    const pool = [];
+    for (let m = nameToMidi('C4'); m <= nameToMidi('B4'); m++) if (quizSharps.checked || !isBlack(m)) pool.push(m);
+    let t;
+    do { t = pool[Math.floor(Math.random() * pool.length)]; } while (pool.length > 1 && t === quiz.target);
+    quiz.target = t; quiz.answered = false;
+    document.getElementById('quizReplay').disabled = false;
+    quizFeedback.textContent = 'Which note was that? Click a letter or play it on the keyboard.';
+    quizFeedback.className = 'feedback';
+    playQuizNote();
+  });
+  document.getElementById('quizReplay').addEventListener('click', playQuizNote);
+  function playQuizNote() {
+    if (quiz.target == null) return;
+    // Play without lighting up the key so it isn't a giveaway
+    stopPlayback(); ensureAudio();
+    noteOn(quiz.target, 0.8);
+    const t = quiz.target;
+    playTimers.push(setTimeout(() => noteOff(t), 900));
+  }
+  function answerQuiz(name) {
+    if (quiz.answered || quiz.target == null) return;
+    quiz.answered = true; quiz.total++;
+    const correct = NAMES[quiz.target % 12];
+    if (name === correct) {
+      quiz.right++; quiz.streak++;
+      quizFeedback.textContent = `✅ Yes, that was ${correct}!` + (quiz.streak >= 3 ? ` 🔥 ${quiz.streak} in a row` : '');
+      quizFeedback.className = 'feedback good';
+      flash(quiz.target, 'down', 600);
+    } else {
+      quiz.streak = 0;
+      quizFeedback.textContent = `❌ Not quite — it was ${correct}. Listen again with Replay.`;
+      quizFeedback.className = 'feedback bad';
+      flash(quiz.target, 'hint', 1200);
+    }
+    document.getElementById('quizScore').textContent = `${quiz.right} / ${quiz.total}`;
+    document.getElementById('quizStreak').textContent = quiz.streak;
+  }
+  quizChoices.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    answerQuiz(b.dataset.n);
+  });
+  listeners.push((m) => {
+    if (activeTab === 'quiz' && !quiz.answered) answerQuiz(NAMES[m % 12]);
+  });
+
+  // ---------- Tabs ----------
+  let activeTab = 'play';
+  document.querySelectorAll('nav.tabs button').forEach(b => b.addEventListener('click', () => {
+    activeTab = b.dataset.tab;
+    document.querySelectorAll('nav.tabs button').forEach(x => x.classList.toggle('active', x === b));
+    document.querySelectorAll('main > section').forEach(s => s.hidden = s.id !== 'tab-' + activeTab);
+    stopPlayback(); setButtons(false);
+    // Restore the hint for whatever practice is in progress on this tab
+    if (activeTab === 'songs' && practice) { setHint(practice.song.seq[practice.idx].midi); setButtons(true); }
+    else if (activeTab === 'lessons' && lesson && lesson.idx < lesson.l.seq.length) setHint(lesson.l.seq[lesson.idx].midi);
+    else setHint(null);
+  }));
+
+  // ---------- Settings ----------
+  const optSustain = document.getElementById('optSustain');
+  document.getElementById('optNotes').addEventListener('change', e => document.body.classList.toggle('show-notes', e.target.checked));
+  document.getElementById('optKbd').addEventListener('change', e => document.body.classList.toggle('show-kbd', e.target.checked));
+  document.getElementById('optSound').addEventListener('change', e => { sound = e.target.value; });
+  document.getElementById('optVolume').addEventListener('input', e => {
+    volume = +e.target.value; if (master) master.gain.value = volume;
+  });
+  optSustain.addEventListener('change', () => { if (!optSustain.checked) releaseSustained(); sustainOn = optSustain.checked; });
+
+  // ---------- MIDI ----------
+  const midiStatus = document.getElementById('midiStatus');
+  if (navigator.requestMIDIAccess) {
+    navigator.requestMIDIAccess().then(access => {
+      const hook = () => {
+        let n = 0;
+        access.inputs.forEach(input => { n++; input.onmidimessage = onMidi; });
+        midiStatus.textContent = n ? `🎛 MIDI connected (${n})` : '';
+      };
+      hook(); access.onstatechange = hook;
+    }).catch(() => {});
+  }
+  function onMidi(e) {
+    const [st, note, vel] = e.data, cmd = st & 0xf0;
+    if (cmd === 0xb0 && note === 64) { // sustain pedal
+      if (vel >= 64) sustainOn = true; else releaseSustained();
+      return;
+    }
+    if (note < LOW - 24 || note > HIGH + 24) return;
+    if (cmd === 0x90 && vel > 0) press(note, 'midi', vel / 127);
+    else if (cmd === 0x80 || (cmd === 0x90 && vel === 0)) release(note);
+  }
+
+  // ---------- Init ----------
+  buildKeyboard();
+  fillSongs();
+  resetSongView();
+  renderLessonList();
+  renderChoices();
+  // Start with Middle C in view on narrow screens
+  const scroller = document.querySelector('.kb-scroll');
+  requestAnimationFrame(() => { const c = keyEls[nameToMidi('C4')]; scroller.scrollLeft = c.offsetLeft - scroller.clientWidth / 3; });
+})();
+</script>
+</body>
+</html>
