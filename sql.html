@@ -1,60 +1,317 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>SQL Snippet Safe Capture</title>
-  <!-- Basic security header (browsers respect this when served over HTTP) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self';">
-  <style>
-    body { font-family: system-ui, sans-serif; background:#f5f7fa; padding:20px; }
-    h1 { margin-top:0; font-size:22px; }
-    textarea { width:100%; min-height:160px; padding:8px; font-family: monospace; }
-    button { margin-top:10px; padding:8px 12px; border:none; border-radius:6px;
-             background:#007aff; color:#fff; cursor:pointer; font-size:13px; }
-    button:hover { background:#005fcb; }
-    pre { background:#111; color:#0f0; padding:10px; border-radius:6px; margin-top:15px; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TasteTO prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F4F2;--panel:#FFFFFF;--ink:#1D2125;--muted:#5E666D;--line:#DADDD8;--red:#D52B1E;--redbg:#FBE4E1;--lake:#2B6A8F;--lakebg:#E2EEF5;--plum:#7B2F5B;--plumbg:#F4E3EC;--map:#E7EAE4;--street:#FFFFFF;--fog:rgba(29,33,37,.55);--on:#FFFFFF;color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141618;--panel:#1E2124;--ink:#ECEEEC;--muted:#A3AAB0;--line:#33383C;--red:#EF4A3C;--redbg:#3A1C19;--lake:#6FB0D6;--lakebg:#1B2A33;--plum:#D58AB4;--plumbg:#35202B;--map:#25292C;--street:#3A3F43;--fog:rgba(0,0,0,.62);--on:#FFFFFF;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141618;--panel:#1E2124;--ink:#ECEEEC;--muted:#A3AAB0;--line:#33383C;--red:#EF4A3C;--redbg:#3A1C19;--lake:#6FB0D6;--lakebg:#1B2A33;--plum:#D58AB4;--plumbg:#35202B;--map:#25292C;--street:#3A3F43;--fog:rgba(0,0,0,.62);--on:#FFFFFF;color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--ink);font-family:"Archivo",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.45}
+#root{height:100%;display:flex;justify-content:center}
+.app{position:relative;width:100%;max-width:430px;height:100%;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+@media (min-width:600px){#root{padding:24px 0}.app{border:1px solid var(--line);border-radius:28px;max-height:880px}}
+.top{padding:14px 18px 10px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.title{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0;line-height:1.1}
+.sub{color:var(--muted);font-size:13px;margin:2px 0 0}
+main{flex:1;overflow-y:auto;padding:0 18px 24px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--lake);outline-offset:2px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:500}
+.btn.solid{background:var(--red);border-color:var(--red);color:var(--on)}
+.btn.plum{background:var(--plum);border-color:var(--plum);color:var(--on)}
+.map{border-radius:20px;overflow:hidden;background:var(--map);border:1px solid var(--line)}
+.pin{cursor:pointer}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:14px 16px;margin-top:12px;transition:transform .25s ease}
+.grab{width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 10px}
+.row{display:flex;gap:12px;align-items:center}
+.tile{border-radius:14px;display:flex;align-items:flex-end;padding:10px;font-weight:600;font-size:14px;line-height:1.2;overflow:hidden;position:relative;background-size:cover;background-position:center}
+.tile span{position:relative;background:var(--panel);color:var(--ink);border-radius:8px;padding:3px 7px;font-size:12px}
+.chip{display:inline-block;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:500;margin:0 6px 6px 0}
+.chip.red{background:var(--redbg);color:var(--red)}
+.chip.plum{background:var(--plumbg);color:var(--plum)}
+.chip.lake{background:var(--lakebg);color:var(--lake)}
+.chip.ghost{border:1px solid var(--line);color:var(--muted);background:transparent}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.nav{display:flex;justify-content:space-around;align-items:center;border-top:1px solid var(--line);background:var(--panel);padding:8px 6px 10px}
+.tab{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--muted);padding:4px 8px;min-width:56px}
+.tab.on{color:var(--red);font-weight:600}
+.plus{width:56px;height:56px;border-radius:50%;background:var(--red);color:var(--on);border:0;margin-top:-26px;display:flex;align-items:center;justify-content:center;border:4px solid var(--bg)}
+.sheetwrap{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;z-index:20}
+.sheet{background:var(--panel);width:100%;border-radius:24px 24px 0 0;padding:14px 18px 22px;max-height:88%;overflow-y:auto;animation:up .25s ease}
+@keyframes up{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.sheet,.banner{animation:none}.card{transition:none}}
+label{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px}
+input[type=text],textarea,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+textarea{min-height:70px;resize:vertical}
+.rates{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}
+.rate{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 0;font-size:14px;font-weight:600}
+.rate.on{background:var(--red);border-color:var(--red);color:var(--on)}
+.err{color:var(--red);font-size:13px;margin:6px 0 0}
+.banner{position:absolute;left:12px;right:12px;top:12px;z-index:15;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:12px 14px;animation:up .3s ease}
+.toast{position:absolute;left:50%;transform:translateX(-50%);bottom:92px;background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;z-index:30}
+.feed{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.av{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px}
+.noise{display:inline-flex;gap:3px;align-items:flex-end;vertical-align:middle;margin-right:6px}
+.noise i{display:block;width:4px;background:var(--line);border-radius:2px}
+.noise i.on{background:var(--plum)}
+h3{font-size:17px;margin:0;font-weight:600;letter-spacing:-.01em}
+.muted{color:var(--muted);font-size:13px;margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
 </head>
 <body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
+<script type="text/babel" data-presets="react">
+const {useState,useEffect,useRef}=React;
 
-<h1>Secure SQL Capture (Front-End Only)</h1>
+const SPOTS=[
+{id:'home',name:'Home base',cat:'Home',area:'Your place',x:222,y:135,home:true},
+{id:'khao',name:'Khao San Road',cat:'Thai',area:'Adelaide and Charlotte',x:160,y:135,tone:'#E9B44C'},
+{id:'salus',name:'Salus Fresh Foods',cat:'Healthy bowls',area:'Downtown',x:245,y:185,tone:'#7FB069'},
+{id:'lantern',name:'Lantern Room',cat:'Cocktail bar',area:'Queen West',x:80,y:40,tone:'#B5838D',date:true,vibe:['Candlelit','Intimate'],noise:1,note:'Book the corner booth. Go after 8.'},
+{id:'marrow',name:'Marrow and Vine',cat:'Wine bar',area:'King West',x:62,y:185,tone:'#8E5572',date:true,vibe:['Natural wine','Small plates'],noise:2,note:'Walk-ins only on Thursdays.'},
+{id:'ash',name:'Ash and Ember',cat:'Wood-fired grill',area:'Front Street',x:170,y:278,tone:'#C8553D',date:true,vibe:['Open kitchen','Dress up a bit'],noise:2,note:'Ask for the chef’s counter.'},
+{id:'kiln',name:'Kiln Coffee',cat:'Coffee',area:'Richmond',x:292,y:88,tone:'#9C6644'}
+];
+const FRIENDS=[
+{who:'Maya',col:'#2B6A8F',spot:'lantern',dish:'Smoked old fashioned',rating:9,text:'Perfect first-date spot. Dark, quiet, great drinks.'},
+{who:'Dev',col:'#4E8A57',spot:'ash',dish:'Half chicken',rating:8,text:'Get the charred cabbage too.'},
+{who:'Priya',col:'#7B2F5B',spot:'kiln',dish:'Cortado',rating:7,text:'Good laptop spot on weekends.'},
+{who:'Dev',col:'#4E8A57',spot:'salus',dish:'Chicken bowl',rating:7,text:'Chicken’s fine. Skip the fish.'}
+];
+const SEED=[
+{id:1,spot:'khao',dish:'Khao soi',rating:9,review:'Sample entry. Edit with what you actually had.',photo:null,date:'Oct 30'},
+{id:2,spot:'salus',dish:'Salmon bowl',rating:2,review:'The salmon was horrible.',photo:null,date:'Nov 2'}
+];
+const spotBy=id=>SPOTS.find(s=>s.id===id);
+const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 
-<textarea id="sqlInput" placeholder="Paste your SQL here..."></textarea>
-<br>
-<button onclick="previewSql()">Preview Safely</button>
-<button onclick="downloadSql()">Download .sql</button>
+const Icon=({d,size=22})=>(<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>);
+const I={
+map:<Icon d={<><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></>}/>,
+heart:<Icon d={<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>}/>,
+plus:<Icon size={26} d={<path d="M12 5v14M5 12h14"/>}/>,
+users:<Icon d={<><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M21 20c0-2.6-1.6-4.8-4-5.6"/></>}/>,
+photos:<Icon d={<><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></>}/>
+};
 
-<pre id="preview"></pre>
+function Tile({log,h=120}){
+  const s=spotBy(log.spot);
+  return (<div className="tile" style={{height:h,background:log.photo?`center/cover url(${log.photo})`:s.tone}}>
+    {!log.photo && <svg width="60" height="60" viewBox="0 0 60 60" style={{position:'absolute',right:10,top:10,opacity:.35}} aria-hidden="true"><circle cx="30" cy="30" r="26" fill="none" stroke="#fff" strokeWidth="3"/><circle cx="30" cy="30" r="16" fill="#fff"/></svg>}
+    <span>{log.dish} · {log.rating}/10</span>
+  </div>);
+}
 
-<script>
-  // Escape HTML so SQL shows safely in the preview (prevents XSS if you paste weird stuff)
-  function escapeHtml(str) {
-    return str
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-  }
+function MapView({logs,selected,setSelected,openAdd,saved,toggleSave,simulate,openReserve}){
+  const visited=new Set(logs.map(l=>l.spot));
+  const clear=SPOTS.filter(s=>s.home||visited.has(s.id));
+  const s=selected?spotBy(selected):null;
+  const mine=s?logs.filter(l=>l.spot===s.id):[];
+  const theirs=s?FRIENDS.filter(f=>f.spot===s.id):[];
+  return (<>
+    <div className="map">
+      <svg viewBox="0 0 320 300" width="100%" role="img" aria-label="Map of downtown Toronto. Fog clears around spots you’ve logged." style={{display:'block'}}>
+        <defs><mask id="fog"><rect width="320" height="300" fill="white"/>{clear.map(c=><circle key={c.id} cx={c.x} cy={c.y} r="58" fill="black"/>)}</mask></defs>
+        <g stroke="var(--street)" strokeWidth="7" strokeLinecap="round">
+          {[40,88,135,185,232,278].map(y=><line key={y} x1="0" y1={y} x2="320" y2={y}/>)}
+          {[30,128,195,262].map(x=><line key={x} x1={x} y1="0" x2={x} y2="300"/>)}
+        </g>
+        <g fontSize="10" fill="var(--muted)" fontFamily="Archivo">
+          <text x="268" y="34">Queen</text><text x="262" y="129">Adelaide</text><text x="8" y="178">King</text><text x="276" y="272">Front</text><text x="132" y="296">Spadina</text><text x="34" y="296">Bathurst</text>
+        </g>
+        <rect width="320" height="300" fill="var(--fog)" mask="url(#fog)"/>
+        {SPOTS.map(p=>{
+          const v=visited.has(p.id), on=selected===p.id;
+          const fill=p.home?'var(--ink)':v?'var(--red)':p.date?'var(--plum)':'var(--panel)';
+          return (<g key={p.id} className="pin" onClick={()=>setSelected(p.id)} role="button" tabIndex="0" aria-label={p.name} onKeyDown={e=>{if(e.key==='Enter')setSelected(p.id)}}>
+            {on && <circle cx={p.x} cy={p.y} r="21" fill="none" stroke="var(--red)" strokeWidth="2"/>}
+            <circle cx={p.x} cy={p.y} r={p.home?12:14} fill={fill} stroke={v||p.home||p.date?'var(--panel)':'var(--muted)'} strokeWidth="2.5"/>
+            <text x={p.x} y={p.y+4.5} textAnchor="middle" fontSize="12" fontWeight="700" fill={v||p.home||p.date?'#fff':'var(--ink)'} fontFamily="Archivo">{p.home?'H':p.name[0]}</text>
+          </g>);
+        })}
+      </svg>
+    </div>
+    <div style={{display:'flex',gap:14,flexWrap:'wrap',margin:'10px 2px 0',fontSize:12,color:'var(--muted)'}}>
+      <span><b style={{color:'var(--red)'}}>●</b> Logged</span><span><b style={{color:'var(--plum)'}}>●</b> Date night idea</span><span>○ Not yet tried</span>
+    </div>
+    {s ? (<div className="card">
+      <div className="grab"/>
+      <div className="row" style={{justifyContent:'space-between',alignItems:'flex-start'}}>
+        <div><h3>{s.name}</h3><p className="muted">{s.cat} · {s.area}</p></div>
+        {!s.home && <button className="btn solid" onClick={()=>openAdd({spot:s.id})}>Log a visit</button>}
+      </div>
+      {s.home && <p className="muted" style={{marginTop:8}}>Your Toronto starts here. The fog clears outward as you log spots.</p>}
+      {mine.length>0 && <><p className="muted" style={{margin:'14px 0 8px'}}>Your visits</p>
+        <div className="grid">{mine.map(l=><div key={l.id}><Tile log={l} h={100}/>{l.review && <p className="muted" style={{marginTop:6}}>“{l.review}”</p>}{l.rating<=3 && <span className="chip red" style={{marginTop:6}}>Skip next time</span>}</div>)}</div></>}
+      {theirs.length>0 && <><p className="muted" style={{margin:'14px 0 6px'}}>From friends</p>
+        {theirs.map((f,i)=><p key={i} style={{margin:'0 0 6px',fontSize:14}}><b>{f.who}</b> had the {f.dish.toLowerCase()} · {f.rating}/10 · <span className="muted" style={{display:'inline'}}>{f.text}</span></p>)}</>}
+      {!s.home && mine.length===0 && theirs.length===0 && <p className="muted" style={{marginTop:10}}>No visits yet. This one’s still in the fog.</p>}
+      {!s.home && <div style={{display:'flex',gap:8,marginTop:12,flexWrap:'wrap'}}><button className="btn" onClick={()=>toggleSave(s.id)}>{saved.includes(s.id)?'Saved for date night':'Save for date night'}</button>{(s.date||saved.includes(s.id)) && <button className="btn plum" onClick={()=>openReserve(s.id)}>Reserve for 2</button>}</div>}
+    </div>) : (<div className="card"><div className="grab"/><h3>Tap a pin</h3><p className="muted">Or try the reminder that shows up 30 minutes after you leave a restaurant.</p>
+      <button className="btn" style={{marginTop:10}} onClick={simulate}>Simulate leaving Khao San Road</button></div>)}
+  </>);
+}
 
-  function previewSql() {
-    const sql = document.getElementById("sqlInput").value || "";
-    document.getElementById("preview").innerHTML = escapeHtml(sql);
-  }
+function DateNight({saved,toggleSave,notes,setNote,planned,togglePlanned,openAdd,openReserve,bookings}){
+  const list=SPOTS.filter(s=>s.date||saved.includes(s.id)).filter(s=>!s.home);
+  return (<>{list.map(s=>(<div className="card" key={s.id}>
+    <div className="row" style={{justifyContent:'space-between',alignItems:'flex-start'}}>
+      <div><h3>{s.name}</h3><p className="muted">{s.cat} · {s.area}</p></div>
+      <button className={'btn'+(planned.includes(s.id)?' plum':'')} onClick={()=>togglePlanned(s.id)}>{planned.includes(s.id)?'Planned':'Plan it'}</button>
+    </div>
+    <div style={{marginTop:10}}>{(s.vibe||['Saved by you']).map(v=><span key={v} className="chip plum">{v}</span>)}</div>
+    {s.noise && <p className="muted"><span className="noise" aria-hidden="true">{[1,2,3].map(n=><i key={n} className={n<=s.noise?'on':''} style={{height:4+n*4}}/>)}</span>{['','Quiet','Lively','Loud'][s.noise]}</p>}
+    {bookings[s.id] && <p style={{margin:'10px 0 0',fontSize:14,color:'var(--plum)',fontWeight:600}}>Booked: {bookings[s.id].day.toLowerCase()} at {bookings[s.id].time} pm, table for {bookings[s.id].party}</p>}
+    <label htmlFor={'n'+s.id}>Planning notes</label>
+    <textarea id={'n'+s.id} value={notes[s.id]??(s.note||'')} onChange={e=>setNote(s.id,e.target.value)} placeholder="Reservation time, what to order, what to wear"/>
+    <div style={{display:'flex',gap:8,marginTop:10}}>
+      <button className="btn plum" onClick={()=>openReserve(s.id)}>{bookings[s.id]?'Change booking':'Reserve for 2'}</button>
+      <button className="btn" onClick={()=>openAdd({spot:s.id})}>Log the date</button>
+      {saved.includes(s.id) && !s.date && <button className="btn" onClick={()=>toggleSave(s.id)}>Remove</button>}
+    </div>
+  </div>))}</>);
+}
 
-  function downloadSql() {
-    const sql = document.getElementById("sqlInput").value || "";
-    if (!sql.trim()) {
-      alert("Nothing to download – paste some SQL first.");
-      return;
-    }
-    const blob = new Blob([sql], { type: "text/sql" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "snippet.sql";
-    a.click();
-    URL.revokeObjectURL(url);
-  }
+function Feed({logs}){
+  const [f,setF]=useState('all');const [open,setOpen]=useState(null);
+  const shown=logs.filter(l=>f==='all'||(f==='loved'?l.rating>=8:l.rating<=3));
+  return (<>
+    <div style={{margin:'4px 0 12px'}}>{[['all','All'],['loved','Loved'],['skip','Skip']].map(([k,t])=><button key={k} className={'chip ghost'+(f===k?' on':'')} onClick={()=>setF(k)}>{t}</button>)}</div>
+    {shown.length===0 && <p className="muted">Nothing here yet. Tap + to log a meal.</p>}
+    <div className="grid">{shown.map(l=>{const s=spotBy(l.spot);return (<button key={l.id} onClick={()=>setOpen(open===l.id?null:l.id)} style={{background:'none',border:0,padding:0,textAlign:'left',gridColumn:open===l.id?'1 / -1':'auto'}}>
+      <Tile log={l} h={open===l.id?220:140}/>
+      <p style={{margin:'6px 0 0',fontWeight:600,fontSize:14}}>{s.name}</p>
+      <p className="muted">{l.date}</p>
+      {open===l.id && l.review && <p style={{margin:'6px 0 0',fontSize:14}}>“{l.review}”</p>}
+    </button>)})}</div>
+  </>);
+}
+
+function Friends({toggleSave,saved,openSpot}){
+  return (<>{FRIENDS.map((f,i)=>{const s=spotBy(f.spot);return (<div className="feed" key={i}>
+    <div className="av" style={{background:f.col,color:'#fff'}}>{f.who[0]}</div>
+    <div style={{flex:1,minWidth:0}}>
+      <p style={{margin:0,fontSize:14}}><b>{f.who}</b> rated {f.dish.toLowerCase()} at <b>{s.name}</b></p>
+      <p className="muted" style={{margin:'2px 0 6px'}}>{f.rating}/10 · {f.text}</p>
+      <div style={{display:'flex',gap:8}}>
+        <button className="btn" onClick={()=>openSpot(s.id)}>See on map</button>
+        <button className="btn" onClick={()=>toggleSave(s.id)}>{saved.includes(s.id)?'Saved':'Save'}</button>
+      </div>
+    </div></div>)})}
+    <div className="card"><h3>Dev’s list: patios for spring</h3><p className="muted">6 spots · shared with you</p><button className="btn" style={{marginTop:10}}>Open list</button></div>
+  </>);
+}
+
+function ReserveSheet({spot,onClose,onBook}){
+  const s=spotBy(spot);
+  const [party,setParty]=useState(2);const [day,setDay]=useState('Tonight');const [time,setTime]=useState('');const [done,setDone]=useState(false);const [err,setErr]=useState('');
+  const times=['6:30','7:00','7:45','8:15','9:00'];
+  const confirm=()=>{if(!time){setErr('Pick a time first.');return}setDone(true);onBook({spot,party,day,time})};
+  return (<div className="sheetwrap" onClick={onClose}><div className="sheet" role="dialog" aria-label={'Reserve at '+s.name} onClick={e=>e.stopPropagation()}>
+    <div className="grab"/>
+    {done ? (<div style={{textAlign:'center',padding:'18px 0 6px'}}>
+      <div style={{width:56,height:56,borderRadius:'50%',background:'var(--plum)',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 12px'}}><Icon size={28} d={<path d="m5 12 5 5 9-10"/>}/></div>
+      <h3>Table for {party} booked</h3>
+      <p className="muted" style={{marginTop:4}}>{s.name}, {day.toLowerCase()} at {time} pm</p>
+      <p className="muted" style={{marginTop:10,fontSize:12}}>Demo only. No real reservation was made.</p>
+      <button className="btn plum" style={{width:'100%',marginTop:16,padding:12}} onClick={onClose}>Done</button>
+    </div>) : (<>
+    <div className="row" style={{justifyContent:'space-between'}}><h3>Reserve at {s.name}</h3><button className="btn" onClick={onClose}>Cancel</button></div>
+    <label>Party size</label>
+    <div>{[2,3,4].map(n=><button key={n} className={'chip ghost'+(party===n?' on':'')} onClick={()=>setParty(n)}>{n} people</button>)}</div>
+    <label>Day</label>
+    <div>{['Tonight','Tomorrow','Saturday'].map(d=><button key={d} className={'chip ghost'+(day===d?' on':'')} onClick={()=>setDay(d)}>{d}</button>)}</div>
+    <label>Time</label>
+    <div>{times.map(t=><button key={t} className={'chip ghost'+(time===t?' on':'')} onClick={()=>{setTime(t);setErr('')}}>{t} pm</button>)}</div>
+    {err && <p className="err">{err}</p>}
+    <button className="btn plum" style={{width:'100%',marginTop:16,padding:12}} onClick={confirm}>Book table</button>
+    </>)}
+  </div></div>);
+}
+
+function AddSheet({init,onClose,onSave}){
+  const [spot,setSpot]=useState(init.spot||'khao');
+  const [dish,setDish]=useState('');const [rating,setRating]=useState(init.rating||0);
+  const [review,setReview]=useState('');const [photo,setPhoto]=useState(null);const [err,setErr]=useState('');
+  const fileRef=useRef();
+  const pickPhoto=e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const sc=Math.min(1,600/img.width);c.width=img.width*sc;c.height=img.height*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);setPhoto(c.toDataURL('image/jpeg',.7))};img.src=r.result};r.readAsDataURL(file)};
+  const submit=()=>{if(!dish.trim()){setErr('Add what you had first.');return}if(!rating){setErr('Tap a rating first.');return}onSave({spot,dish:dish.trim(),rating,review:review.trim(),photo})};
+  return (<div className="sheetwrap" onClick={onClose}><div className="sheet" role="dialog" aria-label="Log a visit" onClick={e=>e.stopPropagation()}>
+    <div className="grab"/>
+    <div className="row" style={{justifyContent:'space-between'}}><h3>Log a visit</h3><button className="btn" onClick={onClose}>Cancel</button></div>
+    <button onClick={()=>fileRef.current.click()} style={{marginTop:14,width:'100%',height:150,borderRadius:16,border:'1.5px dashed var(--line)',background:photo?`center/cover url(${photo})`:'var(--bg)',color:'var(--muted)',fontSize:14}}>{photo?'':'Add a photo'}</button>
+    <input ref={fileRef} type="file" accept="image/*" className="sr" onChange={pickPhoto} aria-label="Photo"/>
+    <label htmlFor="sp">Spot</label>
+    <select id="sp" value={spot} onChange={e=>setSpot(e.target.value)}>{SPOTS.filter(s=>!s.home).map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select>
+    <label htmlFor="di">What you had</label>
+    <input id="di" type="text" value={dish} onChange={e=>{setDish(e.target.value);setErr('')}} placeholder="Khao soi"/>
+    <label>Rating</label>
+    <div className="rates">{[1,2,3,4,5,6,7,8,9,10].map(n=><button key={n} className={'rate'+(rating===n?' on':'')} onClick={()=>{setRating(n);setErr('')}} aria-label={n+' out of 10'}>{n}</button>)}</div>
+    <label htmlFor="rv">Review (optional)</label>
+    <textarea id="rv" value={review} onChange={e=>setReview(e.target.value)} placeholder="What would you tell a friend?"/>
+    {err && <p className="err">{err}</p>}
+    <button className="btn solid" style={{width:'100%',marginTop:16,padding:'12px'}} onClick={submit}>Save visit</button>
+  </div></div>);
+}
+
+function App(){
+  const [tab,setTab]=useState('map');
+  const [logs,setLogs]=useState(()=>load('tto-logs',SEED));
+  const [saved,setSaved]=useState(()=>load('tto-saved',[]));
+  const [notes,setNotes]=useState(()=>load('tto-notes',{}));
+  const [planned,setPlanned]=useState(()=>load('tto-planned',[]));
+  const [selected,setSelected]=useState('salus');
+  const [add,setAdd]=useState(null);const [nudge,setNudge]=useState(false);const [toast,setToast]=useState('');
+  const [reserve,setReserve]=useState(null);const [bookings,setBookings]=useState(()=>load('tto-bookings',{}));
+  useEffect(()=>save('tto-bookings',bookings),[bookings]);
+  useEffect(()=>save('tto-logs',logs),[logs]);useEffect(()=>save('tto-saved',saved),[saved]);
+  useEffect(()=>save('tto-notes',notes),[notes]);useEffect(()=>save('tto-planned',planned),[planned]);
+  useEffect(()=>{if(!toast)return;const t=setTimeout(()=>setToast(''),2200);return()=>clearTimeout(t)},[toast]);
+  const toggle=(arr,set)=>id=>set(arr.includes(id)?arr.filter(x=>x!==id):[...arr,id]);
+  const simulate=()=>{setToast('Leaving… reminder in 30 min (sped up)');setTimeout(()=>setNudge(true),2500)};
+  const onSave=v=>{const d=new Date();setLogs([{id:Date.now(),date:d.toLocaleDateString('en-CA',{month:'short',day:'numeric'}),...v},...logs]);setAdd(null);setSelected(v.spot);setTab('map');setToast('Visit saved')};
+  const heads={map:['Your Toronto',`${new Set(logs.map(l=>l.spot)).size} spots logged`],date:['Date night with Sarah','Ideas, vibes, and plans'],feed:['Your log','Every meal, so you remember the names'],friends:['Friends','Where they’ve been eating']};
+  return (<div className="app">
+    {nudge && <div className="banner" role="alert">
+      <div className="row" style={{justifyContent:'space-between'}}><b style={{fontSize:14}}>How was Khao San Road?</b><button className="btn" style={{padding:'3px 10px'}} onClick={()=>setNudge(false)}>Later</button></div>
+      <p className="muted" style={{margin:'2px 0 8px'}}>You left 30 minutes ago. Tap a rating to log it.</p>
+      <div className="rates">{[1,2,3,4,5,6,7,8,9,10].map(n=><button key={n} className="rate" style={{padding:'6px 0',fontSize:13}} onClick={()=>{setNudge(false);setAdd({spot:'khao',rating:n})}}>{n}</button>)}</div>
+    </div>}
+    <div className="top"><div><h1 className="title">{heads[tab][0]}</h1><p className="sub">{heads[tab][1]}</p></div><b style={{color:'var(--red)',fontSize:13}}>TasteTO</b></div>
+    <main>
+      {tab==='map' && <MapView logs={logs} selected={selected} setSelected={setSelected} openAdd={setAdd} saved={saved} toggleSave={toggle(saved,setSaved)} simulate={simulate} openReserve={setReserve}/>}
+      {tab==='date' && <DateNight saved={saved} toggleSave={toggle(saved,setSaved)} notes={notes} setNote={(id,v)=>setNotes({...notes,[id]:v})} planned={planned} togglePlanned={toggle(planned,setPlanned)} openAdd={setAdd} openReserve={setReserve} bookings={bookings}/>}
+      {tab==='feed' && <Feed logs={logs}/>}
+      {tab==='friends' && <Friends toggleSave={toggle(saved,setSaved)} saved={saved} openSpot={id=>{setSelected(id);setTab('map')}}/>}
+    </main>
+    <nav className="nav" aria-label="Main">
+      <button className={'tab'+(tab==='map'?' on':'')} onClick={()=>setTab('map')}>{I.map}Map</button>
+      <button className={'tab'+(tab==='date'?' on':'')} onClick={()=>setTab('date')}>{I.heart}Date night</button>
+      <button className="plus" aria-label="Log a visit" onClick={()=>setAdd({})}>{I.plus}</button>
+      <button className={'tab'+(tab==='feed'?' on':'')} onClick={()=>setTab('feed')}>{I.photos}Log</button>
+      <button className={'tab'+(tab==='friends'?' on':'')} onClick={()=>setTab('friends')}>{I.users}Friends</button>
+    </nav>
+    {add && <AddSheet init={add} onClose={()=>setAdd(null)} onSave={onSave}/>}
+    {reserve && <ReserveSheet spot={reserve} onClose={()=>setReserve(null)} onBook={b=>{setBookings({...bookings,[b.spot]:b});if(!planned.includes(b.spot))setPlanned([...planned,b.spot]);if(!saved.includes(b.spot)&&!spotBy(b.spot).date)setSaved([...saved,b.spot]);setToast('Table booked')}}/>}
+    {toast && <div className="toast" role="status">{toast}</div>}
+  </div>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
-
 </body>
 </html>
