@@ -6,9 +6,10 @@
 <title>TasteTO prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* Leaflet 1.9.4 CSS, inlined */
+.leaflet-image-layer,.leaflet-layer,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-pane,.leaflet-pane>canvas,.leaflet-pane>svg,.leaflet-tile,.leaflet-tile-container,.leaflet-zoom-box{position:absolute;left:0;top:0}.leaflet-container{overflow:hidden}.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile{-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-user-drag:none}.leaflet-tile::selection{background:0 0}.leaflet-safari .leaflet-tile{image-rendering:-webkit-optimize-contrast}.leaflet-safari .leaflet-tile-container{width:1600px;height:1600px;-webkit-transform-origin:0 0}.leaflet-marker-icon,.leaflet-marker-shadow{display:block}.leaflet-container .leaflet-overlay-pane svg{max-width:none!important;max-height:none!important}.leaflet-container .leaflet-marker-pane img,.leaflet-container .leaflet-shadow-pane img,.leaflet-container .leaflet-tile,.leaflet-container .leaflet-tile-pane img,.leaflet-container img.leaflet-image-layer{max-width:none!important;max-height:none!important;width:auto;padding:0}.leaflet-container img.leaflet-tile{mix-blend-mode:plus-lighter}.leaflet-container.leaflet-touch-zoom{-ms-touch-action:pan-x pan-y;touch-action:pan-x pan-y}.leaflet-container.leaflet-touch-drag{-ms-touch-action:pinch-zoom;touch-action:none;touch-action:pinch-zoom}.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom{-ms-touch-action:none;touch-action:none}.leaflet-container{-webkit-tap-highlight-color:transparent}.leaflet-container a{-webkit-tap-highlight-color:rgba(51,181,229,.4)}.leaflet-tile{filter:inherit;visibility:hidden}.leaflet-tile-loaded{visibility:inherit}.leaflet-zoom-box{width:0;height:0;-moz-box-sizing:border-box;box-sizing:border-box;z-index:800}.leaflet-overlay-pane svg{-moz-user-select:none}.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-shadow-pane{z-index:500}.leaflet-marker-pane{z-index:600}.leaflet-tooltip-pane{z-index:650}.leaflet-popup-pane{z-index:700}.leaflet-map-pane canvas{z-index:100}.leaflet-map-pane svg{z-index:200}.leaflet-vml-shape{width:1px;height:1px}.lvml{behavior:url(#default#VML);display:inline-block;position:absolute}.leaflet-control{position:relative;z-index:800;pointer-events:visiblePainted;pointer-events:auto}.leaflet-bottom,.leaflet-top{position:absolute;z-index:1000;pointer-events:none}.leaflet-top{top:0}.leaflet-right{right:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}.leaflet-control{float:left;clear:both}.leaflet-right .leaflet-control{float:right}.leaflet-top .leaflet-control{margin-top:10px}.leaflet-bottom .leaflet-control{margin-bottom:10px}.leaflet-left .leaflet-control{margin-left:10px}.leaflet-right .leaflet-control{margin-right:10px}.leaflet-fade-anim .leaflet-popup{opacity:0;-webkit-transition:opacity .2s linear;-moz-transition:opacity .2s linear;transition:opacity .2s linear}.leaflet-fade-anim .leaflet-map-pane .leaflet-popup{opacity:1}.leaflet-zoom-animated{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0}svg.leaflet-zoom-animated{will-change:transform}.leaflet-zoom-anim .leaflet-zoom-animated{-webkit-transition:-webkit-transform .25s cubic-bezier(0,0,.25,1);-moz-transition:-moz-transform .25s cubic-bezier(0,0,.25,1);transition:transform .25s cubic-bezier(0,0,.25,1)}.leaflet-pan-anim .leaflet-tile,.leaflet-zoom-anim .leaflet-tile{-webkit-transition:none;-moz-transition:none;transition:none}.leaflet-zoom-anim .leaflet-zoom-hide{visibility:hidden}.leaflet-interactive{cursor:pointer}.leaflet-grab{cursor:-webkit-grab;cursor:-moz-grab;cursor:grab}.leaflet-crosshair,.leaflet-crosshair .leaflet-interactive{cursor:crosshair}.leaflet-control,.leaflet-popup-pane{cursor:auto}.leaflet-dragging .leaflet-grab,.leaflet-dragging .leaflet-grab .leaflet-interactive,.leaflet-dragging .leaflet-marker-draggable{cursor:move;cursor:-webkit-grabbing;cursor:-moz-grabbing;cursor:grabbing}.leaflet-image-layer,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-pane>svg path,.leaflet-tile-container{pointer-events:none}.leaflet-image-layer.leaflet-interactive,.leaflet-marker-icon.leaflet-interactive,.leaflet-pane>svg path.leaflet-interactive,svg.leaflet-image-layer.leaflet-interactive path{pointer-events:visiblePainted;pointer-events:auto}.leaflet-container{background:#ddd;outline-offset:1px}.leaflet-container a{color:#0078a8}.leaflet-zoom-box{border:2px dotted #38f;background:rgba(255,255,255,.5)}.leaflet-container{font-family:"Helvetica Neue",Arial,Helvetica,sans-serif;font-size:12px;font-size:.75rem;line-height:1.5}.leaflet-bar{box-shadow:0 1px 5px rgba(0,0,0,.65);border-radius:4px}.leaflet-bar a{background-color:#fff;border-bottom:1px solid #ccc;width:26px;height:26px;line-height:26px;display:block;text-align:center;text-decoration:none;color:#000}.leaflet-bar a,.leaflet-control-layers-toggle{background-position:50% 50%;background-repeat:no-repeat;display:block}.leaflet-bar a:focus,.leaflet-bar a:hover{background-color:#f4f4f4}.leaflet-bar a:first-child{border-top-left-radius:4px;border-top-right-radius:4px}.leaflet-bar a:last-child{border-bottom-left-radius:4px;border-bottom-right-radius:4px;border-bottom:none}.leaflet-bar a.leaflet-disabled{cursor:default;background-color:#f4f4f4;color:#bbb}.leaflet-touch .leaflet-bar a{width:30px;height:30px;line-height:30px}.leaflet-touch .leaflet-bar a:first-child{border-top-left-radius:2px;border-top-right-radius:2px}.leaflet-touch .leaflet-bar a:last-child{border-bottom-left-radius:2px;border-bottom-right-radius:2px}.leaflet-control-zoom-in,.leaflet-control-zoom-out{font:bold 18px 'Lucida Console',Monaco,monospace;text-indent:1px}.leaflet-touch .leaflet-control-zoom-in,.leaflet-touch .leaflet-control-zoom-out{font-size:22px}.leaflet-control-layers{box-shadow:0 1px 5px rgba(0,0,0,.4);background:#fff;border-radius:5px}.leaflet-control-layers-toggle{background-image:url(images/layers.png);width:36px;height:36px}.leaflet-retina .leaflet-control-layers-toggle{background-image:url(images/layers-2x.png);background-size:26px 26px}.leaflet-touch .leaflet-control-layers-toggle{width:44px;height:44px}.leaflet-control-layers .leaflet-control-layers-list,.leaflet-control-layers-expanded .leaflet-control-layers-toggle{display:none}.leaflet-control-layers-expanded .leaflet-control-layers-list{display:block;position:relative}.leaflet-control-layers-expanded{padding:6px 10px 6px 6px;color:#333;background:#fff}.leaflet-control-layers-scrollbar{overflow-y:scroll;overflow-x:hidden;padding-right:5px}.leaflet-control-layers-selector{margin-top:2px;position:relative;top:1px}.leaflet-control-layers label{display:block;font-size:13px;font-size:1.08333em}.leaflet-control-layers-separator{height:0;border-top:1px solid #ddd;margin:5px -10px 5px -6px}.leaflet-default-icon-path{background-image:url(images/marker-icon.png)}.leaflet-container .leaflet-control-attribution{background:#fff;background:rgba(255,255,255,.8);margin:0}.leaflet-control-attribution,.leaflet-control-scale-line{padding:0 5px;color:#333;line-height:1.4}.leaflet-control-attribution a{text-decoration:none}.leaflet-control-attribution a:focus,.leaflet-control-attribution a:hover{text-decoration:underline}.leaflet-attribution-flag{display:inline!important;vertical-align:baseline!important;width:1em;height:.6669em}.leaflet-left .leaflet-control-scale{margin-left:5px}.leaflet-bottom .leaflet-control-scale{margin-bottom:5px}.leaflet-control-scale-line{border:2px solid #777;border-top:none;line-height:1.1;padding:2px 5px 1px;white-space:nowrap;-moz-box-sizing:border-box;box-sizing:border-box;background:rgba(255,255,255,.8);text-shadow:1px 1px #fff}.leaflet-control-scale-line:not(:first-child){border-top:2px solid #777;border-bottom:none;margin-top:-2px}.leaflet-control-scale-line:not(:first-child):not(:last-child){border-bottom:2px solid #777}.leaflet-touch .leaflet-bar,.leaflet-touch .leaflet-control-attribution,.leaflet-touch .leaflet-control-layers{box-shadow:none}.leaflet-touch .leaflet-bar,.leaflet-touch .leaflet-control-layers{border:2px solid rgba(0,0,0,.2);background-clip:padding-box}.leaflet-popup{position:absolute;text-align:center;margin-bottom:20px}.leaflet-popup-content-wrapper{padding:1px;text-align:left;border-radius:12px}.leaflet-popup-content{margin:13px 24px 13px 20px;line-height:1.3;font-size:13px;font-size:1.08333em;min-height:1px}.leaflet-popup-content p{margin:17px 0;margin:1.3em 0}.leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-top:-1px;margin-left:-20px;overflow:hidden;pointer-events:none}.leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;pointer-events:auto;-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#fff;color:#333;box-shadow:0 3px 14px rgba(0,0,0,.4)}.leaflet-container a.leaflet-popup-close-button{position:absolute;top:0;right:0;border:none;text-align:center;width:24px;height:24px;font:16px/24px Tahoma,Verdana,sans-serif;color:#757575;text-decoration:none;background:0 0}.leaflet-container a.leaflet-popup-close-button:focus,.leaflet-container a.leaflet-popup-close-button:hover{color:#585858}.leaflet-popup-scrolled{overflow:auto}.leaflet-oldie .leaflet-popup-content-wrapper{-ms-zoom:1}.leaflet-oldie .leaflet-popup-tip{width:24px;margin:0 auto}.leaflet-oldie .leaflet-control-layers,.leaflet-oldie .leaflet-control-zoom,.leaflet-oldie .leaflet-popup-content-wrapper,.leaflet-oldie .leaflet-popup-tip{border:1px solid #999}.leaflet-div-icon{background:#fff;border:1px solid #666}.leaflet-tooltip{position:absolute;padding:6px;background-color:#fff;border:1px solid #fff;border-radius:3px;color:#222;white-space:nowrap;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,.4)}.leaflet-tooltip.leaflet-interactive{cursor:pointer;pointer-events:auto}.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before,.leaflet-tooltip-top:before{position:absolute;pointer-events:none;border:6px solid transparent;background:0 0;content:""}.leaflet-tooltip-bottom{margin-top:6px}.leaflet-tooltip-top{margin-top:-6px}.leaflet-tooltip-bottom:before,.leaflet-tooltip-top:before{left:50%;margin-left:-6px}.leaflet-tooltip-top:before{bottom:0;margin-bottom:-12px;border-top-color:#fff}.leaflet-tooltip-bottom:before{top:0;margin-top:-12px;margin-left:-6px;border-bottom-color:#fff}.leaflet-tooltip-left{margin-left:-6px}.leaflet-tooltip-right{margin-left:6px}.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{top:50%;margin-top:-6px}.leaflet-tooltip-left:before{right:0;margin-right:-12px;border-left-color:#fff}.leaflet-tooltip-right:before{left:0;margin-left:-12px;border-right-color:#fff}@media print{.leaflet-control{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 :root{--bg:#F3F4F2;--panel:#FFFFFF;--ink:#1D2125;--muted:#5E666D;--line:#DADDD8;--red:#D52B1E;--redbg:#FBE4E1;--lake:#2B6A8F;--lakebg:#E2EEF5;--plum:#7B2F5B;--plumbg:#F4E3EC;--map:#E7EAE4;--street:#FFFFFF;--fog:rgba(29,33,37,.55);--on:#FFFFFF;color-scheme:light}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141618;--panel:#1E2124;--ink:#ECEEEC;--muted:#A3AAB0;--line:#33383C;--red:#EF4A3C;--redbg:#3A1C19;--lake:#6FB0D6;--lakebg:#1B2A33;--plum:#D58AB4;--plumbg:#35202B;--map:#25292C;--street:#3A3F43;--fog:rgba(0,0,0,.62);--on:#FFFFFF;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#141618;--panel:#1E2124;--ink:#ECEEEC;--muted:#A3AAB0;--line:#33383C;--red:#EF4A3C;--redbg:#3A1C19;--lake:#6FB0D6;--lakebg:#1B2A33;--plum:#D58AB4;--plumbg:#35202B;--map:#25292C;--street:#3A3F43;--fog:rgba(0,0,0,.62);--on:#FFFFFF;color-scheme:dark}
@@ -44,6 +45,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .pp-img{height:96px;border-radius:10px;background-size:cover;background-position:center;margin-bottom:8px}
 .pp-sub{color:var(--muted);font-size:12px}.pp-meta{font-size:12px;margin:5px 0 7px}
 .leaflet-popup-content a.pp-go{color:var(--lake);font-weight:600;text-decoration:none}
+.snapstat{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--bg);font-size:13px;display:grid;gap:6px}
+.snapstat .ln{display:flex;gap:8px;align-items:baseline}.snapstat .ln b{flex:none;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);width:44px}
+.snapstat .ok{color:var(--ink)}.snapstat .wait{color:var(--muted)}
+.dots::after{content:'';animation:dots 1.2s steps(4) infinite}@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+@media (prefers-reduced-motion:reduce){.dots::after{animation:none;content:'...'}}
+.aichip{display:inline-block;font-size:11px;font-weight:600;color:var(--lake);background:var(--lakebg);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+.snapcta{position:absolute;inset:0;z-index:25;background:var(--fog);display:flex;align-items:center;justify-content:center;padding:24px}
+.snapcta>div{background:var(--panel);border-radius:24px;padding:22px;text-align:center;max-width:320px;width:100%}
+.mapnote{position:absolute;left:10px;right:10px;bottom:10px;z-index:500;background:var(--panel);color:var(--muted);font-size:12px;border-radius:10px;padding:6px 10px;border:1px solid var(--line)}
 .locres{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 10px;margin-top:6px;font-size:13px}
 .pin{cursor:pointer}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:14px 16px;margin-top:12px;transition:transform .25s ease}
@@ -153,20 +163,22 @@ const popupHtml=(sp,logs)=>{const mine=logs.filter(l=>l.spot===sp.id);const ph=m
 function LeafletMap({logs,selected,setSelected,mode,fog,tall,onMoveSpot,tick}){
   const el=useRef(),R=useRef({markers:{},tiles:[]});
   useEffect(()=>{const map=L.map(el.current,{zoomControl:true}).setView(LL0,15);R.current.map=map;R.current.fog=makeFog(map);return()=>map.remove()},[]);
-  useEffect(()=>{const r=R.current;r.tiles.forEach(t=>r.map.removeLayer(t));r.tiles=TILES[mode]();r.tiles.forEach(t=>t.addTo(r.map))},[mode]);
+  const [noTiles,setNoTiles]=useState(false);
+  useEffect(()=>{const r=R.current;r.tiles.forEach(t=>r.map.removeLayer(t));r.tiles=TILES[mode]();let ok=0,bad=0;
+    r.tiles.forEach(t=>{t.on('tileload',()=>{ok++;setNoTiles(false)});t.on('tileerror',()=>{bad++;if(bad>=4&&!ok)setNoTiles(true)});t.addTo(r.map)})},[mode]);
   useEffect(()=>{const r=R.current;setTimeout(()=>r.map.invalidateSize(),280)},[tall]);
   useEffect(()=>{const r=R.current,visited=new Set(logs.map(l=>l.spot));
     for(const id of Object.keys(r.markers))if(!spotBy(id)){r.map.removeLayer(r.markers[id]);delete r.markers[id]}
     for(const p of SPOTS){let mk=r.markers[p.id];
-      if(!mk){mk=L.marker([p.lat,p.lng],{draggable:!!p.custom,title:p.name,riseOnHover:true}).bindPopup('',{maxWidth:240,autoPanPadding:[20,20]}).addTo(r.map);
+      if(!mk){mk=L.marker([p.lat,p.lng],{icon:pinIcon(p,visited.has(p.id),selected===p.id),draggable:!!p.custom,title:p.name,riseOnHover:true}).bindPopup('',{maxWidth:240,autoPanPadding:[20,20]}).addTo(r.map);
         mk.on('click',()=>setSelected(p.id));mk.on('dragend',e=>{const ll=e.target.getLatLng();onMoveSpot(p.id,ll.lat,ll.lng)});r.markers[p.id]=mk}
       mk.setLatLng([p.lat,p.lng]);mk.setIcon(pinIcon(p,visited.has(p.id),selected===p.id));mk.setZIndexOffset(selected===p.id?1000:0);mk.setPopupContent(popupHtml(p,logs))}
     r.fog.set(SPOTS.filter(x=>x.home||visited.has(x.id)).map(x=>[x.lat,x.lng]),fog)},[logs,selected,fog,tick]);
   useEffect(()=>{const mk=selected&&R.current.markers[selected];if(mk&&!mk.isPopupOpen())mk.openPopup()},[selected]);
-  return <div ref={el} className={'lmap'+(tall?' tall':'')} role="application" aria-label="Map of Toronto. Fog clears around spots you’ve logged."/>;
+  return <><div ref={el} className={'lmap'+(tall?' tall':'')} role="application" aria-label="Map of Toronto. Fog clears around spots you’ve logged."/>{noTiles && <div className="mapnote">Map imagery can’t load here. Pins and pop-ups still work.</div>}</>;
 }
 const pics=l=>l.photos&&l.photos.length?l.photos:(l.photo?[l.photo]:[]);
-const shrink=file=>new Promise(res=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const sc=Math.min(1,600/img.width);c.width=img.width*sc;c.height=img.height*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.7))};img.onerror=()=>res(null);img.src=r.result};r.onerror=()=>res(null);r.readAsDataURL(file)});
+const shrink=(file,max=600,q=.7)=>new Promise(res=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const sc=Math.min(1,max/Math.max(img.width,img.height));c.width=img.width*sc;c.height=img.height*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',q))};img.onerror=()=>res(null);img.src=r.result};r.onerror=()=>res(null);r.readAsDataURL(file)});
 const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
 
 const Icon=({d,size=22})=>(<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>);
@@ -174,10 +186,55 @@ const I={
 map:<Icon d={<><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></>}/>,
 heart:<Icon d={<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>}/>,
 plus:<Icon size={26} d={<path d="M12 5v14M5 12h14"/>}/>,
+camera:<Icon size={26} d={<><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.8"/></>}/>,
 users:<Icon d={<><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M21 20c0-2.6-1.6-4.8-4-5.6"/></>}/>,
 photos:<Icon d={<><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></>}/>
 };
 
+// ---------- AI photo identification ----------
+// Two routes: inside a Claude artifact the page asks Claude directly (no key needed);
+// anywhere else it calls the Claude API with the user's own key, stored only in this browser.
+const dataUrlToBlob=d=>{const [h,b]=d.split(',');const bin=atob(b);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new Blob([u],{type:h.slice(5,h.indexOf(';'))})};
+let samplePromise=null;
+const getSample=()=>{if(!samplePromise)samplePromise=(async()=>{try{if(!window.claude||!window.claude.use)return null;const sm=await window.claude.use('sample');if(!sm)return null;const lim=await sm.limits().catch(()=>null);return lim&&lim.images?sm:null}catch(e){return null}})();return samplePromise};
+const getKey=()=>{try{return localStorage.getItem('tto-apikey')||''}catch(e){return ''}};
+const setKey=k=>{try{k?localStorage.setItem('tto-apikey',k):localStorage.removeItem('tto-apikey')}catch(e){}};
+const metersBetween=(a,b)=>{const R=6371000,toR=Math.PI/180,dLat=(b.lat-a.lat)*toR,dLng=(b.lng-a.lng)*toR;const h=Math.sin(dLat/2)**2+Math.cos(a.lat*toR)*Math.cos(b.lat*toR)*Math.sin(dLng/2)**2;return 2*R*Math.asin(Math.sqrt(h))};
+const parseJsonLoose=t=>{try{return JSON.parse(t)}catch(e){}const m=String(t).match(/\{[\s\S]*\}/);if(m){try{return JSON.parse(m[0])}catch(e){}}return null};
+const aiPrompt=places=>`You are helping someone log a restaurant visit from a single phone photo taken in Toronto.
+Places the person already knows (id | name | type | area):
+${places.map(p=>`${p.id} | ${p.name} | ${p.cat} | ${p.area}`).join('\n')||'(none)'}
+
+Look at the photo and reply with only one JSON object, no other text:
+{"isFood": true or false (is this food, a drink, a menu, or a restaurant scene?),
+ "dish": "short dish or drink name, e.g. Khao soi, or empty string",
+ "cuisine": "one or two words, e.g. Thai, Coffee, Wine bar, or empty string",
+ "restaurant": "the restaurant's name ONLY if it is readable in the photo (sign, menu, cup, packaging, receipt), else empty string",
+ "knownPlaceId": "an id from the list above if the photo clearly shows that place, else empty string",
+ "caption": "one short, plain sentence describing what is in the photo"}`;
+async function identifyPhoto(blob,places){
+  const prompt=aiPrompt(places);
+  const sm=await getSample();
+  if(sm){const v=await sm.json(prompt,{images:[blob],modelTier:'quick'});return {...v,via:'claude'}}
+  const key=getKey();if(!key)throw {code:'no_ai'};
+  const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=rej;r.readAsDataURL(blob)});
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2026-10-21',
+      'anthropic-beta':'server-side-fallback-2026-07-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-opus-5-5',max_tokens:4000,fallbacks:'default',output_config:{effort:'low'},
+      messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:blob.type||'image/jpeg',data:b64}},{type:'text',text:prompt}]}]})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw {code:r.status===401?'bad_key':r.status===429?'rate_limited':'api_error',message:(j.error&&j.error.message)||('HTTP '+r.status)};
+  if(j.stop_reason==='refusal')throw {code:'refused'};
+  const text=(j.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('');
+  const v=parseJsonLoose(text);if(!v)throw {code:'invalid_json'};return {...v,via:'api'};
+}
+const aiErrText=e=>({no_ai:'AI is off. Tap “AI” at the top to turn it on.',bad_key:'That API key was rejected. Check it under “AI”.',not_granted:'Claude access was declined for this page.',
+  rate_limited:'Too many requests right now. Fill it in by hand or try again in a minute.',refused:'Claude couldn’t describe this photo.',invalid_json:'Couldn’t read the AI’s answer.'}[e&&e.code]||'AI couldn’t identify this photo. Fill it in by hand.');
+const getLocation=()=>new Promise(res=>{if(!navigator.geolocation)return res(null);navigator.geolocation.getCurrentPosition(p=>res({lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy}),()=>res(null),{enableHighAccuracy:true,timeout:9000,maximumAge:60000})});
+const FOOD_TYPES=['restaurant','cafe','bar','pub','fast_food','food_court','ice_cream','bakery','biergarten','deli','confectionery'];
+async function placeAt(loc){try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&addressdetails=1&zoom=18&lat=${loc.lat}&lon=${loc.lng}`,{headers:{'Accept-Language':'en'}});const j=await r.json();
+  const a=j.address||{};const isFood=FOOD_TYPES.includes(j.type)||FOOD_TYPES.includes(j.category);
+  return {name:isFood?(j.name||a.amenity||''):'',area:a.neighbourhood||a.suburb||a.quarter||a.road||'',road:a.road||''}}catch(e){return null}}
 const loadScript=src=>new Promise((res,rej)=>{if(document.querySelector(`script[src="${src}"]`)&&window.jspdf)return res();const t=document.createElement('script');t.src=src;t.onload=res;t.onerror=()=>rej(new Error('load'));document.head.appendChild(t)});
 const imgSize=src=>new Promise(res=>{const i=new Image();i.onload=()=>res({w:i.naturalWidth||1,h:i.naturalHeight||1});i.onerror=()=>res(null);i.src=src});
 const pdfText=t=>String(t??'').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,'-').replace(/…/g,'...').replace(/·/g,'-').replace(/[^\x09\x0A\x0D\x20-\x7E -ÿ]/g,'');
@@ -255,7 +312,10 @@ async function exportPdf({logs,saved,notes,planned,bookings}){
 
   const n=doc.getNumberOfPages();
   for(let i=1;i<=n;i++){doc.setPage(i);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...muted);doc.text(`TasteTO export - ${stamp} - page ${i} of ${n}`,M,292)}
-  doc.save(`tasteto-export-${stamp}.pdf`);
+  const fname=`tasteto-export-${stamp}.pdf`;
+  let dl=null;try{dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null}catch(e){}
+  if(dl){await dl.save({filename:fname,data:doc.output('blob')});return}
+  doc.save(fname);
 }
 
 function Tile({log,h=120}){
@@ -383,7 +443,8 @@ function ReserveSheet({spot,onClose,onBook}){
 function AddSheet({init,onClose,onSave}){
   const [spot,setSpot]=useState(init.spot||'khao');
   const [dish,setDish]=useState('');const [rating,setRating]=useState(init.rating||0);
-  const [review,setReview]=useState('');const [photos,setPhotos]=useState([]);const [err,setErr]=useState('');
+  const [review,setReview]=useState('');const [photos,setPhotos]=useState(init.photos||[]);const [err,setErr]=useState('');
+  const [snap,setSnap]=useState(init.snap?{ai:'busy',loc:'busy'}:null);const [aiFilled,setAiFilled]=useState({});
   const [nName,setNName]=useState('');const [nCat,setNCat]=useState('');const [nArea,setNArea]=useState('');
   const [loc,setLoc]=useState(null);const [q,setQ]=useState('');const [res,setRes]=useState(null);const [finding,setFinding]=useState('');
   const findPlace=async()=>{const term=(q||nName).trim();if(!term){setErr('Type a name or address to search.');return}setFinding('Searching…');setRes(null);
@@ -395,6 +456,33 @@ function AddSheet({init,onClose,onSave}){
     navigator.geolocation.getCurrentPosition(p=>{setLoc({lat:p.coords.latitude,lng:p.coords.longitude,label:'Your current location'});setFinding('')},()=>setFinding('Couldn’t get your location. Check permissions.'),{enableHighAccuracy:true,timeout:10000})};
   const fileRef=useRef();
   const isNew=spot==='__new';
+  useEffect(()=>{if(!init.snap)return;let live=true;const upd=p=>live&&setSnap(s=>({...s,...p}));
+    (async()=>{
+      const locP=getLocation();
+      const loc=await Promise.race([locP,new Promise(r=>setTimeout(()=>r('slow'),1500))]);
+      const here=loc&&loc!=='slow'?loc:null;
+      const near=SPOTS.filter(x=>!x.home).map(x=>({...x,d:here?metersBetween(here,x):null})).sort((a,b)=>(a.d??1e9)-(b.d??1e9)).slice(0,12);
+      const aiP=identifyPhoto(init.snap.blob,near).then(v=>{if(!live)return v;
+          const f={};if(v.dish&&String(v.dish).trim()){setDish(d=>d||String(v.dish).trim());f.dish=1}
+          upd({ai:'done',aiText:[v.dish,v.cuisine].filter(Boolean).join(' · ')||v.caption||'Identified',notFood:v.isFood===false,via:v.via});setAiFilled(f);return v})
+        .catch(e=>{upd({ai:'fail',aiText:aiErrText(e)});return null});
+      const pos=here||await locP;
+      const v=await aiP;if(!live)return;
+      // Work out the place: known id from AI > known place nearby > AI-read name > map lookup at this spot
+      const known=id=>id&&SPOTS.find(x=>x.id===id&&!x.home);
+      let pick=known(v&&v.knownPlaceId),why=pick?'Recognised by AI':'';
+      if(!pick&&pos){const n=SPOTS.filter(x=>!x.home).map(x=>({x,d:metersBetween(pos,x)})).sort((a,b)=>a.d-b.d)[0];if(n&&n.d<=150){pick=n.x;why=`${Math.round(n.d)} m from you`}}
+      const rName=v&&v.restaurant?String(v.restaurant).trim():'';
+      if(!pick&&rName){const m=SPOTS.find(x=>!x.home&&x.name.toLowerCase()===rName.toLowerCase());if(m){pick=m;why='Name read from photo'}}
+      if(pick){setSpot(pick.id);upd({loc:'done',locText:`${pick.name} · ${why}`});return}
+      let found=pos?await placeAt(pos):null;if(!live)return;
+      const name=(found&&found.name)||rName;
+      if(name||pos){setSpot('__new');if(name)setNName(name);if(v&&v.cuisine)setNCat(String(v.cuisine));if(found&&found.area)setNArea(found.area);
+        if(pos)setLoc({lat:pos.lat,lng:pos.lng,label:found&&found.road?`Near ${found.road}`:'Where you took the photo'});
+        upd({loc:'done',locText:name?`New place: ${name}${pos?' · pinned where you are':''}`:'New place pinned where you are. Add its name.'});return}
+      upd({loc:'fail',locText:'Couldn’t tell where you are. Pick the place below.'});
+    })();
+    return()=>{live=false}},[]);
   const pickPhoto=async e=>{const files=[...e.target.files];e.target.value='';if(!files.length)return;const out=(await Promise.all(files.map(shrink))).filter(Boolean);setPhotos(p=>[...p,...out].slice(0,10))};
   const submit=()=>{
     let newSpot=null,spotId=spot;
@@ -406,6 +494,15 @@ function AddSheet({init,onClose,onSave}){
   return (<div className="sheetwrap" onClick={onClose}><div className="sheet" role="dialog" aria-label="Log a visit" onClick={e=>e.stopPropagation()}>
     <div className="grab"/>
     <div className="row" style={{justifyContent:'space-between'}}><h3>Log a visit</h3><button className="btn" onClick={onClose}>Cancel</button></div>
+    {snap && <div className="snapstat" aria-live="polite">
+      <div className="ln"><b>Photo</b>{snap.ai==='busy'?<span className="wait dots">Identifying</span>:<span className={snap.ai==='done'?'ok':'wait'}>{snap.aiText}</span>}</div>
+      {snap.notFood && <div className="ln"><b></b><span className="wait">This doesn’t look like food. You can still log it.</span></div>}
+      <div className="ln"><b>Place</b>{snap.loc==='busy'?<span className="wait dots">Finding where you are</span>:<span className={snap.loc==='done'?'ok':'wait'}>{snap.locText}</span>}</div>
+      {snap.ai!=='busy'&&snap.loc!=='busy' && <>
+        <div className="ln"><b>Rate</b><span className="ok" style={{fontWeight:600}}>{rating?`${rating}/10`:'Tap a score, check the details, save.'}</span></div>
+        <div className="rates" role="group" aria-label="Rating">{[1,2,3,4,5,6,7,8,9,10].map(n=><button key={n} className={'rate'+(rating===n?' on':'')} style={{padding:'6px 0',fontSize:13}} onClick={()=>{setRating(n);setErr('')}} aria-label={'Rate '+n+' out of 10'}>{n}</button>)}</div>
+      </>}
+    </div>}
     {photos.length===0 ? <button onClick={()=>fileRef.current.click()} style={{marginTop:14,width:'100%',height:150,borderRadius:16,border:'1.5px dashed var(--line)',background:'var(--bg)',color:'var(--muted)',fontSize:14}}>Add photos</button>
     : <div style={{display:'grid',gridTemplateColumns:'repeat(3,minmax(0,1fr))',gap:8,marginTop:14}}>
         {photos.map((ph,i)=><div key={i} style={{position:'relative',height:90,borderRadius:12,background:`center/cover url(${ph})`}}><button aria-label={'Remove photo '+(i+1)} onClick={()=>setPhotos(photos.filter((_,j)=>j!==i))} style={{position:'absolute',top:4,right:4,width:24,height:24,borderRadius:12,border:0,background:'var(--fog)',color:'#fff',fontSize:14,lineHeight:'24px',padding:0}}>×</button></div>)}
@@ -428,7 +525,7 @@ function AddSheet({init,onClose,onSave}){
       {res && res.map((r,i)=><button key={i} className="locres" onClick={()=>pickRes(r)}>{r.display_name.split(',').slice(0,4).join(',')}</button>)}
       <p className="muted" style={{marginTop:8}}>{loc?`Pinned: ${loc.label}`:'No location yet. It will drop near downtown and you can drag the pin later.'}</p>
     </>}
-    <label htmlFor="di">What you had</label>
+    <label htmlFor="di">What you had{aiFilled.dish && dish && <span className="aichip">AI</span>}</label>
     <input id="di" type="text" value={dish} onChange={e=>{setDish(e.target.value);setErr('')}} placeholder="Khao soi"/>
     <label>Rating</label>
     <div className="rates">{[1,2,3,4,5,6,7,8,9,10].map(n=><button key={n} className={'rate'+(rating===n?' on':'')} onClick={()=>{setRating(n);setErr('')}} aria-label={n+' out of 10'}>{n}</button>)}</div>
@@ -436,6 +533,24 @@ function AddSheet({init,onClose,onSave}){
     <textarea id="rv" value={review} onChange={e=>setReview(e.target.value)} placeholder="What would you tell a friend?"/>
     {err && <p className="err">{err}</p>}
     <button className="btn solid" style={{width:'100%',marginTop:16,padding:'12px'}} onClick={submit}>Save visit</button>
+  </div></div>);
+}
+
+function AiSheet({mode,onClose,onSaved}){
+  const [key,setK]=useState(getKey());const [show,setShow]=useState(false);
+  return (<div className="sheetwrap" onClick={onClose}><div className="sheet" role="dialog" aria-label="AI photo recognition" onClick={e=>e.stopPropagation()}>
+    <div className="grab"/>
+    <div className="row" style={{justifyContent:'space-between'}}><h3>AI photo recognition</h3><button className="btn" onClick={onClose}>Close</button></div>
+    <p className="muted" style={{marginTop:8}}>When you snap a meal, Claude looks at the photo and fills in the dish, the cuisine, and the restaurant if its name is visible.</p>
+    {mode==='claude' ? <p style={{marginTop:12,fontSize:14}}><b>On.</b> This page is running inside Claude, so it uses your Claude account. No key needed. Claude asks your permission the first time.</p>
+    : <>
+      <label htmlFor="ak">Anthropic API key</label>
+      <div style={{display:'flex',gap:8}}><input id="ak" type={show?'text':'password'} value={key} onChange={e=>setK(e.target.value.trim())} placeholder="sk-ant-…" autoComplete="off" spellCheck="false"/><button className="btn" onClick={()=>setShow(!show)}>{show?'Hide':'Show'}</button></div>
+      <p className="muted" style={{marginTop:8}}>Stored only in this browser, and sent only to Anthropic. Get a key at console.anthropic.com. Each photo costs a fraction of a cent to a few cents.</p>
+      <div style={{display:'flex',gap:8,marginTop:14}}>
+        <button className="btn solid" onClick={()=>{setKey(key);onSaved(key?'key':'off')}}>{key?'Save and turn on':'Save'}</button>
+        {getKey() && <button className="btn" onClick={()=>{setKey('');setK('');onSaved('off')}}>Remove key</button>}
+      </div></>}
   </div></div>);
 }
 
@@ -447,14 +562,22 @@ function App(){
   const [planned,setPlanned]=useState(()=>load('tto-planned',[]));
   const [selected,setSelected]=useState('salus');
   const [add,setAdd]=useState(null);const [nudge,setNudge]=useState(false);const [toast,setToast]=useState('');
-  const [reserve,setReserve]=useState(null);const [exporting,setExporting]=useState(false);const [bookings,setBookings]=useState(()=>load('tto-bookings',{}));
+  const [reserve,setReserve]=useState(null);const [exporting,setExporting]=useState(false);
+  const snapRef=useRef();const [snapCta,setSnapCta]=useState(()=>location.hash==='#snap');const [aiOpen,setAiOpen]=useState(false);
+  const [aiMode,setAiMode]=useState(getKey()?'key':'off');
+  useEffect(()=>{getSample().then(sm=>{if(sm)setAiMode('claude')})},[]);
+  useEffect(()=>{const h=()=>{if(location.hash==='#snap')setSnapCta(true)};window.addEventListener('hashchange',h);return()=>window.removeEventListener('hashchange',h)},[]);
+  const openCamera=()=>{setSnapCta(false);snapRef.current&&snapRef.current.click()};
+  const onSnap=async e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
+    const [small,big]=await Promise.all([shrink(f),shrink(f,1280,.85)]);if(!small){setToast('Couldn’t read that photo');return}
+    setAdd({photos:[small],snap:{blob:dataUrlToBlob(big||small)}})};const [bookings,setBookings]=useState(()=>load('tto-bookings',{}));
   useEffect(()=>save('tto-bookings',bookings),[bookings]);
   useEffect(()=>{if(!save('tto-logs',logs))setToast('Storage full: remove some photos')},[logs]);useEffect(()=>save('tto-saved',saved),[saved]);
   useEffect(()=>save('tto-notes',notes),[notes]);useEffect(()=>save('tto-planned',planned),[planned]);
   useEffect(()=>{if(!toast)return;const t=setTimeout(()=>setToast(''),2200);return()=>clearTimeout(t)},[toast]);
   const toggle=(arr,set)=>id=>set(arr.includes(id)?arr.filter(x=>x!==id):[...arr,id]);
   const simulate=()=>{setToast('Leaving… reminder in 30 min (sped up)');setTimeout(()=>setNudge(true),2500)};
-  const doExport=async()=>{if(exporting)return;setExporting(true);try{await exportPdf({logs,saved,notes,planned,bookings});setToast('PDF downloaded')}catch(e){setToast('Export failed. Check your connection and try again.')}finally{setExporting(false)}};
+  const doExport=async()=>{if(exporting)return;setExporting(true);try{await exportPdf({logs,saved,notes,planned,bookings});setToast('PDF downloaded')}catch(e){setToast(e&&e.code==='declined'?'Export cancelled':'Export failed. Check your connection and try again.')}finally{setExporting(false)}};
   const onSave=(v,newSpot)=>{if(newSpot){SPOTS.push(newSpot);save('tto-spots',SPOTS.filter(x=>x.custom))}const d=new Date();setLogs([{id:Date.now(),date:d.toLocaleDateString('en-CA',{month:'short',day:'numeric'}),...v},...logs]);setAdd(null);setSelected(v.spot);setTab('map');setToast('Visit saved')};
   const heads={map:['Your Toronto',`${new Set(logs.map(l=>l.spot)).size} spots logged`],date:['Date night with Sarah','Ideas, vibes, and plans'],feed:['Your log','Every meal, so you remember the names'],friends:['Friends','Where they’ve been eating']};
   return (<div className="app">
@@ -463,7 +586,7 @@ function App(){
       <p className="muted" style={{margin:'2px 0 8px'}}>You left 30 minutes ago. Tap a rating to log it.</p>
       <div className="rates">{[1,2,3,4,5,6,7,8,9,10].map(n=><button key={n} className="rate" style={{padding:'6px 0',fontSize:13}} onClick={()=>{setNudge(false);setAdd({spot:'khao',rating:n})}}>{n}</button>)}</div>
     </div>}
-    <div className="top"><div><h1 className="title">{heads[tab][0]}</h1><p className="sub">{heads[tab][1]}</p></div><div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:6}}><b style={{color:'var(--red)',fontSize:13}}>TasteTO</b><button className="btn" style={{padding:'4px 11px',fontSize:12,whiteSpace:'nowrap'}} onClick={doExport} disabled={exporting} aria-busy={exporting}>{exporting?'Exporting…':'Export PDF'}</button></div></div>
+    <div className="top"><div><h1 className="title">{heads[tab][0]}</h1><p className="sub">{heads[tab][1]}</p></div><div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:6}}><b style={{color:'var(--red)',fontSize:13}}>TasteTO</b><button className="btn" style={{padding:'4px 11px',fontSize:12,whiteSpace:'nowrap'}} onClick={doExport} disabled={exporting} aria-busy={exporting}>{exporting?'Exporting…':'Export PDF'}</button><button className="btn" style={{padding:'4px 11px',fontSize:12}} onClick={()=>setAiOpen(true)} aria-label="AI photo recognition settings">{aiMode==='off'?'AI: off':'AI: on'}</button></div></div>
     <main>
       {tab==='map' && <MapView logs={logs} selected={selected} setSelected={setSelected} openAdd={setAdd} saved={saved} toggleSave={toggle(saved,setSaved)} simulate={simulate} openReserve={setReserve}/>}
       {tab==='date' && <DateNight saved={saved} toggleSave={toggle(saved,setSaved)} notes={notes} setNote={(id,v)=>setNotes({...notes,[id]:v})} planned={planned} togglePlanned={toggle(planned,setPlanned)} openAdd={setAdd} openReserve={setReserve} bookings={bookings}/>}
@@ -473,11 +596,17 @@ function App(){
     <nav className="nav" aria-label="Main">
       <button className={'tab'+(tab==='map'?' on':'')} onClick={()=>setTab('map')}>{I.map}Map</button>
       <button className={'tab'+(tab==='date'?' on':'')} onClick={()=>setTab('date')}>{I.heart}Date night</button>
-      <button className="plus" aria-label="Log a visit" onClick={()=>setAdd({})}>{I.plus}</button>
+      <button className="plus" aria-label="Snap a meal" onClick={openCamera}>{I.camera}</button>
       <button className={'tab'+(tab==='feed'?' on':'')} onClick={()=>setTab('feed')}>{I.photos}Log</button>
       <button className={'tab'+(tab==='friends'?' on':'')} onClick={()=>setTab('friends')}>{I.users}Friends</button>
     </nav>
+    <input ref={snapRef} type="file" accept="image/*" capture="environment" className="sr" onChange={onSnap} aria-label="Snap a meal" tabIndex="-1"/>
     {add && <AddSheet init={add} onClose={()=>setAdd(null)} onSave={onSave}/>}
+    {snapCta && <div className="snapcta" onClick={()=>setSnapCta(false)}><div onClick={e=>e.stopPropagation()}>
+      <h3 style={{fontSize:20}}>Snap your meal</h3><p className="muted" style={{margin:'6px 0 16px'}}>Take a photo. TasteTO works out the dish and the place, then you just rate it.</p>
+      <button className="btn solid" style={{width:'100%',padding:'14px',fontSize:16}} onClick={openCamera}>Open camera</button>
+      <button className="btn" style={{marginTop:10}} onClick={()=>setSnapCta(false)}>Not now</button></div></div>}
+    {aiOpen && <AiSheet mode={aiMode} onClose={()=>setAiOpen(false)} onSaved={m=>{setAiMode(m);setAiOpen(false);setToast(m==='key'?'AI is on':'AI is off')}}/>}
     {reserve && <ReserveSheet spot={reserve} onClose={()=>setReserve(null)} onBook={b=>{setBookings({...bookings,[b.spot]:b});if(!planned.includes(b.spot))setPlanned([...planned,b.spot]);if(!saved.includes(b.spot)&&!spotBy(b.spot).date)setSaved([...saved,b.spot]);setToast('Table booked')}}/>}
     {toast && <div className="toast" role="status">{toast}</div>}
   </div>);
