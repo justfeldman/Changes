@@ -6,6 +6,7 @@
 <title>TasteTO prototype</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#F3F4F2;--panel:#FFFFFF;--ink:#1D2125;--muted:#5E666D;--line:#DADDD8;--red:#D52B1E;--redbg:#FBE4E1;--lake:#2B6A8F;--lakebg:#E2EEF5;--plum:#7B2F5B;--plumbg:#F4E3EC;--map:#E7EAE4;--street:#FFFFFF;--fog:rgba(29,33,37,.55);--on:#FFFFFF;color-scheme:light}
@@ -28,7 +29,22 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .btn{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:7px 14px;font-size:13px;font-weight:500}
 .btn.solid{background:var(--red);border-color:var(--red);color:var(--on)}
 .btn.plum{background:var(--plum);border-color:var(--plum);color:var(--on)}
-.map{border-radius:20px;overflow:hidden;background:var(--map);border:1px solid var(--line)}
+.map{border-radius:20px;overflow:hidden;background:var(--map);border:1px solid var(--line);isolation:isolate;position:relative}
+.lmap{height:320px;transition:height .25s ease}.lmap.tall{height:62vh}
+.leaflet-container{font-family:inherit;background:var(--map)}
+.mapbar{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:var(--panel);padding:2px}
+.seg button{border:0;background:none;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500;color:var(--muted)}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.lpin{width:30px;height:30px;border-radius:50%;border:2.5px solid;display:grid;place-items:center;font:700 13px Archivo,sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.4)}
+.lpin.on{outline:2.5px solid var(--red);outline-offset:3px}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--ink)}
+.leaflet-popup-content{margin:10px 12px;font-size:14px;line-height:1.35;min-width:170px}
+.leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
+.pp-img{height:96px;border-radius:10px;background-size:cover;background-position:center;margin-bottom:8px}
+.pp-sub{color:var(--muted);font-size:12px}.pp-meta{font-size:12px;margin:5px 0 7px}
+.leaflet-popup-content a.pp-go{color:var(--lake);font-weight:600;text-decoration:none}
+.locres{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 10px;margin-top:6px;font-size:13px}
 .pin{cursor:pointer}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:14px 16px;margin-top:12px;transition:transform .25s ease}
 .grab{width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 10px}
@@ -73,18 +89,19 @@ h3{font-size:17px;margin:0;font-weight:600;letter-spacing:-.01em}
 <div id="root"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.24.7/babel.min.js"></script>
 <script type="text/babel" data-presets="react">
 const {useState,useEffect,useRef}=React;
 
 const SPOTS=[
-{id:'home',name:'Home base',cat:'Home',area:'Your place',x:222,y:135,home:true},
-{id:'khao',name:'Khao San Road',cat:'Thai',area:'Adelaide and Charlotte',x:160,y:135,tone:'#E9B44C'},
-{id:'salus',name:'Salus Fresh Foods',cat:'Healthy bowls',area:'Downtown',x:245,y:185,tone:'#7FB069'},
-{id:'lantern',name:'Lantern Room',cat:'Cocktail bar',area:'Queen West',x:80,y:40,tone:'#B5838D',date:true,vibe:['Candlelit','Intimate'],noise:1,note:'Book the corner booth. Go after 8.'},
-{id:'marrow',name:'Marrow and Vine',cat:'Wine bar',area:'King West',x:62,y:185,tone:'#8E5572',date:true,vibe:['Natural wine','Small plates'],noise:2,note:'Walk-ins only on Thursdays.'},
-{id:'ash',name:'Ash and Ember',cat:'Wood-fired grill',area:'Front Street',x:170,y:278,tone:'#C8553D',date:true,vibe:['Open kitchen','Dress up a bit'],noise:2,note:'Ask for the chef’s counter.'},
-{id:'kiln',name:'Kiln Coffee',cat:'Coffee',area:'Richmond',x:292,y:88,tone:'#9C6644'}
+{id:'home',lat:43.6472,lng:-79.3893,name:'Home base',cat:'Home',area:'Your place',x:222,y:135,home:true},
+{id:'khao',lat:43.6466,lng:-79.3935,name:'Khao San Road',cat:'Thai',area:'Adelaide and Charlotte',x:160,y:135,tone:'#E9B44C'},
+{id:'salus',lat:43.6452,lng:-79.3872,name:'Salus Fresh Foods',cat:'Healthy bowls',area:'Downtown',x:245,y:185,tone:'#7FB069'},
+{id:'lantern',lat:43.6487,lng:-79.4021,name:'Lantern Room',cat:'Cocktail bar',area:'Queen West',x:80,y:40,tone:'#B5838D',date:true,vibe:['Candlelit','Intimate'],noise:1,note:'Book the corner booth. Go after 8.'},
+{id:'marrow',lat:43.6443,lng:-79.4006,name:'Marrow and Vine',cat:'Wine bar',area:'King West',x:62,y:185,tone:'#8E5572',date:true,vibe:['Natural wine','Small plates'],noise:2,note:'Walk-ins only on Thursdays.'},
+{id:'ash',lat:43.6433,lng:-79.3946,name:'Ash and Ember',cat:'Wood-fired grill',area:'Front Street',x:170,y:278,tone:'#C8553D',date:true,vibe:['Open kitchen','Dress up a bit'],noise:2,note:'Ask for the chef’s counter.'},
+{id:'kiln',lat:43.6497,lng:-79.3906,name:'Kiln Coffee',cat:'Coffee',area:'Richmond',x:292,y:88,tone:'#9C6644'}
 ];
 const FRIENDS=[
 {who:'Maya',col:'#2B6A8F',spot:'lantern',dish:'Smoked old fashioned',rating:9,text:'Perfect first-date spot. Dark, quiet, great drinks.'},
@@ -100,7 +117,54 @@ const spotBy=id=>SPOTS.find(s=>s.id===id);
 const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
 SPOTS.push(...load('tto-spots',[]).filter(c=>c&&c.id&&!SPOTS.some(s=>s.id===c.id)));
 const TONES=['#E9B44C','#7FB069','#B5838D','#8E5572','#C8553D','#9C6644','#5B8E7D','#6C8EBF','#D08C60'];
-const freeSpot=()=>{let best={x:160,y:150},bd=-1;for(let y=35;y<=265;y+=23)for(let x=35;x<=285;x+=25){const d=Math.min(...SPOTS.map(p=>Math.hypot(p.x-x,p.y-y)));if(d>bd){bd=d;best={x,y}}}return best};
+const LL0=[43.6466,-79.3935];
+const xyToLL=(x,y)=>[+(43.6515-0.0095*y/300).toFixed(5),+(-79.4060+0.0230*x/320).toFixed(5)];
+SPOTS.forEach(sp=>{if(sp.lat==null){[sp.lat,sp.lng]=xyToLL(sp.x||160,sp.y||150)}});
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const isDark=()=>{const t=document.documentElement.dataset.theme;return t==='dark'||(t!=='light'&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)};
+const ESRI=n=>`https://server.arcgisonline.com/ArcGIS/rest/services/${n}/MapServer/tile/{z}/{y}/{x}`;
+const TILES={
+  map:()=>isDark()?[L.tileLayer(ESRI('Canvas/World_Dark_Gray_Base'),{maxZoom:19,maxNativeZoom:16,attribution:'Tiles &copy; Esri'}),L.tileLayer(ESRI('Canvas/World_Dark_Gray_Reference'),{maxZoom:19,maxNativeZoom:16})]
+    :[L.tileLayer(ESRI('World_Street_Map'),{maxZoom:19,attribution:'Tiles &copy; Esri, HERE, Garmin, OpenStreetMap contributors'})],
+  sat:()=>[L.tileLayer(ESRI('World_Imagery'),{maxZoom:19,attribution:'Imagery &copy; Esri, Maxar, Earthstar Geographics'}),
+           L.tileLayer(ESRI('Reference/World_Transportation'),{maxZoom:19}),L.tileLayer(ESRI('Reference/World_Boundaries_and_Places'),{maxZoom:19})]
+};
+function makeFog(map){
+  const pane=map.createPane('fog');pane.style.zIndex=350;pane.style.pointerEvents='none';
+  const c=L.DomUtil.create('canvas','',pane);let pts=[],on=true;
+  const draw=()=>{const sz=map.getSize(),r=window.devicePixelRatio||1;c.width=sz.x*r;c.height=sz.y*r;c.style.width=sz.x+'px';c.style.height=sz.y+'px';
+    L.DomUtil.setPosition(c,map.containerPointToLayerPoint([0,0]));const g=c.getContext('2d');g.setTransform(r,0,0,r,0,0);g.clearRect(0,0,sz.x,sz.y);if(!on)return;
+    g.fillStyle='rgba(20,22,24,.55)';g.fillRect(0,0,sz.x,sz.y);g.globalCompositeOperation='destination-out';
+    for(const ll of pts){const p=map.latLngToContainerPoint(ll),q=map.latLngToContainerPoint([ll[0]+0.0027,ll[1]]);const rad=Math.max(8,Math.abs(p.y-q.y));
+      const gr=g.createRadialGradient(p.x,p.y,rad*.55,p.x,p.y,rad);gr.addColorStop(0,'rgba(0,0,0,1)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.beginPath();g.arc(p.x,p.y,rad,0,7);g.fill()}
+    g.globalCompositeOperation='source-over'};
+  map.on('move moveend zoomend resize viewreset',draw);map.on('zoomstart',()=>{c.style.opacity=0});map.on('zoomend',()=>{c.style.opacity=1});
+  return {set(p,o){pts=p;on=o;draw()}};
+}
+const pinIcon=(p,v,on)=>{const fill=p.home?'var(--ink)':v?'var(--red)':p.date?'var(--plum)':'var(--panel)';const solid=v||p.home||p.date;
+  return L.divIcon({className:'',iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-16],html:`<div class="lpin${on?' on':''}" style="background:${fill};border-color:${solid?'var(--panel)':'var(--muted)'};color:${solid?(p.home?'var(--bg)':'#fff'):'var(--ink)'}">${p.home?'H':esc(p.name[0]||'?')}</div>`})};
+const popupHtml=(sp,logs)=>{const mine=logs.filter(l=>l.spot===sp.id);const ph=mine.flatMap(pics)[0];const fr=FRIENDS.filter(f=>f.spot===sp.id).length;
+  const avg=mine.length?(mine.reduce((n,l)=>n+l.rating,0)/mine.length).toFixed(1):null;
+  const meta=sp.home?'Your Toronto starts here':[mine.length?`Your avg ${avg}/10 · ${mine.length} visit${mine.length>1?'s':''}`:'Not tried yet',fr?`${fr} friend review${fr>1?'s':''}`:''].filter(Boolean).join(' · ');
+  return `${ph?`<div class="pp-img" style="background-image:url('${ph}')"></div>`:''}<b>${esc(sp.name)}</b><div class="pp-sub">${esc(sp.cat)} · ${esc(sp.area)}</div><div class="pp-meta">${esc(meta)}</div>`+
+    (sp.home?'':`<a class="pp-go" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(sp.name+' '+sp.area+' Toronto')}" target="_blank" rel="noopener">Open in Google Maps ↗</a>`)+
+    (sp.custom?'<div class="pp-sub" style="margin-top:6px">Drag the pin to move it</div>':'')};
+
+function LeafletMap({logs,selected,setSelected,mode,fog,tall,onMoveSpot,tick}){
+  const el=useRef(),R=useRef({markers:{},tiles:[]});
+  useEffect(()=>{const map=L.map(el.current,{zoomControl:true}).setView(LL0,15);R.current.map=map;R.current.fog=makeFog(map);return()=>map.remove()},[]);
+  useEffect(()=>{const r=R.current;r.tiles.forEach(t=>r.map.removeLayer(t));r.tiles=TILES[mode]();r.tiles.forEach(t=>t.addTo(r.map))},[mode]);
+  useEffect(()=>{const r=R.current;setTimeout(()=>r.map.invalidateSize(),280)},[tall]);
+  useEffect(()=>{const r=R.current,visited=new Set(logs.map(l=>l.spot));
+    for(const id of Object.keys(r.markers))if(!spotBy(id)){r.map.removeLayer(r.markers[id]);delete r.markers[id]}
+    for(const p of SPOTS){let mk=r.markers[p.id];
+      if(!mk){mk=L.marker([p.lat,p.lng],{draggable:!!p.custom,title:p.name,riseOnHover:true}).bindPopup('',{maxWidth:240,autoPanPadding:[20,20]}).addTo(r.map);
+        mk.on('click',()=>setSelected(p.id));mk.on('dragend',e=>{const ll=e.target.getLatLng();onMoveSpot(p.id,ll.lat,ll.lng)});r.markers[p.id]=mk}
+      mk.setLatLng([p.lat,p.lng]);mk.setIcon(pinIcon(p,visited.has(p.id),selected===p.id));mk.setZIndexOffset(selected===p.id?1000:0);mk.setPopupContent(popupHtml(p,logs))}
+    r.fog.set(SPOTS.filter(x=>x.home||visited.has(x.id)).map(x=>[x.lat,x.lng]),fog)},[logs,selected,fog,tick]);
+  useEffect(()=>{const mk=selected&&R.current.markers[selected];if(mk&&!mk.isPopupOpen())mk.openPopup()},[selected]);
+  return <div ref={el} className={'lmap'+(tall?' tall':'')} role="application" aria-label="Map of Toronto. Fog clears around spots you’ve logged."/>;
+}
 const pics=l=>l.photos&&l.photos.length?l.photos:(l.photo?[l.photo]:[]);
 const shrink=file=>new Promise(res=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const sc=Math.min(1,600/img.width);c.width=img.width*sc;c.height=img.height*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.7))};img.onerror=()=>res(null);img.src=r.result};r.onerror=()=>res(null);r.readAsDataURL(file)});
 const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
@@ -204,34 +268,19 @@ function Tile({log,h=120}){
 }
 
 function MapView({logs,selected,setSelected,openAdd,saved,toggleSave,simulate,openReserve}){
-  const visited=new Set(logs.map(l=>l.spot));
-  const clear=SPOTS.filter(s=>s.home||visited.has(s.id));
+  const [mode,setModeS]=useState(()=>load('tto-mapmode','map'));const setMode=m=>{setModeS(m);save('tto-mapmode',m)};
+  const [fog,setFog]=useState(true);const [tall,setTall]=useState(false);const [tick,setTick]=useState(0);
+  const moveSpot=(id,lat,lng)=>{const sp=spotBy(id);if(!sp)return;sp.lat=+lat.toFixed(6);sp.lng=+lng.toFixed(6);save('tto-spots',SPOTS.filter(x=>x.custom));setTick(t=>t+1)};
   const s=selected?spotBy(selected):null;
   const mine=s?logs.filter(l=>l.spot===s.id):[];
   const theirs=s?FRIENDS.filter(f=>f.spot===s.id):[];
   return (<>
-    <div className="map">
-      <svg viewBox="0 0 320 300" width="100%" role="img" aria-label="Map of downtown Toronto. Fog clears around spots you’ve logged." style={{display:'block'}}>
-        <defs><mask id="fog"><rect width="320" height="300" fill="white"/>{clear.map(c=><circle key={c.id} cx={c.x} cy={c.y} r="58" fill="black"/>)}</mask></defs>
-        <g stroke="var(--street)" strokeWidth="7" strokeLinecap="round">
-          {[40,88,135,185,232,278].map(y=><line key={y} x1="0" y1={y} x2="320" y2={y}/>)}
-          {[30,128,195,262].map(x=><line key={x} x1={x} y1="0" x2={x} y2="300"/>)}
-        </g>
-        <g fontSize="10" fill="var(--muted)" fontFamily="Archivo">
-          <text x="268" y="34">Queen</text><text x="262" y="129">Adelaide</text><text x="8" y="178">King</text><text x="276" y="272">Front</text><text x="132" y="296">Spadina</text><text x="34" y="296">Bathurst</text>
-        </g>
-        <rect width="320" height="300" fill="var(--fog)" mask="url(#fog)"/>
-        {SPOTS.map(p=>{
-          const v=visited.has(p.id), on=selected===p.id;
-          const fill=p.home?'var(--ink)':v?'var(--red)':p.date?'var(--plum)':'var(--panel)';
-          return (<g key={p.id} className="pin" onClick={()=>setSelected(p.id)} role="button" tabIndex="0" aria-label={p.name} onKeyDown={e=>{if(e.key==='Enter')setSelected(p.id)}}>
-            {on && <circle cx={p.x} cy={p.y} r="21" fill="none" stroke="var(--red)" strokeWidth="2"/>}
-            <circle cx={p.x} cy={p.y} r={p.home?12:14} fill={fill} stroke={v||p.home||p.date?'var(--panel)':'var(--muted)'} strokeWidth="2.5"/>
-            <text x={p.x} y={p.y+4.5} textAnchor="middle" fontSize="12" fontWeight="700" fill={v||p.home||p.date?'#fff':'var(--ink)'} fontFamily="Archivo">{p.home?'H':p.name[0]}</text>
-          </g>);
-        })}
-      </svg>
+    <div className="mapbar">
+      <div className="seg" role="group" aria-label="Map style">{[['map','Map'],['sat','Satellite']].map(([k,t])=><button key={k} className={mode===k?'on':''} aria-pressed={mode===k} onClick={()=>setMode(k)}>{t}</button>)}</div>
+      <button className="btn" aria-pressed={fog} onClick={()=>setFog(!fog)}>{fog?'Fog on':'Fog off'}</button>
+      <button className="btn" onClick={()=>setTall(!tall)}>{tall?'Shrink':'Expand'}</button>
     </div>
+    <div className="map"><LeafletMap logs={logs} selected={selected} setSelected={setSelected} mode={mode} fog={fog} tall={tall} tick={tick} onMoveSpot={moveSpot}/></div>
     <div style={{display:'flex',gap:14,flexWrap:'wrap',margin:'10px 2px 0',fontSize:12,color:'var(--muted)'}}>
       <span><b style={{color:'var(--red)'}}>●</b> Logged</span><span><b style={{color:'var(--plum)'}}>●</b> Date night idea</span><span>○ Not yet tried</span>
     </div>
@@ -336,6 +385,14 @@ function AddSheet({init,onClose,onSave}){
   const [dish,setDish]=useState('');const [rating,setRating]=useState(init.rating||0);
   const [review,setReview]=useState('');const [photos,setPhotos]=useState([]);const [err,setErr]=useState('');
   const [nName,setNName]=useState('');const [nCat,setNCat]=useState('');const [nArea,setNArea]=useState('');
+  const [loc,setLoc]=useState(null);const [q,setQ]=useState('');const [res,setRes]=useState(null);const [finding,setFinding]=useState('');
+  const findPlace=async()=>{const term=(q||nName).trim();if(!term){setErr('Type a name or address to search.');return}setFinding('Searching…');setRes(null);
+    try{const r=await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5&countrycodes=ca&viewbox=-79.64,43.86,-79.11,43.58&bounded=1&q=${encodeURIComponent(term)}`,{headers:{'Accept-Language':'en'}});
+      const j=await r.json();setRes(j);setFinding(j.length?'':'No matches in Toronto. Try a street address.')}catch(e){setFinding('Search failed. Check your connection.')}};
+  const pickRes=r=>{const a=r.address||{};setLoc({lat:+r.lat,lng:+r.lon,label:r.display_name.split(',').slice(0,3).join(',')});if(!nName.trim()&&r.name)setNName(r.name);
+    if(!nArea.trim())setNArea(a.neighbourhood||a.suburb||a.quarter||a.road||'');setRes(null)};
+  const useMe=()=>{if(!navigator.geolocation){setFinding('Location not available on this device.');return}setFinding('Finding you…');
+    navigator.geolocation.getCurrentPosition(p=>{setLoc({lat:p.coords.latitude,lng:p.coords.longitude,label:'Your current location'});setFinding('')},()=>setFinding('Couldn’t get your location. Check permissions.'),{enableHighAccuracy:true,timeout:10000})};
   const fileRef=useRef();
   const isNew=spot==='__new';
   const pickPhoto=async e=>{const files=[...e.target.files];e.target.value='';if(!files.length)return;const out=(await Promise.all(files.map(shrink))).filter(Boolean);setPhotos(p=>[...p,...out].slice(0,10))};
@@ -343,7 +400,7 @@ function AddSheet({init,onClose,onSave}){
     let newSpot=null,spotId=spot;
     if(isNew){const n=nName.trim();if(!n){setErr('Name the new place first.');return}
       const dup=SPOTS.find(x=>!x.home&&x.name.toLowerCase()===n.toLowerCase());
-      if(dup)spotId=dup.id;else{newSpot={id:'c'+Date.now(),name:n,cat:nCat.trim()||'Restaurant',area:nArea.trim()||'Toronto',...freeSpot(),tone:TONES[SPOTS.length%TONES.length],custom:true};spotId=newSpot.id}}
+      if(dup)spotId=dup.id;else{const k=SPOTS.filter(x=>x.custom).length;newSpot={id:'c'+Date.now(),name:n,cat:nCat.trim()||'Restaurant',area:nArea.trim()||'Toronto',...(loc?{lat:+loc.lat.toFixed(6),lng:+loc.lng.toFixed(6)}:{lat:LL0[0]+0.0012*Math.sin(k*2.4),lng:LL0[1]+0.0018*Math.cos(k*2.4)}),tone:TONES[SPOTS.length%TONES.length],custom:true};spotId=newSpot.id}}
     if(!dish.trim()){setErr('Add what you had first.');return}if(!rating){setErr('Tap a rating first.');return}
     onSave({spot:spotId,dish:dish.trim(),rating,review:review.trim(),photos},newSpot)};
   return (<div className="sheetwrap" onClick={onClose}><div className="sheet" role="dialog" aria-label="Log a visit" onClick={e=>e.stopPropagation()}>
@@ -364,6 +421,12 @@ function AddSheet({init,onClose,onSave}){
         <div style={{flex:1}}><label htmlFor="nc">Type (optional)</label><input id="nc" type="text" value={nCat} onChange={e=>setNCat(e.target.value)} placeholder="Thai"/></div>
         <div style={{flex:1}}><label htmlFor="na">Area (optional)</label><input id="na" type="text" value={nArea} onChange={e=>setNArea(e.target.value)} placeholder="Duncan St"/></div>
       </div>
+      <label htmlFor="lq">Where is it?</label>
+      <div style={{display:'flex',gap:8}}><input id="lq" type="text" value={q} onChange={e=>setQ(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();findPlace()}}} placeholder={nName?`Search “${nName}” or an address`:'Name or street address'}/><button className="btn" onClick={findPlace}>Find</button></div>
+      <button className="btn" style={{marginTop:8}} onClick={useMe}>Use my current location</button>
+      {finding && <p className="muted" style={{marginTop:6}}>{finding}</p>}
+      {res && res.map((r,i)=><button key={i} className="locres" onClick={()=>pickRes(r)}>{r.display_name.split(',').slice(0,4).join(',')}</button>)}
+      <p className="muted" style={{marginTop:8}}>{loc?`Pinned: ${loc.label}`:'No location yet. It will drop near downtown and you can drag the pin later.'}</p>
     </>}
     <label htmlFor="di">What you had</label>
     <input id="di" type="text" value={dish} onChange={e=>{setDish(e.target.value);setErr('')}} placeholder="Khao soi"/>
