@@ -114,6 +114,86 @@ users:<Icon d={<><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6
 photos:<Icon d={<><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></>}/>
 };
 
+const loadScript=src=>new Promise((res,rej)=>{if(document.querySelector(`script[src="${src}"]`)&&window.jspdf)return res();const t=document.createElement('script');t.src=src;t.onload=res;t.onerror=()=>rej(new Error('load'));document.head.appendChild(t)});
+const imgSize=src=>new Promise(res=>{const i=new Image();i.onload=()=>res({w:i.naturalWidth||1,h:i.naturalHeight||1});i.onerror=()=>res(null);i.src=src});
+const pdfText=t=>String(t??'').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,'-').replace(/…/g,'...').replace(/·/g,'-').replace(/[^\x09\x0A\x0D\x20-\x7E -ÿ]/g,'');
+async function exportPdf({logs,saved,notes,planned,bookings}){
+  await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+  const doc=new window.jspdf.jsPDF({unit:'mm',format:'a4'});
+  const W=210,M=16,CW=W-2*M,BOTTOM=282;let y=M;
+  const ensure=h=>{if(y+h>BOTTOM){doc.addPage();y=M}};
+  const text=(t,{size=10,bold=false,color=[29,33,37],gap=1.5,indent=0,font='helvetica'}={})=>{
+    doc.setFont(font,bold?'bold':'normal');doc.setFontSize(size);doc.setTextColor(...color);
+    const lh=size*0.42;for(const line of doc.splitTextToSize(pdfText(t),CW-indent)){ensure(lh);doc.text(line,M+indent,y+lh*0.8);y+=lh}y+=gap};
+  const heading=t=>{ensure(16);y+=4;text(t,{size:15,bold:true,color:[213,43,30],gap:1});doc.setDrawColor(218,221,216);doc.line(M,y,W-M,y);y+=4};
+  const muted=[94,102,109];
+  const now=new Date();const stamp=now.toISOString().slice(0,10);
+  const name=id=>(spotBy(id)||{name:id}).name;
+  const places=SPOTS.filter(s=>!s.home);
+  const sorted=[...logs];
+
+  text('TasteTO export',{size:22,bold:true,gap:1});
+  text(`Exported ${now.toLocaleString('en-CA')}`,{color:muted});
+  const pl=(n,w)=>`${n} ${w}${n===1?'':'s'}`;
+  text(`${pl(logs.length,'visit')} - ${pl(new Set(logs.map(l=>l.spot)).size,'place')} logged - ${pl(places.filter(p=>p.custom).length,'place')} you added - ${pl(logs.reduce((n,l)=>n+pics(l).length,0),'photo')} - ${saved.length} saved for date night - ${pl(Object.keys(bookings).length,'booking')}`,{color:muted,gap:4});
+
+  heading('Visits');
+  if(!sorted.length)text('No visits logged yet.',{color:muted});
+  for(const l of sorted){
+    const sp=spotBy(l.spot)||{};
+    ensure(22);
+    text(`${sp.name||l.spot}  -  ${l.rating}/10`,{size:12,bold:true,gap:0.5});
+    text(`${l.date||''}${sp.cat?'  |  '+sp.cat:''}${sp.area?'  |  '+sp.area:''}`,{size:9,color:muted,gap:1});
+    text(`Had: ${l.dish}`,{gap:0.5});
+    if(l.review)text(`"${l.review}"`,{gap:0.5});
+    if(l.rating<=3)text('Skip next time',{size:9,bold:true,color:[213,43,30],gap:0.5});
+    const ph=pics(l);
+    if(ph.length){y+=1;const th=38;let x=M;
+      for(const src of ph){const d=await imgSize(src);if(!d)continue;let w=Math.min(th*d.w/d.h,CW);
+        if(x+w>W-M){x=M;y+=th+3}ensure(th+3);
+        try{doc.addImage(src,'JPEG',x,y,w,th)}catch(e){}x+=w+3}
+      y+=th+2}
+    y+=2;doc.setDrawColor(235,237,233);ensure(4);doc.line(M,y,W-M,y);y+=4;
+  }
+
+  heading('Places');
+  for(const p of places){
+    const vs=logs.filter(l=>l.spot===p.id);
+    const avg=vs.length?(vs.reduce((n,l)=>n+l.rating,0)/vs.length).toFixed(1):null;
+    const tags=[p.custom&&'added by you',p.date&&'date night idea',saved.includes(p.id)&&'saved',planned.includes(p.id)&&'planned'].filter(Boolean);
+    ensure(14);
+    text(p.name,{size:11,bold:true,gap:0.3});
+    text(`${p.cat} | ${p.area}${tags.length?'  |  '+tags.join(', '):''}`,{size:9,color:muted,gap:0.3});
+    text(vs.length?`${vs.length} visit${vs.length>1?'s':''}, average ${avg}/10`:'Not visited yet',{size:9,gap:3});
+  }
+
+  heading('Date night');
+  const dn=places.filter(p=>p.date||saved.includes(p.id));
+  if(!dn.length)text('Nothing saved yet.',{color:muted});
+  for(const p of dn){
+    const b=bookings[p.id];const note=notes[p.id]??p.note;
+    ensure(14);
+    text(`${p.name}${planned.includes(p.id)?'  (planned)':''}`,{size:11,bold:true,gap:0.3});
+    if(p.vibe)text(`Vibe: ${p.vibe.join(', ')}${p.noise?'  |  '+['','Quiet','Lively','Loud'][p.noise]:''}`,{size:9,color:muted,gap:0.3});
+    if(b)text(`Booked: ${b.day} at ${b.time} pm, table for ${b.party}`,{size:10,bold:true,color:[123,47,91],gap:0.3});
+    if(note)text(`Notes: ${note}`,{size:10,gap:0.3});
+    y+=3;
+  }
+
+  doc.addPage();y=M;
+  heading('Raw data (JSON)');
+  text('Machine-readable copy of everything above, for importing into another app. Photos are listed by count only; they appear in full in the Visits section.',{size:9,color:muted,gap:3});
+  const raw={exportedAt:now.toISOString(),app:'TasteTO prototype',
+    places:places.map(({x,y,tone,...r})=>r),
+    visits:logs.map(({photo,photos,...r})=>({...r,spotName:name(r.spot),photoCount:pics({photo,photos}).length})),
+    dateNight:{saved,planned,notes,bookings}};
+  text(JSON.stringify(raw,null,2),{size:7.5,font:'courier',gap:0});
+
+  const n=doc.getNumberOfPages();
+  for(let i=1;i<=n;i++){doc.setPage(i);doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...muted);doc.text(`TasteTO export - ${stamp} - page ${i} of ${n}`,M,292)}
+  doc.save(`tasteto-export-${stamp}.pdf`);
+}
+
 function Tile({log,h=120}){
   const s=spotBy(log.spot)||{tone:'#888'};const ph=pics(log);
   return (<div className="tile" style={{height:h,background:ph[0]?`center/cover url(${ph[0]})`:s.tone}}>
@@ -304,13 +384,14 @@ function App(){
   const [planned,setPlanned]=useState(()=>load('tto-planned',[]));
   const [selected,setSelected]=useState('salus');
   const [add,setAdd]=useState(null);const [nudge,setNudge]=useState(false);const [toast,setToast]=useState('');
-  const [reserve,setReserve]=useState(null);const [bookings,setBookings]=useState(()=>load('tto-bookings',{}));
+  const [reserve,setReserve]=useState(null);const [exporting,setExporting]=useState(false);const [bookings,setBookings]=useState(()=>load('tto-bookings',{}));
   useEffect(()=>save('tto-bookings',bookings),[bookings]);
   useEffect(()=>{if(!save('tto-logs',logs))setToast('Storage full: remove some photos')},[logs]);useEffect(()=>save('tto-saved',saved),[saved]);
   useEffect(()=>save('tto-notes',notes),[notes]);useEffect(()=>save('tto-planned',planned),[planned]);
   useEffect(()=>{if(!toast)return;const t=setTimeout(()=>setToast(''),2200);return()=>clearTimeout(t)},[toast]);
   const toggle=(arr,set)=>id=>set(arr.includes(id)?arr.filter(x=>x!==id):[...arr,id]);
   const simulate=()=>{setToast('Leaving… reminder in 30 min (sped up)');setTimeout(()=>setNudge(true),2500)};
+  const doExport=async()=>{if(exporting)return;setExporting(true);try{await exportPdf({logs,saved,notes,planned,bookings});setToast('PDF downloaded')}catch(e){setToast('Export failed. Check your connection and try again.')}finally{setExporting(false)}};
   const onSave=(v,newSpot)=>{if(newSpot){SPOTS.push(newSpot);save('tto-spots',SPOTS.filter(x=>x.custom))}const d=new Date();setLogs([{id:Date.now(),date:d.toLocaleDateString('en-CA',{month:'short',day:'numeric'}),...v},...logs]);setAdd(null);setSelected(v.spot);setTab('map');setToast('Visit saved')};
   const heads={map:['Your Toronto',`${new Set(logs.map(l=>l.spot)).size} spots logged`],date:['Date night with Sarah','Ideas, vibes, and plans'],feed:['Your log','Every meal, so you remember the names'],friends:['Friends','Where they’ve been eating']};
   return (<div className="app">
@@ -319,7 +400,7 @@ function App(){
       <p className="muted" style={{margin:'2px 0 8px'}}>You left 30 minutes ago. Tap a rating to log it.</p>
       <div className="rates">{[1,2,3,4,5,6,7,8,9,10].map(n=><button key={n} className="rate" style={{padding:'6px 0',fontSize:13}} onClick={()=>{setNudge(false);setAdd({spot:'khao',rating:n})}}>{n}</button>)}</div>
     </div>}
-    <div className="top"><div><h1 className="title">{heads[tab][0]}</h1><p className="sub">{heads[tab][1]}</p></div><b style={{color:'var(--red)',fontSize:13}}>TasteTO</b></div>
+    <div className="top"><div><h1 className="title">{heads[tab][0]}</h1><p className="sub">{heads[tab][1]}</p></div><div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:6}}><b style={{color:'var(--red)',fontSize:13}}>TasteTO</b><button className="btn" style={{padding:'4px 11px',fontSize:12,whiteSpace:'nowrap'}} onClick={doExport} disabled={exporting} aria-busy={exporting}>{exporting?'Exporting…':'Export PDF'}</button></div></div>
     <main>
       {tab==='map' && <MapView logs={logs} selected={selected} setSelected={setSelected} openAdd={setAdd} saved={saved} toggleSave={toggle(saved,setSaved)} simulate={simulate} openReserve={setReserve}/>}
       {tab==='date' && <DateNight saved={saved} toggleSave={toggle(saved,setSaved)} notes={notes} setNote={(id,v)=>setNotes({...notes,[id]:v})} planned={planned} togglePlanned={toggle(planned,setPlanned)} openAdd={setAdd} openReserve={setReserve} bookings={bookings}/>}
