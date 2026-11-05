@@ -98,7 +98,12 @@ const SEED=[
 ];
 const spotBy=id=>SPOTS.find(s=>s.id===id);
 const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
-const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+SPOTS.push(...load('tto-spots',[]).filter(c=>c&&c.id&&!SPOTS.some(s=>s.id===c.id)));
+const TONES=['#E9B44C','#7FB069','#B5838D','#8E5572','#C8553D','#9C6644','#5B8E7D','#6C8EBF','#D08C60'];
+const freeSpot=()=>{let best={x:160,y:150},bd=-1;for(let y=35;y<=265;y+=23)for(let x=35;x<=285;x+=25){const d=Math.min(...SPOTS.map(p=>Math.hypot(p.x-x,p.y-y)));if(d>bd){bd=d;best={x,y}}}return best};
+const pics=l=>l.photos&&l.photos.length?l.photos:(l.photo?[l.photo]:[]);
+const shrink=file=>new Promise(res=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const sc=Math.min(1,600/img.width);c.width=img.width*sc;c.height=img.height*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.7))};img.onerror=()=>res(null);img.src=r.result};r.onerror=()=>res(null);r.readAsDataURL(file)});
+const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
 
 const Icon=({d,size=22})=>(<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>);
 const I={
@@ -110,9 +115,10 @@ photos:<Icon d={<><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9
 };
 
 function Tile({log,h=120}){
-  const s=spotBy(log.spot);
-  return (<div className="tile" style={{height:h,background:log.photo?`center/cover url(${log.photo})`:s.tone}}>
-    {!log.photo && <svg width="60" height="60" viewBox="0 0 60 60" style={{position:'absolute',right:10,top:10,opacity:.35}} aria-hidden="true"><circle cx="30" cy="30" r="26" fill="none" stroke="#fff" strokeWidth="3"/><circle cx="30" cy="30" r="16" fill="#fff"/></svg>}
+  const s=spotBy(log.spot)||{tone:'#888'};const ph=pics(log);
+  return (<div className="tile" style={{height:h,background:ph[0]?`center/cover url(${ph[0]})`:s.tone}}>
+    {ph.length>1 && <b style={{position:'absolute',right:8,top:8,background:'var(--fog)',color:'#fff',borderRadius:8,padding:'2px 7px',fontSize:12}}>+{ph.length-1}</b>}
+    {!ph[0] && <svg width="60" height="60" viewBox="0 0 60 60" style={{position:'absolute',right:10,top:10,opacity:.35}} aria-hidden="true"><circle cx="30" cy="30" r="26" fill="none" stroke="#fff" strokeWidth="3"/><circle cx="30" cy="30" r="16" fill="#fff"/></svg>}
     <span>{log.dish} · {log.rating}/10</span>
   </div>);
 }
@@ -157,7 +163,7 @@ function MapView({logs,selected,setSelected,openAdd,saved,toggleSave,simulate,op
       </div>
       {s.home && <p className="muted" style={{marginTop:8}}>Your Toronto starts here. The fog clears outward as you log spots.</p>}
       {mine.length>0 && <><p className="muted" style={{margin:'14px 0 8px'}}>Your visits</p>
-        <div className="grid">{mine.map(l=><div key={l.id}><Tile log={l} h={100}/>{l.review && <p className="muted" style={{marginTop:6}}>“{l.review}”</p>}{l.rating<=3 && <span className="chip red" style={{marginTop:6}}>Skip next time</span>}</div>)}</div></>}
+        <div className="grid">{mine.map(l=><div key={l.id}><Tile log={l} h={100}/>{pics(l).length>1 && <div style={{display:'flex',gap:4,overflowX:'auto',marginTop:4}}>{pics(l).slice(1).map((ph,i)=><img key={i} src={ph} alt="" style={{height:44,borderRadius:6,flex:'none'}}/>)}</div>}{l.review && <p className="muted" style={{marginTop:6}}>“{l.review}”</p>}{l.rating<=3 && <span className="chip red" style={{marginTop:6}}>Skip next time</span>}</div>)}</div></>}
       {theirs.length>0 && <><p className="muted" style={{margin:'14px 0 6px'}}>From friends</p>
         {theirs.map((f,i)=><p key={i} style={{margin:'0 0 6px',fontSize:14}}><b>{f.who}</b> had the {f.dish.toLowerCase()} · {f.rating}/10 · <span className="muted" style={{display:'inline'}}>{f.text}</span></p>)}</>}
       {!s.home && mine.length===0 && theirs.length===0 && <p className="muted" style={{marginTop:10}}>No visits yet. This one’s still in the fog.</p>}
@@ -195,7 +201,8 @@ function Feed({logs}){
     {shown.length===0 && <p className="muted">Nothing here yet. Tap + to log a meal.</p>}
     <div className="grid">{shown.map(l=>{const s=spotBy(l.spot);return (<button key={l.id} onClick={()=>setOpen(open===l.id?null:l.id)} style={{background:'none',border:0,padding:0,textAlign:'left',gridColumn:open===l.id?'1 / -1':'auto'}}>
       <Tile log={l} h={open===l.id?220:140}/>
-      <p style={{margin:'6px 0 0',fontWeight:600,fontSize:14}}>{s.name}</p>
+      {open===l.id && pics(l).length>1 && <div style={{display:'flex',gap:6,overflowX:'auto',marginTop:6}}>{pics(l).map((ph,i)=><img key={i} src={ph} alt="" style={{height:90,borderRadius:10,flex:'none'}}/>)}</div>}
+      <p style={{margin:'6px 0 0',fontWeight:600,fontSize:14}}>{s?s.name:'Unknown spot'}</p>
       <p className="muted">{l.date}</p>
       {open===l.id && l.review && <p style={{margin:'6px 0 0',fontSize:14}}>“{l.review}”</p>}
     </button>)})}</div>
@@ -247,17 +254,37 @@ function ReserveSheet({spot,onClose,onBook}){
 function AddSheet({init,onClose,onSave}){
   const [spot,setSpot]=useState(init.spot||'khao');
   const [dish,setDish]=useState('');const [rating,setRating]=useState(init.rating||0);
-  const [review,setReview]=useState('');const [photo,setPhoto]=useState(null);const [err,setErr]=useState('');
+  const [review,setReview]=useState('');const [photos,setPhotos]=useState([]);const [err,setErr]=useState('');
+  const [nName,setNName]=useState('');const [nCat,setNCat]=useState('');const [nArea,setNArea]=useState('');
   const fileRef=useRef();
-  const pickPhoto=e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const sc=Math.min(1,600/img.width);c.width=img.width*sc;c.height=img.height*sc;c.getContext('2d').drawImage(img,0,0,c.width,c.height);setPhoto(c.toDataURL('image/jpeg',.7))};img.src=r.result};r.readAsDataURL(file)};
-  const submit=()=>{if(!dish.trim()){setErr('Add what you had first.');return}if(!rating){setErr('Tap a rating first.');return}onSave({spot,dish:dish.trim(),rating,review:review.trim(),photo})};
+  const isNew=spot==='__new';
+  const pickPhoto=async e=>{const files=[...e.target.files];e.target.value='';if(!files.length)return;const out=(await Promise.all(files.map(shrink))).filter(Boolean);setPhotos(p=>[...p,...out].slice(0,10))};
+  const submit=()=>{
+    let newSpot=null,spotId=spot;
+    if(isNew){const n=nName.trim();if(!n){setErr('Name the new place first.');return}
+      const dup=SPOTS.find(x=>!x.home&&x.name.toLowerCase()===n.toLowerCase());
+      if(dup)spotId=dup.id;else{newSpot={id:'c'+Date.now(),name:n,cat:nCat.trim()||'Restaurant',area:nArea.trim()||'Toronto',...freeSpot(),tone:TONES[SPOTS.length%TONES.length],custom:true};spotId=newSpot.id}}
+    if(!dish.trim()){setErr('Add what you had first.');return}if(!rating){setErr('Tap a rating first.');return}
+    onSave({spot:spotId,dish:dish.trim(),rating,review:review.trim(),photos},newSpot)};
   return (<div className="sheetwrap" onClick={onClose}><div className="sheet" role="dialog" aria-label="Log a visit" onClick={e=>e.stopPropagation()}>
     <div className="grab"/>
     <div className="row" style={{justifyContent:'space-between'}}><h3>Log a visit</h3><button className="btn" onClick={onClose}>Cancel</button></div>
-    <button onClick={()=>fileRef.current.click()} style={{marginTop:14,width:'100%',height:150,borderRadius:16,border:'1.5px dashed var(--line)',background:photo?`center/cover url(${photo})`:'var(--bg)',color:'var(--muted)',fontSize:14}}>{photo?'':'Add a photo'}</button>
-    <input ref={fileRef} type="file" accept="image/*" className="sr" onChange={pickPhoto} aria-label="Photo"/>
+    {photos.length===0 ? <button onClick={()=>fileRef.current.click()} style={{marginTop:14,width:'100%',height:150,borderRadius:16,border:'1.5px dashed var(--line)',background:'var(--bg)',color:'var(--muted)',fontSize:14}}>Add photos</button>
+    : <div style={{display:'grid',gridTemplateColumns:'repeat(3,minmax(0,1fr))',gap:8,marginTop:14}}>
+        {photos.map((ph,i)=><div key={i} style={{position:'relative',height:90,borderRadius:12,background:`center/cover url(${ph})`}}><button aria-label={'Remove photo '+(i+1)} onClick={()=>setPhotos(photos.filter((_,j)=>j!==i))} style={{position:'absolute',top:4,right:4,width:24,height:24,borderRadius:12,border:0,background:'var(--fog)',color:'#fff',fontSize:14,lineHeight:'24px',padding:0}}>×</button></div>)}
+        {photos.length<10 && <button onClick={()=>fileRef.current.click()} style={{height:90,borderRadius:12,border:'1.5px dashed var(--line)',background:'var(--bg)',color:'var(--muted)',fontSize:13}}>+ Add more</button>}
+      </div>}
+    <input ref={fileRef} type="file" accept="image/*" multiple className="sr" onChange={pickPhoto} aria-label="Photos"/>
     <label htmlFor="sp">Spot</label>
-    <select id="sp" value={spot} onChange={e=>setSpot(e.target.value)}>{SPOTS.filter(s=>!s.home).map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select>
+    <select id="sp" value={spot} onChange={e=>{setSpot(e.target.value);setErr('')}}>{SPOTS.filter(s=>!s.home).map(s=><option key={s.id} value={s.id}>{s.name}</option>)}<option value="__new">+ New place…</option></select>
+    {isNew && <>
+      <label htmlFor="nn">Place name</label>
+      <input id="nn" type="text" value={nName} onChange={e=>{setNName(e.target.value);setErr('')}} placeholder="e.g. Pai Northern Thai" autoFocus/>
+      <div style={{display:'flex',gap:8}}>
+        <div style={{flex:1}}><label htmlFor="nc">Type (optional)</label><input id="nc" type="text" value={nCat} onChange={e=>setNCat(e.target.value)} placeholder="Thai"/></div>
+        <div style={{flex:1}}><label htmlFor="na">Area (optional)</label><input id="na" type="text" value={nArea} onChange={e=>setNArea(e.target.value)} placeholder="Duncan St"/></div>
+      </div>
+    </>}
     <label htmlFor="di">What you had</label>
     <input id="di" type="text" value={dish} onChange={e=>{setDish(e.target.value);setErr('')}} placeholder="Khao soi"/>
     <label>Rating</label>
@@ -279,12 +306,12 @@ function App(){
   const [add,setAdd]=useState(null);const [nudge,setNudge]=useState(false);const [toast,setToast]=useState('');
   const [reserve,setReserve]=useState(null);const [bookings,setBookings]=useState(()=>load('tto-bookings',{}));
   useEffect(()=>save('tto-bookings',bookings),[bookings]);
-  useEffect(()=>save('tto-logs',logs),[logs]);useEffect(()=>save('tto-saved',saved),[saved]);
+  useEffect(()=>{if(!save('tto-logs',logs))setToast('Storage full: remove some photos')},[logs]);useEffect(()=>save('tto-saved',saved),[saved]);
   useEffect(()=>save('tto-notes',notes),[notes]);useEffect(()=>save('tto-planned',planned),[planned]);
   useEffect(()=>{if(!toast)return;const t=setTimeout(()=>setToast(''),2200);return()=>clearTimeout(t)},[toast]);
   const toggle=(arr,set)=>id=>set(arr.includes(id)?arr.filter(x=>x!==id):[...arr,id]);
   const simulate=()=>{setToast('Leaving… reminder in 30 min (sped up)');setTimeout(()=>setNudge(true),2500)};
-  const onSave=v=>{const d=new Date();setLogs([{id:Date.now(),date:d.toLocaleDateString('en-CA',{month:'short',day:'numeric'}),...v},...logs]);setAdd(null);setSelected(v.spot);setTab('map');setToast('Visit saved')};
+  const onSave=(v,newSpot)=>{if(newSpot){SPOTS.push(newSpot);save('tto-spots',SPOTS.filter(x=>x.custom))}const d=new Date();setLogs([{id:Date.now(),date:d.toLocaleDateString('en-CA',{month:'short',day:'numeric'}),...v},...logs]);setAdd(null);setSelected(v.spot);setTab('map');setToast('Visit saved')};
   const heads={map:['Your Toronto',`${new Set(logs.map(l=>l.spot)).size} spots logged`],date:['Date night with Sarah','Ideas, vibes, and plans'],feed:['Your log','Every meal, so you remember the names'],friends:['Friends','Where they’ve been eating']};
   return (<div className="app">
     {nudge && <div className="banner" role="alert">
