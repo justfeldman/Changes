@@ -13,7 +13,7 @@
 :root{--bg:#F3F4F2;--panel:#FFFFFF;--ink:#1D2125;--muted:#5E666D;--line:#DADDD8;--red:#D52B1E;--redbg:#FBE4E1;--lake:#2B6A8F;--lakebg:#E2EEF5;--plum:#7B2F5B;--plumbg:#F4E3EC;--map:#E7EAE4;--street:#FFFFFF;--fog:rgba(29,33,37,.55);--on:#FFFFFF;color-scheme:light}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141618;--panel:#1E2124;--ink:#ECEEEC;--muted:#A3AAB0;--line:#33383C;--red:#EF4A3C;--redbg:#3A1C19;--lake:#6FB0D6;--lakebg:#1B2A33;--plum:#D58AB4;--plumbg:#35202B;--map:#25292C;--street:#3A3F43;--fog:rgba(0,0,0,.62);--on:#FFFFFF;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#141618;--panel:#1E2124;--ink:#ECEEEC;--muted:#A3AAB0;--line:#33383C;--red:#EF4A3C;--redbg:#3A1C19;--lake:#6FB0D6;--lakebg:#1B2A33;--plum:#D58AB4;--plumbg:#35202B;--map:#25292C;--street:#3A3F43;--fog:rgba(0,0,0,.62);--on:#FFFFFF;color-scheme:dark}
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
 html,body{height:100%;margin:0}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -21,7 +21,15 @@ body{background:var(--bg);color:var(--ink);font-family:"Archivo",-apple-system,"
 #root{height:100%;display:flex;justify-content:center}
 .app{position:relative;width:100%;max-width:430px;height:100%;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
 @media (min-width:600px){#root{padding:24px 0}.app{border:1px solid var(--line);border-radius:28px;max-height:880px}}
-.top{padding:14px 18px 10px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.top{padding:8px 18px 12px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.brand{color:var(--red);font-weight:700;font-size:15px;letter-spacing:-.01em}
+.iconbtn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--ink);display:grid;place-items:center;padding:0}
+.menuwrap{position:absolute;inset:0;z-index:27}
+.menu{position:absolute;top:52px;right:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 28px rgba(0,0,0,.16);padding:6px;min-width:232px}
+.menu button{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:none;padding:11px 12px;border-radius:10px;font-size:14px}
+.menu button:hover{background:var(--bg)}
+.menu .state{color:var(--muted);font-size:13px}
 .title{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:0;line-height:1.1}
 .sub{color:var(--muted);font-size:13px;margin:2px 0 0}
 main{flex:1;overflow-y:auto;padding:0 18px 24px}
@@ -31,13 +39,22 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .btn.solid{background:var(--red);border-color:var(--red);color:var(--on)}
 .btn.plum{background:var(--plum);border-color:var(--plum);color:var(--on)}
 .map{border-radius:20px;overflow:hidden;background:var(--map);border:1px solid var(--line);isolation:isolate;position:relative}
-.lmap{height:320px;transition:height .25s ease}.lmap.tall{height:62vh}
+.lmap{height:340px;transition:height .25s ease}.lmap.tall{height:62vh}
+.mapctl{position:absolute;left:10px;bottom:10px;z-index:1000;display:flex;gap:6px}
+.mbtn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.mbtn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.leaflet-container .leaflet-control-attribution{font-size:9px;line-height:1.4;background:var(--panel);color:var(--muted);opacity:.85;padding:0 5px;border-radius:6px 0 0 0}
+.leaflet-container .leaflet-control-attribution a{color:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:10px 2px 0;font-size:12px;color:var(--muted);align-items:center}.legend span{display:inline-flex;align-items:center}
+.legend i{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font-style:normal;font-size:10px;font-weight:700;margin-right:5px}
 .leaflet-container{font-family:inherit;background:var(--map)}
 .mapbar{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:var(--panel);padding:2px}
 .seg button{border:0;background:none;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500;color:var(--muted)}
 .seg button.on{background:var(--ink);color:var(--bg)}
-.lpin{width:30px;height:30px;border-radius:50%;border:2.5px solid;display:grid;place-items:center;font:700 13px Archivo,sans-serif;box-shadow:0 1px 5px rgba(0,0,0,.4)}
+.lpin{width:100%;height:100%;box-sizing:border-box;border-radius:50%;border:2px solid var(--panel);display:grid;place-items:center;font:700 13px Archivo,sans-serif;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+.lpin.logged{background:var(--red);color:#fff}.lpin.date{background:var(--plum);color:#fff}.lpin.home{background:var(--ink);color:var(--bg)}
+.lpin.todo{background:var(--panel);color:var(--muted);border:1.5px solid var(--muted);font-size:10.5px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .lpin.on{outline:2.5px solid var(--red);outline-offset:3px}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--ink)}
 .leaflet-popup-content{margin:10px 12px;font-size:14px;line-height:1.35;min-width:170px}
@@ -60,7 +77,13 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .grab{width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 10px}
 .row{display:flex;gap:12px;align-items:center}
 .tile{border-radius:14px;display:flex;align-items:flex-end;padding:10px;font-weight:600;font-size:14px;line-height:1.2;overflow:hidden;position:relative;background-size:cover;background-position:center}
-.tile span{position:relative;background:var(--panel);color:var(--ink);border-radius:8px;padding:3px 7px;font-size:12px}
+.tile .score{position:absolute;left:8px;top:8px;border-radius:999px;padding:3px 9px;font-size:13px;font-weight:700;background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tile .score small{font-size:10px;font-weight:600;opacity:.65;margin-left:1px}
+.tile .score.loved{background:var(--red);color:#fff}.tile .score.skip{background:var(--ink);color:var(--bg)}
+.tile .more{position:absolute;right:8px;top:8px;background:var(--fog);color:#fff;border-radius:8px;padding:2px 7px;font-size:12px;font-weight:600}
+.tile .tinit{position:absolute;right:12px;bottom:2px;font-size:68px;font-weight:700;line-height:1;color:rgba(255,255,255,.5);letter-spacing:-.04em}
+.tilebtn{display:block;width:100%;background:none;border:0;padding:0;text-align:left;border-radius:14px}
+.ldish{margin:8px 0 0;font-weight:600;font-size:14px;line-height:1.25}
 .chip{display:inline-block;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:500;margin:0 6px 6px 0}
 .chip.red{background:var(--redbg);color:var(--red)}
 .chip.plum{background:var(--plumbg);color:var(--plum)}
@@ -68,10 +91,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .chip.ghost{border:1px solid var(--line);color:var(--muted);background:transparent}
 .chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.nav{display:flex;justify-content:space-around;align-items:center;border-top:1px solid var(--line);background:var(--panel);padding:8px 6px 10px}
+.nav{display:flex;justify-content:space-around;align-items:center;border-top:1px solid var(--line);background:var(--panel);padding:8px 6px calc(10px + env(safe-area-inset-bottom,0px))}
 .tab{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--muted);padding:4px 8px;min-width:56px}
 .tab.on{color:var(--red);font-weight:600}
-.plus{width:56px;height:56px;border-radius:50%;background:var(--red);color:var(--on);border:0;margin-top:-26px;display:flex;align-items:center;justify-content:center;border:4px solid var(--bg)}
+.plus{width:56px;height:56px;border-radius:50%;background:var(--red);color:var(--on);border:0;margin-top:-26px;display:flex;align-items:center;justify-content:center;border:4px solid var(--panel);box-shadow:0 4px 12px rgba(213,43,30,.3)}
 .sheetwrap{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;z-index:20}
 .sheet{background:var(--panel);width:100%;border-radius:24px 24px 0 0;padding:14px 18px 22px;max-height:88%;overflow-y:auto;animation:up .25s ease}
 @keyframes up{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
@@ -135,7 +158,7 @@ const isDark=()=>{const t=document.documentElement.dataset.theme;return t==='dar
 const ESRI=n=>`https://server.arcgisonline.com/ArcGIS/rest/services/${n}/MapServer/tile/{z}/{y}/{x}`;
 const TILES={
   map:()=>isDark()?[L.tileLayer(ESRI('Canvas/World_Dark_Gray_Base'),{maxZoom:19,maxNativeZoom:16,attribution:'Tiles &copy; Esri'}),L.tileLayer(ESRI('Canvas/World_Dark_Gray_Reference'),{maxZoom:19,maxNativeZoom:16})]
-    :[L.tileLayer(ESRI('World_Street_Map'),{maxZoom:19,attribution:'Tiles &copy; Esri, HERE, Garmin, OpenStreetMap contributors'})],
+    :[L.tileLayer(ESRI('Canvas/World_Light_Gray_Base'),{maxZoom:19,maxNativeZoom:16,attribution:'Tiles &copy; Esri, HERE, Garmin, OSM'}),L.tileLayer(ESRI('Canvas/World_Light_Gray_Reference'),{maxZoom:19,maxNativeZoom:16})],
   sat:()=>[L.tileLayer(ESRI('World_Imagery'),{maxZoom:19,attribution:'Imagery &copy; Esri, Maxar, Earthstar Geographics'}),
            L.tileLayer(ESRI('Reference/World_Transportation'),{maxZoom:19}),L.tileLayer(ESRI('Reference/World_Boundaries_and_Places'),{maxZoom:19})]
 };
@@ -144,35 +167,35 @@ function makeFog(map){
   const c=L.DomUtil.create('canvas','',pane);let pts=[],on=true;
   const draw=()=>{const sz=map.getSize(),r=window.devicePixelRatio||1;c.width=sz.x*r;c.height=sz.y*r;c.style.width=sz.x+'px';c.style.height=sz.y+'px';
     L.DomUtil.setPosition(c,map.containerPointToLayerPoint([0,0]));const g=c.getContext('2d');g.setTransform(r,0,0,r,0,0);g.clearRect(0,0,sz.x,sz.y);if(!on)return;
-    g.fillStyle='rgba(20,22,24,.55)';g.fillRect(0,0,sz.x,sz.y);g.globalCompositeOperation='destination-out';
+    g.fillStyle=isDark()?'rgba(0,0,0,.55)':'rgba(29,33,37,.32)';g.fillRect(0,0,sz.x,sz.y);g.globalCompositeOperation='destination-out';
     for(const ll of pts){const p=map.latLngToContainerPoint(ll),q=map.latLngToContainerPoint([ll[0]+0.0027,ll[1]]);const rad=Math.max(8,Math.abs(p.y-q.y));
       const gr=g.createRadialGradient(p.x,p.y,rad*.55,p.x,p.y,rad);gr.addColorStop(0,'rgba(0,0,0,1)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.beginPath();g.arc(p.x,p.y,rad,0,7);g.fill()}
     g.globalCompositeOperation='source-over'};
   map.on('move moveend zoomend resize viewreset',draw);map.on('zoomstart',()=>{c.style.opacity=0});map.on('zoomend',()=>{c.style.opacity=1});
   return {set(p,o){pts=p;on=o;draw()}};
 }
-const pinIcon=(p,v,on)=>{const fill=p.home?'var(--ink)':v?'var(--red)':p.date?'var(--plum)':'var(--panel)';const solid=v||p.home||p.date;
-  return L.divIcon({className:'',iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-16],html:`<div class="lpin${on?' on':''}" style="background:${fill};border-color:${solid?'var(--panel)':'var(--muted)'};color:${solid?(p.home?'var(--bg)':'#fff'):'var(--ink)'}">${p.home?'H':esc(p.name[0]||'?')}</div>`})};
+const pinIcon=(p,score,on)=>{const v=score!=null;const cls=p.home?'home':v?'logged':p.date?'date':'todo';const txt=p.home?'H':v?String(score):esc(p.name[0]||'?');const sz=cls==='todo'?24:30;
+  return L.divIcon({className:'',iconSize:[sz,sz],iconAnchor:[sz/2,sz/2],popupAnchor:[0,-sz/2-2],html:`<div class="lpin ${cls}${on?' on':''}">${txt}</div>`})};
 const popupHtml=(sp,logs)=>{const mine=logs.filter(l=>l.spot===sp.id);const ph=mine.flatMap(pics)[0];const fr=FRIENDS.filter(f=>f.spot===sp.id).length;
   const avg=mine.length?(mine.reduce((n,l)=>n+l.rating,0)/mine.length).toFixed(1):null;
   const meta=sp.home?'Your Toronto starts here':[mine.length?`Your avg ${avg}/10 · ${mine.length} visit${mine.length>1?'s':''}`:'Not tried yet',fr?`${fr} friend review${fr>1?'s':''}`:''].filter(Boolean).join(' · ');
-  return `${ph?`<div class="pp-img" style="background-image:url('${ph}')"></div>`:''}<b>${esc(sp.name)}</b><div class="pp-sub">${esc(sp.cat)} · ${esc(sp.area)}</div><div class="pp-meta">${esc(meta)}</div>`+
+  return `${ph?`<div class="pp-img" style="background-image:url('${ph}')"></div>`:''}<b>${esc(sp.name)}</b><div class="pp-meta">${esc(meta)}</div>`+
     (sp.home?'':`<a class="pp-go" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(sp.name+' '+sp.area+' Toronto')}" target="_blank" rel="noopener">Open in Google Maps ↗</a>`)+
     (sp.custom?'<div class="pp-sub" style="margin-top:6px">Drag the pin to move it</div>':'')};
 
 function LeafletMap({logs,selected,setSelected,mode,fog,tall,onMoveSpot,tick}){
   const el=useRef(),R=useRef({markers:{},tiles:[]});
-  useEffect(()=>{const map=L.map(el.current,{zoomControl:true}).setView(LL0,15);R.current.map=map;R.current.fog=makeFog(map);return()=>map.remove()},[]);
+  useEffect(()=>{const map=L.map(el.current,{zoomControl:!L.Browser.mobile}).setView(LL0,15);map.attributionControl.setPrefix(false);R.current.map=map;R.current.fog=makeFog(map);return()=>{R.current.dead=true;try{map.stop();map.off();map.remove()}catch(e){}}},[]);
   const [noTiles,setNoTiles]=useState(false);
   useEffect(()=>{const r=R.current;r.tiles.forEach(t=>r.map.removeLayer(t));r.tiles=TILES[mode]();let ok=0,bad=0;
     r.tiles.forEach(t=>{t.on('tileload',()=>{ok++;setNoTiles(false)});t.on('tileerror',()=>{bad++;if(bad>=4&&!ok)setNoTiles(true)});t.addTo(r.map)})},[mode]);
-  useEffect(()=>{const r=R.current;setTimeout(()=>r.map.invalidateSize(),280)},[tall]);
-  useEffect(()=>{const r=R.current,visited=new Set(logs.map(l=>l.spot));
+  useEffect(()=>{const r=R.current;const t=setTimeout(()=>{if(!r.dead)r.map.invalidateSize()},280);return()=>clearTimeout(t)},[tall]);
+  useEffect(()=>{const r=R.current,visited=new Set(logs.map(l=>l.spot));const avgOf=id=>{const m=logs.filter(l=>l.spot===id);return m.length?Math.round(m.reduce((n,l)=>n+l.rating,0)/m.length):null};
     for(const id of Object.keys(r.markers))if(!spotBy(id)){r.map.removeLayer(r.markers[id]);delete r.markers[id]}
     for(const p of SPOTS){let mk=r.markers[p.id];
-      if(!mk){mk=L.marker([p.lat,p.lng],{icon:pinIcon(p,visited.has(p.id),selected===p.id),draggable:!!p.custom,title:p.name,riseOnHover:true}).bindPopup('',{maxWidth:240,autoPanPadding:[20,20]}).addTo(r.map);
+      if(!mk){mk=L.marker([p.lat,p.lng],{icon:pinIcon(p,avgOf(p.id),selected===p.id),draggable:!!p.custom,title:p.name,riseOnHover:true}).bindPopup('',{maxWidth:240,autoPanPaddingTopLeft:[16,16],autoPanPaddingBottomRight:[16,58]}).addTo(r.map);
         mk.on('click',()=>setSelected(p.id));mk.on('dragend',e=>{const ll=e.target.getLatLng();onMoveSpot(p.id,ll.lat,ll.lng)});r.markers[p.id]=mk}
-      mk.setLatLng([p.lat,p.lng]);mk.setIcon(pinIcon(p,visited.has(p.id),selected===p.id));mk.setZIndexOffset(selected===p.id?1000:0);mk.setPopupContent(popupHtml(p,logs))}
+      mk.setLatLng([p.lat,p.lng]);mk.setIcon(pinIcon(p,avgOf(p.id),selected===p.id));mk.setZIndexOffset(selected===p.id?1000:0);mk.setPopupContent(popupHtml(p,logs))}
     r.fog.set(SPOTS.filter(x=>x.home||visited.has(x.id)).map(x=>[x.lat,x.lng]),fog)},[logs,selected,fog,tick]);
   useEffect(()=>{const mk=selected&&R.current.markers[selected];if(mk&&!mk.isPopupOpen())mk.openPopup()},[selected]);
   return <><div ref={el} className={'lmap'+(tall?' tall':'')} role="application" aria-label="Map of Toronto. Fog clears around spots you’ve logged."/>{noTiles && <div className="mapnote">Map imagery can’t load here. Pins and pop-ups still work.</div>}</>;
@@ -319,11 +342,11 @@ async function exportPdf({logs,saved,notes,planned,bookings}){
 }
 
 function Tile({log,h=120}){
-  const s=spotBy(log.spot)||{tone:'#888'};const ph=pics(log);
+  const s=spotBy(log.spot)||{tone:'#8a8f94'};const ph=pics(log);const r=log.rating;const kind=r>=8?'loved':r<=3?'skip':'mid';
   return (<div className="tile" style={{height:h,background:ph[0]?`center/cover url(${ph[0]})`:s.tone}}>
-    {ph.length>1 && <b style={{position:'absolute',right:8,top:8,background:'var(--fog)',color:'#fff',borderRadius:8,padding:'2px 7px',fontSize:12}}>+{ph.length-1}</b>}
-    {!ph[0] && <svg width="60" height="60" viewBox="0 0 60 60" style={{position:'absolute',right:10,top:10,opacity:.35}} aria-hidden="true"><circle cx="30" cy="30" r="26" fill="none" stroke="#fff" strokeWidth="3"/><circle cx="30" cy="30" r="16" fill="#fff"/></svg>}
-    <span>{log.dish} · {log.rating}/10</span>
+    {!ph[0] && <span className="tinit" aria-hidden="true">{(log.dish||'?')[0]}</span>}
+    <span className={'score '+kind}>{r}<small>/10</small></span>
+    {ph.length>1 && <span className="more">+{ph.length-1}</span>}
   </div>);
 }
 
@@ -335,24 +358,22 @@ function MapView({logs,selected,setSelected,openAdd,saved,toggleSave,simulate,op
   const mine=s?logs.filter(l=>l.spot===s.id):[];
   const theirs=s?FRIENDS.filter(f=>f.spot===s.id):[];
   return (<>
-    <div className="mapbar">
-      <div className="seg" role="group" aria-label="Map style">{[['map','Map'],['sat','Satellite']].map(([k,t])=><button key={k} className={mode===k?'on':''} aria-pressed={mode===k} onClick={()=>setMode(k)}>{t}</button>)}</div>
-      <button className="btn" aria-pressed={fog} onClick={()=>setFog(!fog)}>{fog?'Fog on':'Fog off'}</button>
-      <button className="btn" onClick={()=>setTall(!tall)}>{tall?'Shrink':'Expand'}</button>
-    </div>
-    <div className="map"><LeafletMap logs={logs} selected={selected} setSelected={setSelected} mode={mode} fog={fog} tall={tall} tick={tick} onMoveSpot={moveSpot}/></div>
-    <div style={{display:'flex',gap:14,flexWrap:'wrap',margin:'10px 2px 0',fontSize:12,color:'var(--muted)'}}>
-      <span><b style={{color:'var(--red)'}}>●</b> Logged</span><span><b style={{color:'var(--plum)'}}>●</b> Date night idea</span><span>○ Not yet tried</span>
-    </div>
+    <div className="map"><LeafletMap logs={logs} selected={selected} setSelected={setSelected} mode={mode} fog={fog} tall={tall} tick={tick} onMoveSpot={moveSpot}/>
+      <div className="mapctl">
+        <button className={'mbtn'+(mode==='sat'?' on':'')} aria-pressed={mode==='sat'} onClick={()=>setMode(mode==='sat'?'map':'sat')}>Satellite</button>
+        <button className={'mbtn'+(fog?' on':'')} aria-pressed={fog} onClick={()=>setFog(!fog)}>Fog</button>
+        <button className="mbtn" onClick={()=>setTall(!tall)}>{tall?'Shrink':'Expand'}</button>
+      </div></div>
+    <div className="legend"><span><i style={{background:'var(--red)',color:'#fff'}}>9</i>Your score</span><span><i style={{background:'var(--plum)'}}></i>Date night idea</span><span><i style={{border:'1.5px solid var(--muted)',width:14,height:14}}></i>Not tried</span></div>
     {s ? (<div className="card">
       <div className="grab"/>
       <div className="row" style={{justifyContent:'space-between',alignItems:'flex-start'}}>
         <div><h3>{s.name}</h3><p className="muted">{s.cat} · {s.area}</p></div>
-        {!s.home && <button className="btn solid" onClick={()=>openAdd({spot:s.id})}>Log a visit</button>}
+        {!s.home && <button className="btn" style={{color:'var(--red)',fontWeight:600}} onClick={()=>openAdd({spot:s.id})}>Log a visit</button>}
       </div>
       {s.home && <p className="muted" style={{marginTop:8}}>Your Toronto starts here. The fog clears outward as you log spots.</p>}
       {mine.length>0 && <><p className="muted" style={{margin:'14px 0 8px'}}>Your visits</p>
-        <div className="grid">{mine.map(l=><div key={l.id}><Tile log={l} h={100}/>{pics(l).length>1 && <div style={{display:'flex',gap:4,overflowX:'auto',marginTop:4}}>{pics(l).slice(1).map((ph,i)=><img key={i} src={ph} alt="" style={{height:44,borderRadius:6,flex:'none'}}/>)}</div>}{l.review && <p className="muted" style={{marginTop:6}}>“{l.review}”</p>}{l.rating<=3 && <span className="chip red" style={{marginTop:6}}>Skip next time</span>}</div>)}</div></>}
+        <div className="grid">{mine.map(l=><div key={l.id}><Tile log={l} h={100}/><p className="ldish">{l.dish}</p>{pics(l).length>1 && <div style={{display:'flex',gap:4,overflowX:'auto',marginTop:4}}>{pics(l).slice(1).map((ph,i)=><img key={i} src={ph} alt="" style={{height:44,borderRadius:6,flex:'none'}}/>)}</div>}{l.review && <p className="muted" style={{marginTop:6}}>“{l.review}”</p>}{l.rating<=3 && <span className="chip red" style={{marginTop:6}}>Skip next time</span>}</div>)}</div></>}
       {theirs.length>0 && <><p className="muted" style={{margin:'14px 0 6px'}}>From friends</p>
         {theirs.map((f,i)=><p key={i} style={{margin:'0 0 6px',fontSize:14}}><b>{f.who}</b> had the {f.dish.toLowerCase()} · {f.rating}/10 · <span className="muted" style={{display:'inline'}}>{f.text}</span></p>)}</>}
       {!s.home && mine.length===0 && theirs.length===0 && <p className="muted" style={{marginTop:10}}>No visits yet. This one’s still in the fog.</p>}
@@ -382,19 +403,22 @@ function DateNight({saved,toggleSave,notes,setNote,planned,togglePlanned,openAdd
   </div>))}</>);
 }
 
-function Feed({logs}){
-  const [f,setF]=useState('all');const [open,setOpen]=useState(null);
+function Feed({logs,onEdit,onDelete}){
+  const [f,setF]=useState('all');const [open,setOpen]=useState(null);const [confirm,setConfirm]=useState(null);
   const shown=logs.filter(l=>f==='all'||(f==='loved'?l.rating>=8:l.rating<=3));
   return (<>
     <div style={{margin:'4px 0 12px'}}>{[['all','All'],['loved','Loved'],['skip','Skip']].map(([k,t])=><button key={k} className={'chip ghost'+(f===k?' on':'')} onClick={()=>setF(k)}>{t}</button>)}</div>
-    {shown.length===0 && <p className="muted">Nothing here yet. Tap + to log a meal.</p>}
-    <div className="grid">{shown.map(l=>{const s=spotBy(l.spot);return (<button key={l.id} onClick={()=>setOpen(open===l.id?null:l.id)} style={{background:'none',border:0,padding:0,textAlign:'left',gridColumn:open===l.id?'1 / -1':'auto'}}>
-      <Tile log={l} h={open===l.id?220:140}/>
-      {open===l.id && pics(l).length>1 && <div style={{display:'flex',gap:6,overflowX:'auto',marginTop:6}}>{pics(l).map((ph,i)=><img key={i} src={ph} alt="" style={{height:90,borderRadius:10,flex:'none'}}/>)}</div>}
-      <p style={{margin:'6px 0 0',fontWeight:600,fontSize:14}}>{s?s.name:'Unknown spot'}</p>
-      <p className="muted">{l.date}</p>
-      {open===l.id && l.review && <p style={{margin:'6px 0 0',fontSize:14}}>“{l.review}”</p>}
-    </button>)})}</div>
+    {shown.length===0 && <p className="muted">{logs.length?'Nothing here with this filter.':'Nothing here yet. Tap the camera to log a meal.'}</p>}
+    <div className="grid">{shown.map(l=>{const s=spotBy(l.spot);const isOpen=open===l.id;return (<div key={l.id} style={{gridColumn:isOpen?'1 / -1':'auto',minWidth:0}}>
+      <button className="tilebtn" aria-expanded={isOpen} aria-label={`${l.dish} at ${s?s.name:'unknown place'}, ${l.rating} out of 10`} onClick={()=>{setOpen(isOpen?null:l.id);setConfirm(null)}}><Tile log={l} h={isOpen?220:140}/></button>
+      {isOpen && pics(l).length>1 && <div style={{display:'flex',gap:6,overflowX:'auto',marginTop:6}}>{pics(l).map((ph,i)=><img key={i} src={ph} alt="" style={{height:90,borderRadius:10,flex:'none'}}/>)}</div>}
+      <p className="ldish">{l.dish}</p>
+      <p className="muted">{s?s.name:'Unknown place'} · {l.date}</p>
+      {isOpen && l.review && <p style={{margin:'6px 0 0',fontSize:14}}>“{l.review}”</p>}
+      {isOpen && (confirm===l.id
+        ? <div style={{display:'flex',gap:8,marginTop:10,alignItems:'center',flexWrap:'wrap'}}><span style={{fontSize:13}}>Delete this visit and its photos?</span><button className="btn solid" onClick={()=>{onDelete(l.id);setOpen(null);setConfirm(null)}}>Delete</button><button className="btn" onClick={()=>setConfirm(null)}>Keep</button></div>
+        : <div style={{display:'flex',gap:8,marginTop:10}}><button className="btn" onClick={()=>onEdit(l)}>Edit</button><button className="btn" onClick={()=>setConfirm(l.id)}>Delete</button></div>)}
+    </div>)})}</div>
   </>);
 }
 
@@ -441,9 +465,10 @@ function ReserveSheet({spot,onClose,onBook}){
 }
 
 function AddSheet({init,onClose,onSave}){
-  const [spot,setSpot]=useState(init.spot||'khao');
-  const [dish,setDish]=useState('');const [rating,setRating]=useState(init.rating||0);
-  const [review,setReview]=useState('');const [photos,setPhotos]=useState(init.photos||[]);const [err,setErr]=useState('');
+  const E=init.edit;
+  const [spot,setSpot]=useState(E?E.spot:(init.spot||''));
+  const [dish,setDish]=useState(E?E.dish:'');const [rating,setRating]=useState(E?E.rating:(init.rating||0));
+  const [review,setReview]=useState(E?(E.review||''):'');const [photos,setPhotos]=useState(E?pics(E):(init.photos||[]));const [err,setErr]=useState('');
   const [snap,setSnap]=useState(init.snap?{ai:'busy',loc:'busy'}:null);const [aiFilled,setAiFilled]=useState({});
   const [nName,setNName]=useState('');const [nCat,setNCat]=useState('');const [nArea,setNArea]=useState('');
   const [loc,setLoc]=useState(null);const [q,setQ]=useState('');const [res,setRes]=useState(null);const [finding,setFinding]=useState('');
@@ -486,6 +511,7 @@ function AddSheet({init,onClose,onSave}){
   const pickPhoto=async e=>{const files=[...e.target.files];e.target.value='';if(!files.length)return;const out=(await Promise.all(files.map(shrink))).filter(Boolean);setPhotos(p=>[...p,...out].slice(0,10))};
   const submit=()=>{
     let newSpot=null,spotId=spot;
+    if(!spot){setErr('Pick the place first.');return}
     if(isNew){const n=nName.trim();if(!n){setErr('Name the new place first.');return}
       const dup=SPOTS.find(x=>!x.home&&x.name.toLowerCase()===n.toLowerCase());
       if(dup)spotId=dup.id;else{const k=SPOTS.filter(x=>x.custom).length;newSpot={id:'c'+Date.now(),name:n,cat:nCat.trim()||'Restaurant',area:nArea.trim()||'Toronto',...(loc?{lat:+loc.lat.toFixed(6),lng:+loc.lng.toFixed(6)}:{lat:LL0[0]+0.0012*Math.sin(k*2.4),lng:LL0[1]+0.0018*Math.cos(k*2.4)}),tone:TONES[SPOTS.length%TONES.length],custom:true};spotId=newSpot.id}}
@@ -493,7 +519,7 @@ function AddSheet({init,onClose,onSave}){
     onSave({spot:spotId,dish:dish.trim(),rating,review:review.trim(),photos},newSpot)};
   return (<div className="sheetwrap" onClick={onClose}><div className="sheet" role="dialog" aria-label="Log a visit" onClick={e=>e.stopPropagation()}>
     <div className="grab"/>
-    <div className="row" style={{justifyContent:'space-between'}}><h3>Log a visit</h3><button className="btn" onClick={onClose}>Cancel</button></div>
+    <div className="row" style={{justifyContent:'space-between'}}><h3>{E?'Edit visit':'Log a visit'}</h3><button className="btn" onClick={onClose}>Cancel</button></div>
     {snap && <div className="snapstat" aria-live="polite">
       <div className="ln"><b>Photo</b>{snap.ai==='busy'?<span className="wait dots">Identifying</span>:<span className={snap.ai==='done'?'ok':'wait'}>{snap.aiText}</span>}</div>
       {snap.notFood && <div className="ln"><b></b><span className="wait">This doesn’t look like food. You can still log it.</span></div>}
@@ -510,7 +536,7 @@ function AddSheet({init,onClose,onSave}){
       </div>}
     <input ref={fileRef} type="file" accept="image/*" multiple className="sr" onChange={pickPhoto} aria-label="Photos"/>
     <label htmlFor="sp">Spot</label>
-    <select id="sp" value={spot} onChange={e=>{setSpot(e.target.value);setErr('')}}>{SPOTS.filter(s=>!s.home).map(s=><option key={s.id} value={s.id}>{s.name}</option>)}<option value="__new">+ New place…</option></select>
+    <select id="sp" value={spot} onChange={e=>{setSpot(e.target.value);setErr('')}}>{!spot && <option value="" disabled>Choose a place…</option>}{SPOTS.filter(s=>!s.home).map(s=><option key={s.id} value={s.id}>{s.name}</option>)}<option value="__new">+ New place…</option></select>
     {isNew && <>
       <label htmlFor="nn">Place name</label>
       <input id="nn" type="text" value={nName} onChange={e=>{setNName(e.target.value);setErr('')}} placeholder="e.g. Pai Northern Thai" autoFocus/>
@@ -532,7 +558,7 @@ function AddSheet({init,onClose,onSave}){
     <label htmlFor="rv">Review (optional)</label>
     <textarea id="rv" value={review} onChange={e=>setReview(e.target.value)} placeholder="What would you tell a friend?"/>
     {err && <p className="err">{err}</p>}
-    <button className="btn solid" style={{width:'100%',marginTop:16,padding:'12px'}} onClick={submit}>Save visit</button>
+    <button className="btn solid" style={{width:'100%',marginTop:16,padding:'12px'}} onClick={submit}>{E?'Save changes':'Save visit'}</button>
   </div></div>);
 }
 
@@ -563,7 +589,7 @@ function App(){
   const [selected,setSelected]=useState('salus');
   const [add,setAdd]=useState(null);const [nudge,setNudge]=useState(false);const [toast,setToast]=useState('');
   const [reserve,setReserve]=useState(null);const [exporting,setExporting]=useState(false);
-  const snapRef=useRef();const [snapCta,setSnapCta]=useState(()=>location.hash==='#snap');const [aiOpen,setAiOpen]=useState(false);
+  const snapRef=useRef();const [snapCta,setSnapCta]=useState(()=>location.hash==='#snap');const [aiOpen,setAiOpen]=useState(false);const [menuOpen,setMenuOpen]=useState(false);
   const [aiMode,setAiMode]=useState(getKey()?'key':'off');
   useEffect(()=>{getSample().then(sm=>{if(sm)setAiMode('claude')})},[]);
   useEffect(()=>{const h=()=>{if(location.hash==='#snap')setSnapCta(true)};window.addEventListener('hashchange',h);return()=>window.removeEventListener('hashchange',h)},[]);
@@ -578,7 +604,9 @@ function App(){
   const toggle=(arr,set)=>id=>set(arr.includes(id)?arr.filter(x=>x!==id):[...arr,id]);
   const simulate=()=>{setToast('Leaving… reminder in 30 min (sped up)');setTimeout(()=>setNudge(true),2500)};
   const doExport=async()=>{if(exporting)return;setExporting(true);try{await exportPdf({logs,saved,notes,planned,bookings});setToast('PDF downloaded')}catch(e){setToast(e&&e.code==='declined'?'Export cancelled':'Export failed. Check your connection and try again.')}finally{setExporting(false)}};
-  const onSave=(v,newSpot)=>{if(newSpot){SPOTS.push(newSpot);save('tto-spots',SPOTS.filter(x=>x.custom))}const d=new Date();setLogs([{id:Date.now(),date:d.toLocaleDateString('en-CA',{month:'short',day:'numeric'}),...v},...logs]);setAdd(null);setSelected(v.spot);setTab('map');setToast('Visit saved')};
+  const onSave=(v,newSpot)=>{if(newSpot){SPOTS.push(newSpot);save('tto-spots',SPOTS.filter(x=>x.custom))}
+    if(add&&add.edit){const id=add.edit.id;setLogs(logs.map(l=>l.id===id?{...l,...v,photo:null}:l));setAdd(null);setToast('Visit updated');return}
+    const d=new Date();setLogs([{id:Date.now(),date:d.toLocaleDateString('en-CA',{month:'short',day:'numeric'}),...v},...logs]);setAdd(null);setSelected(v.spot);setTab('map');setToast('Visit saved')};
   const heads={map:['Your Toronto',`${new Set(logs.map(l=>l.spot)).size} spots logged`],date:['Date night with Sarah','Ideas, vibes, and plans'],feed:['Your log','Every meal, so you remember the names'],friends:['Friends','Where they’ve been eating']};
   return (<div className="app">
     {nudge && <div className="banner" role="alert">
@@ -586,11 +614,18 @@ function App(){
       <p className="muted" style={{margin:'2px 0 8px'}}>You left 30 minutes ago. Tap a rating to log it.</p>
       <div className="rates">{[1,2,3,4,5,6,7,8,9,10].map(n=><button key={n} className="rate" style={{padding:'6px 0',fontSize:13}} onClick={()=>{setNudge(false);setAdd({spot:'khao',rating:n})}}>{n}</button>)}</div>
     </div>}
-    <div className="top"><div><h1 className="title">{heads[tab][0]}</h1><p className="sub">{heads[tab][1]}</p></div><div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:6}}><b style={{color:'var(--red)',fontSize:13}}>TasteTO</b><button className="btn" style={{padding:'4px 11px',fontSize:12,whiteSpace:'nowrap'}} onClick={doExport} disabled={exporting} aria-busy={exporting}>{exporting?'Exporting…':'Export PDF'}</button><button className="btn" style={{padding:'4px 11px',fontSize:12}} onClick={()=>setAiOpen(true)} aria-label="AI photo recognition settings">{aiMode==='off'?'AI: off':'AI: on'}</button></div></div>
+    <div className="top">
+      <div className="topbar"><span className="brand">TasteTO</span><button className="iconbtn" aria-label="More options" aria-expanded={menuOpen} onClick={()=>setMenuOpen(!menuOpen)}><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button></div>
+      <h1 className="title">{heads[tab][0]}</h1><p className="sub">{heads[tab][1]}</p>
+    </div>
+    {menuOpen && <div className="menuwrap" onClick={()=>setMenuOpen(false)}><div className="menu" role="menu" onClick={e=>e.stopPropagation()}>
+      <button role="menuitem" onClick={()=>{setMenuOpen(false);doExport()}} disabled={exporting}>{exporting?'Exporting…':'Export my data (PDF)'}</button>
+      <button role="menuitem" onClick={()=>{setMenuOpen(false);setAiOpen(true)}}>AI photo recognition <span className="state">{aiMode==='off'?'Off':'On'}</span></button>
+    </div></div>}
     <main>
       {tab==='map' && <MapView logs={logs} selected={selected} setSelected={setSelected} openAdd={setAdd} saved={saved} toggleSave={toggle(saved,setSaved)} simulate={simulate} openReserve={setReserve}/>}
       {tab==='date' && <DateNight saved={saved} toggleSave={toggle(saved,setSaved)} notes={notes} setNote={(id,v)=>setNotes({...notes,[id]:v})} planned={planned} togglePlanned={toggle(planned,setPlanned)} openAdd={setAdd} openReserve={setReserve} bookings={bookings}/>}
-      {tab==='feed' && <Feed logs={logs}/>}
+      {tab==='feed' && <Feed logs={logs} onEdit={v=>setAdd({edit:v})} onDelete={id=>{setLogs(logs.filter(l=>l.id!==id));setToast('Visit deleted')}}/>}
       {tab==='friends' && <Friends toggleSave={toggle(saved,setSaved)} saved={saved} openSpot={id=>{setSelected(id);setTab('map')}}/>}
     </main>
     <nav className="nav" aria-label="Main">
